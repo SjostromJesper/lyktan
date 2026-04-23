@@ -48,11 +48,14 @@ const productQuery = `#graphql
   }
 `
 
+const productVariables = {
+  saturdayHandle: 'riftbound-unleasehed-prerelease',
+  sundayHandle: 'riftbound-unleasehed-prerelease-sondag'
+}
+
 const {data: products, error} = await useStorefrontData('event-product-page', productQuery, {
-  variables: {
-    saturdayHandle: 'riftbound-unleasehed-prerelease',
-    sundayHandle: 'riftbound-unleasehed-prerelease-sondag'
-  },
+  variables: productVariables,
+  getCachedData: () => null,
   transform: (data) => ({
     saturday: data.saturday ?? null,
     sunday: data.sunday ?? null
@@ -75,6 +78,34 @@ const {
 
 await loadExistingCart()
 
+const storefront = useStorefront()
+const inventoryUpdatedAt = ref<Date | null>(null)
+let inventoryRefreshInterval: number | undefined
+
+const refreshProducts = async () => {
+  const response = await storefront.request(productQuery, {
+    variables: productVariables
+  })
+
+  products.value = {
+    saturday: response.data?.saturday ?? null,
+    sunday: response.data?.sunday ?? null
+  }
+  inventoryUpdatedAt.value = new Date()
+}
+
+onMounted(() => {
+  refreshProducts()
+
+  inventoryRefreshInterval = window.setInterval(refreshProducts, 30000)
+})
+
+onBeforeUnmount(() => {
+  if (inventoryRefreshInterval) {
+    window.clearInterval(inventoryRefreshInterval)
+  }
+})
+
 const availabilityLabel = (quantity?: number | null) => {
   if (typeof quantity !== 'number') {
     return 'Platser uppdateras snart'
@@ -90,6 +121,17 @@ const availabilityLabel = (quantity?: number | null) => {
 
   return `${quantity} platser kvar`
 }
+
+const updatedLabel = computed(() => {
+  if (!inventoryUpdatedAt.value) {
+    return ''
+  }
+
+  return inventoryUpdatedAt.value.toLocaleTimeString('sv-SE', {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+})
 
 useSeoMeta({
   title: 'Riftbound: Unleashed Prerelease | Butik Lyktan',
@@ -148,6 +190,9 @@ useSeoMeta({
               <span class="day-stock">{{ availabilityLabel(sundayVariant?.quantityAvailable) }}</span>
             </button>
           </div>
+          <p v-if="updatedLabel" class="inventory-updated">
+            Platser senast uppdaterade {{ updatedLabel }}.
+          </p>
 
           <div class="meta-grid">
             <article>
@@ -183,7 +228,7 @@ useSeoMeta({
                 type="button"
                 class="buy-button"
                 :disabled="loadingVariantId === variant?.id || !variant?.availableForSale"
-                @click="variant?.id && addVariantToCart(variant.id, product.title)"
+                @click="variant?.id && addVariantToCart(variant.id, product.title).then(refreshProducts)"
             >
               {{
                 !variant?.availableForSale
@@ -367,6 +412,12 @@ h1 {
   color: #2f3dcc;
   font-size: 0.9rem;
   font-weight: 700;
+}
+
+.inventory-updated {
+  margin-top: 10px;
+  color: #72788a;
+  font-size: 0.9rem;
 }
 
 .meta-grid article {
