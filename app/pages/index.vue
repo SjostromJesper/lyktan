@@ -84,6 +84,7 @@ useSeoMeta({
   background: linear-gradient(180deg, rgba(20, 22, 52, 0.78), rgba(10, 11, 26, 0.88));
   backdrop-filter: blur(18px);
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+  color: white;
 }
 
 .eyebrow {
