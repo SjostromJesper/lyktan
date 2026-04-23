@@ -233,6 +233,7 @@ useSeoMeta({
   min-height: 100vh;
   padding: 28px;
   background-color: #EDF0FA;
+  color: #171717;
 }
 
 .product-shell {
