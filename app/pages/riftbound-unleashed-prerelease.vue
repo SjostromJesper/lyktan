@@ -94,16 +94,29 @@ const refreshProducts = async () => {
   inventoryUpdatedAt.value = new Date()
 }
 
+const refreshWhenVisible = () => {
+  if (document.visibilityState === 'visible') {
+    refreshProducts()
+  }
+}
+
 onMounted(() => {
   refreshProducts()
 
   inventoryRefreshInterval = window.setInterval(refreshProducts, 30000)
+  window.addEventListener('pageshow', refreshProducts)
+  window.addEventListener('focus', refreshProducts)
+  document.addEventListener('visibilitychange', refreshWhenVisible)
 })
 
 onBeforeUnmount(() => {
   if (inventoryRefreshInterval) {
     window.clearInterval(inventoryRefreshInterval)
   }
+
+  window.removeEventListener('pageshow', refreshProducts)
+  window.removeEventListener('focus', refreshProducts)
+  document.removeEventListener('visibilitychange', refreshWhenVisible)
 })
 
 const availabilityLabel = (quantity?: number | null) => {
