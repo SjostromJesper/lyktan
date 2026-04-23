@@ -12,7 +12,20 @@ const useMockStorefront = !normalizedShopName || (!storefrontPublicToken && !sto
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxtjs/shopify'],
-
+  app: {
+    head: {
+      script: [
+        {
+          src: 'https://plausible.io/js/pa-k2Gasfpyo_eWit1Unqy2J.js',
+          async: true
+        },
+        {
+          innerHTML:
+            'window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init()'
+        }
+      ]
+    }
+  },
   shopify: {
     name: normalizedShopName || 'mock-shop',
     errors: {
