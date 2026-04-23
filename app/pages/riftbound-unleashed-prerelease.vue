@@ -222,7 +222,7 @@ useSeoMeta({
             fullständiga namn och mailadressen du använder i carde.io i betalningen
           </p>
           <ul>
-            <li>datum: 2 & 3 maj
+            <li>datum: 3 maj
               </li>
             <li>Registrering 12:00</li>
             <li>startar 12:30</li>
