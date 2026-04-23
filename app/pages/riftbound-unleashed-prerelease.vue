@@ -78,19 +78,44 @@ const {
 
 await loadExistingCart()
 
-const storefront = useStorefront()
 const inventoryUpdatedAt = ref<Date | null>(null)
+const inventoryError = ref('')
 let inventoryRefreshInterval: number | undefined
 
 const refreshProducts = async () => {
-  const response = await storefront.request(productQuery, {
-    variables: productVariables
+  const config = useRuntimeConfig()
+  const shopDomain = String(config.public.shopifyStoreDomain || '').replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+  const publicToken = String(config.public.shopifyStorefrontPublicToken || '')
+
+  if (!shopDomain || !publicToken) {
+    return
+  }
+
+  const response = await fetch(`https://${shopDomain}/api/2026-01/graphql.json?inventory=${Date.now()}`, {
+    method: 'POST',
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Shopify-Storefront-Access-Token': publicToken
+    },
+    body: JSON.stringify({
+      query: productQuery,
+      variables: productVariables
+    })
   })
 
-  products.value = {
-    saturday: response.data?.saturday ?? null,
-    sunday: response.data?.sunday ?? null
+  const result = await response.json()
+
+  if (result.errors?.length) {
+    inventoryError.value = result.errors.map((entry: { message: string }) => entry.message).join(', ')
+    return
   }
+
+  products.value = {
+    saturday: result.data?.saturday ?? null,
+    sunday: result.data?.sunday ?? null
+  }
+  inventoryError.value = ''
   inventoryUpdatedAt.value = new Date()
 }
 
@@ -205,6 +230,9 @@ useSeoMeta({
           </div>
           <p v-if="updatedLabel" class="inventory-updated">
             Platser senast uppdaterade {{ updatedLabel }}.
+          </p>
+          <p v-if="inventoryError" class="inventory-error">
+            Kunde inte uppdatera platser just nu.
           </p>
 
           <div class="meta-grid">
@@ -431,6 +459,13 @@ h1 {
   margin-top: 10px;
   color: #72788a;
   font-size: 0.9rem;
+}
+
+.inventory-error {
+  margin-top: 10px;
+  color: #b93b30;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 .meta-grid article {

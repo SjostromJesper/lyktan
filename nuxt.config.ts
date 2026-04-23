@@ -12,6 +12,12 @@ const useMockStorefront = !normalizedShopName || (!storefrontPublicToken && !sto
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxtjs/shopify'],
+  runtimeConfig: {
+    public: {
+      shopifyStoreDomain: rawShopDomain,
+      shopifyStorefrontPublicToken: storefrontPublicToken
+    }
+  },
   app: {
     head: {
       script: [
