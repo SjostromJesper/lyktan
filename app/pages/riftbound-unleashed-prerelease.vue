@@ -1,29 +1,7 @@
 <script setup lang="ts">
 const productQuery = `#graphql
-  query EventProducts($saturdayHandle: String!, $sundayHandle: String!) {
-    saturday: product(handle: $saturdayHandle) {
-      id
-      title
-      handle
-      description
-      featuredImage {
-        url
-        altText
-      }
-      variants(first: 1) {
-        nodes {
-          id
-          title
-          availableForSale
-          quantityAvailable
-          price {
-            amount
-            currencyCode
-          }
-        }
-      }
-    }
-    sunday: product(handle: $sundayHandle) {
+  query EventProduct($handle: String!) {
+    product(handle: $handle) {
       id
       title
       handle
@@ -49,24 +27,19 @@ const productQuery = `#graphql
 `
 
 const productVariables = {
-  saturdayHandle: 'riftbound-unleasehed-prerelease',
-  sundayHandle: 'riftbound-unleasehed-prerelease-sondag'
+  handle: 'riftbound-unleasehed-prerelease-sondag'
 }
 
 const {data: products, error} = await useStorefrontData('event-product-page', productQuery, {
   variables: productVariables,
   getCachedData: () => null,
-  transform: (data) => ({
-    saturday: data.saturday ?? null,
-    sunday: data.sunday ?? null
-  })
+  transform: (data) => data.product ?? null
 })
 
-const selectedDay = ref<'saturday' | 'sunday'>('saturday')
-const product = computed(() => products.value?.[selectedDay.value] ?? products.value?.saturday ?? null)
+const product = computed(() => products.value ?? null)
 const variant = computed(() => product.value?.variants?.nodes?.[0] ?? null)
-const saturdayVariant = computed(() => products.value?.saturday?.variants?.nodes?.[0] ?? null)
-const sundayVariant = computed(() => products.value?.sunday?.variants?.nodes?.[0] ?? null)
+const selectedQuantity = computed(() => variant.value?.quantityAvailable)
+const selectedIsSoldOut = computed(() => variant.value?.availableForSale === false || selectedQuantity.value === 0)
 
 const {
   cartOpen,
@@ -111,10 +84,7 @@ const refreshProducts = async () => {
     return
   }
 
-  products.value = {
-    saturday: result.data?.saturday ?? null,
-    sunday: result.data?.sunday ?? null
-  }
+  products.value = result.data?.product ?? null
   inventoryError.value = ''
   inventoryUpdatedAt.value = new Date()
 }
@@ -158,6 +128,18 @@ const availabilityLabel = (quantity?: number | null) => {
   }
 
   return `${quantity} platser kvar`
+}
+
+const addSelectedToCart = async () => {
+  await refreshProducts()
+
+  if (!variant.value?.id || variant.value.availableForSale === false || variant.value.quantityAvailable === 0) {
+    inventoryError.value = 'Den valda dagen ar slutsald.'
+    return
+  }
+
+  await addVariantToCart(variant.value.id, product.value.title)
+  await refreshProducts()
 }
 
 const updatedLabel = computed(() => {
@@ -208,25 +190,11 @@ useSeoMeta({
           <p class="eyebrow">Eventbiljett</p>
           <h1>Riftbound: Unleashed Prerelease</h1>
 
-          <div class="day-selector">
-            <button
-                type="button"
-                class="day-button"
-                :class="{ active: selectedDay === 'saturday' }"
-                @click="selectedDay = 'saturday'"
-            >
-              <span class="day-name">Lördag</span>
-              <span class="day-stock">{{ availabilityLabel(saturdayVariant?.quantityAvailable) }}</span>
-            </button>
-            <button
-                type="button"
-                class="day-button"
-                :class="{ active: selectedDay === 'sunday' }"
-                @click="selectedDay = 'sunday'"
-            >
+          <div class="day-selector single-day">
+            <div class="day-button active" :class="{ soldout: selectedIsSoldOut }">
               <span class="day-name">Söndag</span>
-              <span class="day-stock">{{ availabilityLabel(sundayVariant?.quantityAvailable) }}</span>
-            </button>
+              <span class="day-stock">{{ availabilityLabel(variant?.quantityAvailable) }}</span>
+            </div>
           </div>
           <p v-if="updatedLabel" class="inventory-updated">
             Platser senast uppdaterade {{ updatedLabel }}.
@@ -268,11 +236,11 @@ useSeoMeta({
             <button
                 type="button"
                 class="buy-button"
-                :disabled="loadingVariantId === variant?.id || !variant?.availableForSale"
-                @click="variant?.id && addVariantToCart(variant.id, product.title).then(refreshProducts)"
+                :disabled="loadingVariantId === variant?.id || selectedIsSoldOut"
+                @click="addSelectedToCart"
             >
               {{
-                !variant?.availableForSale
+                selectedIsSoldOut
                     ? 'Ej tillgänglig'
                     : loadingVariantId === variant?.id
                         ? 'Lägger till...'
@@ -287,7 +255,7 @@ useSeoMeta({
       <div v-else class="surface-card state-card">
         <p class="eyebrow">Ingen produkt</p>
         <h1>Det finns ingen produkt att visa än.</h1>
-        <p>Kontrollera att både lördags- och söndagsbiljetten finns publicerade i lager.</p>
+        <p>Kontrollera att söndagsbiljetten finns publicerad i lager.</p>
       </div>
     </section>
   </main>
@@ -418,6 +386,10 @@ h1 {
   margin-top: 24px;
 }
 
+.day-selector.single-day {
+  grid-template-columns: 1fr;
+}
+
 .day-button {
   display: grid;
   gap: 4px;
@@ -441,6 +413,10 @@ h1 {
   border-color: rgba(81, 99, 255, 0.3);
   background: linear-gradient(180deg, rgba(81, 99, 255, 0.08), rgba(81, 99, 255, 0.02));
   box-shadow: 0 16px 30px rgba(81, 99, 255, 0.12);
+}
+
+.day-button.soldout {
+  opacity: 0.58;
 }
 
 .day-name {
