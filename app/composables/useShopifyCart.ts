@@ -129,7 +129,8 @@ export const useShopifyCart = () => {
     return new Intl.NumberFormat('sv-SE', {
       style: 'currency',
       currency,
-      maximumFractionDigits: 2
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(value)
   }
 

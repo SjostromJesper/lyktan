@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'Event | Butik Lyktan',
-  description: 'Eventsidan ar tillfalligt under konstruktion.'
+  title: 'Kontakt | Butik Lyktan',
+  description: 'Kontaktsidan ar tillfalligt under konstruktion.'
 })
 </script>
 
@@ -9,8 +9,8 @@ useSeoMeta({
   <main class="locked-page">
     <section class="locked-shell">
       <UnderConstructionPanel
-        title="Det här eventet är tillfälligt stängt."
-        text="Just nu är det bara Pokemon Chaos Rising-prereleasen som är öppen på sajten."
+        title="Kontaktsidan öppnar snart."
+        text="Vi bygger klart sajten just nu. Endast Pokemon Chaos Rising-prereleasen är öppen för bokning."
       />
     </section>
   </main>

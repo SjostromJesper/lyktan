@@ -15,11 +15,6 @@ const {
 
 <template>
   <div>
-    <button type="button" class="cart-fab" @click="cartOpen = true">
-      <span class="cart-fab-label">Kundvagn</span>
-      <span class="cart-fab-count">{{ cartQuantity }}</span>
-    </button>
-
     <transition name="fade">
       <button
         v-if="cartOpen"
@@ -100,42 +95,10 @@ const {
   text-decoration: none;
 }
 
-.cart-fab {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 40;
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 58px;
-  padding: 0 14px 0 18px;
-  border: 0;
-  border-radius: 999px;
-  color: white;
-  background: #171717;
-  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.18);
-  cursor: pointer;
-}
-
-.cart-fab-label {
-  font-weight: 700;
-}
-
-.cart-fab-count {
-  min-width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: #ef6c2f;
-  font-weight: 800;
-}
-
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 49;
+  z-index: 89;
   border: 0;
   background: rgba(20, 18, 16, 0.4);
 }
@@ -144,7 +107,7 @@ const {
   position: fixed;
   top: 0;
   right: 0;
-  z-index: 50;
+  z-index: 90;
   width: min(420px, 100vw);
   height: 100vh;
   padding: 20px;
@@ -331,11 +294,6 @@ h2 {
 }
 
 @media (max-width: 720px) {
-  .cart-fab {
-    right: 12px;
-    bottom: 12px;
-  }
-
   .cart-drawer {
     width: 100vw;
   }

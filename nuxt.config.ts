@@ -65,6 +65,11 @@ export default defineNuxtConfig({
       headers: {
         'cache-control': 'no-store, max-age=0'
       }
+    },
+    '/produkter/**': {
+      headers: {
+        'cache-control': 'no-store, max-age=0'
+      }
     }
   },
 
