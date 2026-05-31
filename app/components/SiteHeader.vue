@@ -1,19 +1,34 @@
 <script setup lang="ts">
 const { cartOpen, cartQuantity } = useShopifyCart()
+
+const navItems = [
+  { label: 'Hem', to: '/' }
+]
 </script>
 
 <template>
   <header class="site-header">
     <div class="header-shell">
       <NuxtLink to="/" class="brand">
-<!--        <span class="brand-mark" aria-hidden="true"></span>-->
         <span class="brand-copy">
           <span class="brand-title">Butik Lyktan</span>
         </span>
       </NuxtLink>
 
       <div class="header-actions">
-        <span class="status-badge">Sidan är under konstruktion</span>
+        <nav class="header-nav" aria-label="Huvudnavigation">
+          <NuxtLink
+            v-for="item in navItems"
+            :key="item.to"
+            :to="item.to"
+            class="nav-link"
+            active-class="nav-link-active"
+          >
+            {{ item.label }}
+          </NuxtLink>
+        </nav>
+
+        <span class="status-badge">Webbshop under konstruktion</span>
 
         <button type="button" class="cart-button" aria-label="Öppna kundvagnen" @click="cartOpen = true">
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -104,6 +119,36 @@ const { cartOpen, cartQuantity } = useShopifyCart()
   flex: 1;
 }
 
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-link {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  color: #4a4f58;
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link-active {
+  border-color: rgba(17, 24, 39, 0.08);
+  background: #f7f7f8;
+  color: #111111;
+}
+
 .status-badge {
   min-height: 38px;
   display: inline-flex;
@@ -171,11 +216,9 @@ const { cartOpen, cartQuantity } = useShopifyCart()
   }
 
   .header-actions {
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 10px;
-  }
-
-  .brand-subtitle {
-    display: none;
   }
 }
 </style>

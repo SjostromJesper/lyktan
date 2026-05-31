@@ -10,7 +10,7 @@ useSeoMeta({
     <section class="locked-shell">
       <UnderConstructionPanel
         title="Det här eventet är tillfälligt stängt."
-        text="Just nu är det bara Pokemon Chaos Rising-prereleasen som är öppen på sajten."
+        text="Just nu är det bara One Piece-prereleasen som är öppen på sajten."
       />
     </section>
   </main>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'Kontakt | Butik Lyktan',
-  description: 'Kontaktsidan ar tillfalligt under konstruktion.'
+  title: 'Event | Butik Lyktan',
+  description: 'Eventsidorna ar tillfalligt under konstruktion.'
 })
 </script>
 
@@ -9,8 +9,8 @@ useSeoMeta({
   <main class="locked-page">
     <section class="locked-shell">
       <UnderConstructionPanel
-        title="Kontaktsidan öppnar snart."
-        text="Vi bygger klart sajten just nu. Eventsidan och One Piece-prereleasen är öppna redan nu."
+        title="Den här eventsidan öppnar snart."
+        text="Vi finslipar eventsidorna just nu. Just nu är det bara One Piece-prereleasen som är öppen på sajten."
       />
     </section>
   </main>

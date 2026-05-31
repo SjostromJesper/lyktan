@@ -12,7 +12,7 @@ defineProps<{
     <p>
       {{
         text ||
-        'Vi öppnar fler delar av sajten snart. Just nu är Pokemon Chaos Rising-prereleasen det enda som är öppet.'
+        'Vi öppnar fler delar av sajten snart. Just nu är One Piece-prereleasen det enda som är öppet.'
       }}
     </p>
   </section>

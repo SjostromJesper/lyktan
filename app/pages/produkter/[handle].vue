@@ -9,7 +9,7 @@ import {
 
 const route = useRoute()
 const handle = computed(() => String(route.params.handle || ''))
-const publicHandle = 'pokemon-chaos-rising-prerelease'
+const publicHandle = 'one-piece-op-16-prerelease-event'
 const selectedVariantId = ref('')
 const productResponse = ref<{ handle?: string | null; routeHandle?: string | null; product?: any | null } | null>(null)
 const error = ref<Error | null>(null)
@@ -158,7 +158,7 @@ useSeoMeta({
       <UnderConstructionPanel
         v-if="handle !== publicHandle"
         title="Den här produkten är inte öppen ännu."
-        text="Vi håller resten av sajten låst medan vi bygger klart. Just nu går det bara att köpa Pokemon Chaos Rising-prereleasen."
+        text="Vi håller resten av sajten låst medan vi bygger klart. Just nu är eventsidan och One Piece-prereleasen öppna."
       />
 
       <template v-else>

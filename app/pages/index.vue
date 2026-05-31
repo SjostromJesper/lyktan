@@ -1,10 +1,10 @@
 <script setup lang="ts">
 const featuredProduct = {
-  handle: 'pokemon-chaos-rising-prerelease',
-  link: '/produkter/pokemon-chaos-rising-prerelease',
+  handle: 'one-piece-op-16-prerelease-event',
+  link: '/produkter/one-piece-op-16-prerelease-event',
   eyebrow: 'Kommande event',
-  title: 'Pokemon Prerelease: Chaos Rising',
-  text: 'Var med på Butik Lyktans Pokemon Prerelease for Chaos Rising. Säkra din plats direkt och hoppa rakt in i eventet via produktsidan.'
+  title: 'One Piece Prerelease Event',
+  text: 'Var med på Butik Lyktans One Piece-prerelease. Säkra din plats direkt och hoppa rakt in i eventet via produktsidan.'
 }
 
 const homepageQuery = `#graphql
@@ -114,14 +114,14 @@ useSeoMeta({
           <img
             v-else
             src="/images/events/riftbound-unleashed.jpg"
-            alt="Pokemon Chaos Rising"
+            alt="One Piece Prerelease Event"
           >
         </div>
       </section>
 
       <UnderConstructionPanel
         title="Fler delar av sajten öppnar snart."
-        text="Just nu är det bara Pokemon Chaos Rising-prereleasen som är öppen för bokning. Resten av sajten är tillfälligt låst medan vi bygger klart butiken."
+        text="Just nu är det bara One Piece-prereleasen som är öppen. Resten av sajten är tillfälligt låst medan vi bygger klart butiken."
       />
     </div>
   </main>
@@ -459,6 +459,7 @@ h3 {
   .latest-grid {
     grid-template-columns: 1fr 1fr;
   }
+
 }
 
 @media (max-width: 520px) {
