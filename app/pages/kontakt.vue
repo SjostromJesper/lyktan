@@ -10,7 +10,7 @@ useSeoMeta({
     <section class="locked-shell">
       <UnderConstructionPanel
         title="Kontaktsidan öppnar snart."
-        text="Vi bygger klart sajten just nu. Eventsidan och One Piece-prereleasen är öppna redan nu."
+        text="Vi bygger klart sajten just nu. Just nu är det bara Magic: The Gathering - Marvel-prereleasen som är öppen."
       />
     </section>
   </main>

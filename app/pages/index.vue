@@ -1,10 +1,10 @@
 <script setup lang="ts">
 const featuredProduct = {
-  handle: 'one-piece-op-16-prerelease-event',
-  link: '/produkter/one-piece-op-16-prerelease-event',
+  handle: 'magic-the-gathering-marvel-prerelease',
+  link: '/produkter/magic-the-gathering-marvel-prerelease',
   eyebrow: 'Kommande event',
-  title: 'One Piece Prerelease Event',
-  text: 'Var med på Butik Lyktans One Piece-prerelease. Säkra din plats direkt och hoppa rakt in i eventet via produktsidan.'
+  title: 'Magic: The Gathering - Marvel Prerelease',
+  text: 'Var med på Butik Lyktans Magic: The Gathering - Marvel-prerelease. Säkra din plats direkt och hoppa rakt in i eventet via produktsidan.'
 }
 
 const homepageQuery = `#graphql
@@ -114,14 +114,14 @@ useSeoMeta({
           <img
             v-else
             src="/images/events/riftbound-unleashed.jpg"
-            alt="One Piece Prerelease Event"
+            alt="Magic: The Gathering - Marvel Prerelease"
           >
         </div>
       </section>
 
       <UnderConstructionPanel
         title="Fler delar av sajten öppnar snart."
-        text="Just nu är det bara One Piece-prereleasen som är öppen. Resten av sajten är tillfälligt låst medan vi bygger klart butiken."
+        text="Just nu är det bara Magic: The Gathering - Marvel-prereleasen som är öppen. Resten av sajten är tillfälligt låst medan vi bygger klart butiken."
       />
     </div>
   </main>
