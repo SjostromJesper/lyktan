@@ -1,18 +1,76 @@
 <script setup lang="ts">
-const featuredProduct = {
-  handle: 'magic-the-gathering-marvel-prerelease',
-  link: '/produkter/magic-the-gathering-marvel-prerelease',
-  eyebrow: 'Kommande event',
-  title: 'Magic: The Gathering - Marvel Prerelease',
-  text: 'Var med på Butik Lyktans Magic: The Gathering - Marvel-prerelease. Säkra din plats direkt och hoppa rakt in i eventet via produktsidan.'
-}
+const {
+  addVariantToCart,
+  loadingVariantId,
+  formatMoney
+} = useShopifyCart()
+
+const categoryTabs = [
+  {
+    slug: 'kortspel',
+    label: 'Kortspel',
+    tags: ['kortspel']
+  },
+  {
+    slug: 'miniatyrspel',
+    label: 'Miniatyrspel',
+    tags: ['miniatyrspel', 'figurspel']
+  },
+  {
+    slug: 'bradspel',
+    label: 'Brädspel',
+    tags: ['bradspel', 'brädspel']
+  },
+  {
+    slug: 'rollspel',
+    label: 'Rollspel',
+    tags: ['rollspel']
+  }
+] as const
+
+const heroSlides = [
+  {
+    handle: 'magic-the-gathering-marvel-prerelease',
+    link: '/produkter/magic-the-gathering-marvel-prerelease',
+    eyebrow: 'Kommande event',
+    title: 'Magic: The Gathering - Marvel Prerelease',
+    text: 'Var med på Butik Lyktans Magic: The Gathering - Marvel-prerelease. Säkra din plats direkt och hoppa rakt in i eventet via produktsidan.'
+  },
+  {
+    handle: 'riftbound-unleashed-postrift-event',
+    link: '/produkter/riftbound-unleashed-postrift-event',
+    eyebrow: 'Kommande event',
+    title: 'Riftbound Unleashed Postrift Event',
+    text: 'Var med på vårt Riftbound Unleashed Postrift-event efter den sena leveransen. Säkra din plats direkt via produktsidan.'
+  }
+] as const
 
 const homepageQuery = `#graphql
-  query HomepageProducts($featuredHandle: String!) {
-    featured: product(handle: $featuredHandle) {
+  query HomepageProducts($firstHeroHandle: String!, $secondHeroHandle: String!) {
+    firstHero: product(handle: $firstHeroHandle) {
       id
       title
       handle
+      tags
+      featuredImage {
+        url
+        altText
+      }
+      variants(first: 1) {
+        nodes {
+          id
+          price {
+            amount
+            currencyCode
+          }
+        }
+      }
+    }
+    secondHero: product(handle: $secondHeroHandle) {
+      id
+      title
+      handle
+      tags
       featuredImage {
         url
         altText
@@ -32,6 +90,7 @@ const homepageQuery = `#graphql
         id
         title
         handle
+        tags
         featuredImage {
           url
           altText
@@ -52,6 +111,28 @@ const homepageQuery = `#graphql
         id
         title
         handle
+        tags
+        featuredImage {
+          url
+          altText
+        }
+        variants(first: 1) {
+          nodes {
+            id
+            price {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+    }
+    storefrontProducts: products(first: 100, sortKey: TITLE) {
+      nodes {
+        id
+        title
+        handle
+        tags
         featuredImage {
           url
           altText
@@ -72,16 +153,114 @@ const homepageQuery = `#graphql
 
 const { data, error } = await useStorefrontData('homepage-products', homepageQuery, {
   variables: {
-    featuredHandle: featuredProduct.handle
+    firstHeroHandle: heroSlides[0].handle,
+    secondHeroHandle: heroSlides[1].handle
   },
   transform: (result) => ({
-    featured: result.featured ?? null,
+    heroProducts: [result.firstHero ?? null, result.secondHero ?? null],
     latestTagged: result.latestTagged?.nodes ?? [],
-    latestRecent: result.latestRecent?.nodes ?? []
+    latestRecent: result.latestRecent?.nodes ?? [],
+    storefrontProducts: result.storefrontProducts?.nodes ?? []
   })
 })
 
-const heroProduct = computed(() => data.value?.featured ?? null)
+const activeHeroIndex = ref(0)
+let heroInterval: ReturnType<typeof window.setInterval> | undefined
+
+const heroItems = computed(() =>
+  heroSlides.map((slide, index) => ({
+    ...slide,
+    product: data.value?.heroProducts?.[index] ?? null
+  }))
+)
+
+const activeHero = computed(() => heroItems.value[activeHeroIndex.value] ?? heroItems.value[0] ?? null)
+const activeCategory = ref<(typeof categoryTabs)[number]['slug']>('kortspel')
+const activeFilterTag = ref('alla')
+
+const normalizeTag = (tag?: string | null) =>
+  String(tag ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+
+const activeCategoryConfig = computed(
+  () => categoryTabs.find((category) => category.slug === activeCategory.value) ?? categoryTabs[0]
+)
+
+const storefrontProducts = computed(() => data.value?.storefrontProducts ?? [])
+
+const categoryProducts = computed(() => {
+  const allowedTags = new Set(activeCategoryConfig.value.tags.map((tag) => normalizeTag(tag)))
+
+  return storefrontProducts.value.filter((product: any) =>
+    product.tags?.some((tag: string) => allowedTags.has(normalizeTag(tag)))
+  )
+})
+
+const availableFilterTags = computed(() => {
+  const categoryTags = new Set(activeCategoryConfig.value.tags.map((tag) => normalizeTag(tag)))
+  const tags = new Map<string, string>()
+
+  for (const product of categoryProducts.value) {
+    for (const tag of product.tags ?? []) {
+      const normalizedTag = normalizeTag(tag)
+
+      if (!normalizedTag || categoryTags.has(normalizedTag)) {
+        continue
+      }
+
+      if (!tags.has(normalizedTag)) {
+        tags.set(normalizedTag, tag)
+      }
+    }
+  }
+
+  return [...tags.entries()]
+    .sort((left, right) => left[1].localeCompare(right[1], 'sv-SE'))
+    .map(([value, label]) => ({ value, label }))
+})
+
+const filteredCategoryProducts = computed(() => {
+  if (activeFilterTag.value === 'alla') {
+    return categoryProducts.value
+  }
+
+  return categoryProducts.value.filter((product: any) =>
+    product.tags?.some((tag: string) => normalizeTag(tag) === activeFilterTag.value)
+  )
+})
+
+const addHomepageProductToCart = async (product: any) => {
+  const firstVariant = product?.variants?.nodes?.[0]
+
+  if (!firstVariant?.id) {
+    return
+  }
+
+  await addVariantToCart(firstVariant.id, product.title)
+}
+
+watch(activeCategory, () => {
+  activeFilterTag.value = 'alla'
+})
+
+const goToHeroSlide = (index: number) => {
+  activeHeroIndex.value = index
+}
+
+onMounted(() => {
+  heroInterval = window.setInterval(() => {
+    activeHeroIndex.value = (activeHeroIndex.value + 1) % heroItems.value.length
+  }, 5000)
+})
+
+onBeforeUnmount(() => {
+  if (heroInterval) {
+    window.clearInterval(heroInterval)
+  }
+})
 
 useSeoMeta({
   title: 'Butik Lyktan',
@@ -94,35 +273,155 @@ useSeoMeta({
     <div class="page-shell">
       <section class="hero-card surface-card">
         <div class="hero-copy">
-          <p class="eyebrow">{{ featuredProduct.eyebrow }}</p>
-          <h1>{{ featuredProduct.title }}</h1>
-          <p class="lead">{{ featuredProduct.text }}</p>
+          <Transition name="hero-copy-transition" mode="out-in">
+            <div :key="activeHero?.handle" class="hero-copy-inner">
+              <p class="eyebrow">{{ activeHero?.eyebrow }}</p>
+              <h1>{{ activeHero?.title }}</h1>
+              <p class="lead">{{ activeHero?.text }}</p>
 
-          <div class="hero-actions">
-            <NuxtLink :to="featuredProduct.link" class="primary-button">
-              Boka din plats
-            </NuxtLink>
+              <div class="hero-actions">
+                <NuxtLink :to="activeHero?.link || '/'" class="primary-button">
+                  Boka din plats
+                </NuxtLink>
+              </div>
+            </div>
+          </Transition>
+
+          <div class="hero-dots">
+            <button
+              v-for="(slide, index) in heroItems"
+              :key="slide.handle"
+              type="button"
+              class="hero-dot"
+              :class="{ 'hero-dot-active': index === activeHeroIndex }"
+              :aria-label="`Visa ${slide.title}`"
+              @click="goToHeroSlide(index)"
+            />
           </div>
         </div>
 
         <div class="hero-media">
-          <img
-            v-if="heroProduct?.featuredImage?.url"
-            :src="heroProduct.featuredImage.url"
-            :alt="heroProduct.featuredImage.altText || heroProduct.title"
-          >
-          <img
-            v-else
-            src="/images/events/riftbound-unleashed.jpg"
-            alt="Magic: The Gathering - Marvel Prerelease"
-          >
+          <Transition name="hero-image-transition" mode="out-in">
+            <img
+              v-if="activeHero?.product?.featuredImage?.url"
+              :key="activeHero.product.handle"
+              :src="activeHero.product.featuredImage.url"
+              :alt="activeHero.product.featuredImage.altText || activeHero.product.title"
+            >
+            <img
+              v-else
+              :key="activeHero?.handle || 'hero-fallback'"
+              src="/images/events/riftbound-unleashed.jpg"
+              :alt="activeHero?.title || 'Kommande event'"
+            >
+          </Transition>
         </div>
       </section>
 
       <UnderConstructionPanel
         title="Fler delar av sajten öppnar snart."
-        text="Just nu är det bara Magic: The Gathering - Marvel-prereleasen som är öppen. Resten av sajten är tillfälligt låst medan vi bygger klart butiken."
+        text="Just nu är sidan under konstruktion."
       />
+
+      <section class="catalog-preview surface-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Tillfällig katalog</p>
+            <h2>Bläddra efter speltyp</h2>
+          </div>
+          <p class="section-note">
+            För tillfället kan produkter endast plockas upp i butik
+          </p>
+        </div>
+
+        <div class="tab-row">
+          <button
+            v-for="category in categoryTabs"
+            :key="category.slug"
+            type="button"
+            class="tab-button"
+            :class="{ 'tab-button-active': category.slug === activeCategory }"
+            @click="activeCategory = category.slug"
+          >
+            {{ category.label }}
+          </button>
+        </div>
+
+        <div v-if="availableFilterTags.length" class="filter-row">
+          <button
+            type="button"
+            class="filter-chip"
+            :class="{ 'filter-chip-active': activeFilterTag === 'alla' }"
+            @click="activeFilterTag = 'alla'"
+          >
+            Alla
+          </button>
+
+          <button
+            v-for="tag in availableFilterTags"
+            :key="tag.value"
+            type="button"
+            class="filter-chip"
+            :class="{ 'filter-chip-active': activeFilterTag === tag.value }"
+            @click="activeFilterTag = tag.value"
+          >
+            {{ tag.label }}
+          </button>
+        </div>
+
+        <div v-if="filteredCategoryProducts.length" class="catalog-grid">
+          <article
+            v-for="product in filteredCategoryProducts"
+            :key="product.id"
+            class="catalog-card"
+          >
+            <div class="catalog-item-media">
+              <img
+                v-if="product.featuredImage?.url"
+                :src="product.featuredImage.url"
+                :alt="product.featuredImage.altText || product.title"
+              >
+              <div v-else class="catalog-item-fallback">{{ product.title.slice(0, 2).toUpperCase() }}</div>
+            </div>
+
+            <div class="catalog-item-copy">
+              <h3>{{ product.title }}</h3>
+              <p class="catalog-price">
+                {{ formatMoney(product.variants?.nodes?.[0]?.price?.amount, product.variants?.nodes?.[0]?.price?.currencyCode) }}
+              </p>
+              <div class="catalog-item-tags">
+                <span v-for="tag in product.tags" :key="`${product.id}-${tag}`" class="catalog-tag">
+                  {{ tag }}
+                </span>
+              </div>
+
+              <div class="catalog-actions">
+                <button
+                  type="button"
+                  class="catalog-cart-button"
+                  :disabled="loadingVariantId === product.variants?.nodes?.[0]?.id"
+                  @click="addHomepageProductToCart(product)"
+                >
+                  {{
+                    loadingVariantId === product.variants?.nodes?.[0]?.id
+                      ? 'Lägger till...'
+                      : 'Lägg i kundvagn'
+                  }}
+                </button>
+
+                <NuxtLink :to="`/produkter/${product.handle}`" class="catalog-link-button">
+                  Produktsida
+                </NuxtLink>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div v-else class="state-card">
+          <p class="eyebrow">Inga produkter</p>
+          <h3>Det finns inga produkter här ännu.</h3>
+        </div>
+      </section>
     </div>
   </main>
 </template>
@@ -177,6 +476,10 @@ useSeoMeta({
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.hero-copy-inner {
+  display: grid;
 }
 
 .hero-media {
@@ -256,6 +559,49 @@ h3 {
   margin-top: 26px;
 }
 
+.hero-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.hero-dot {
+  width: 12px;
+  height: 12px;
+  padding: 0;
+  border: 1px solid rgba(18, 18, 18, 0.14);
+  border-radius: 999px;
+  background: white;
+  cursor: pointer;
+}
+
+.hero-dot-active {
+  background: #121212;
+  border-color: #121212;
+}
+
+.hero-copy-transition-enter-active,
+.hero-copy-transition-leave-active,
+.hero-image-transition-enter-active,
+.hero-image-transition-leave-active {
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+
+.hero-copy-transition-enter-from,
+.hero-image-transition-enter-from {
+  opacity: 0;
+  transform: translateY(18px);
+}
+
+.hero-copy-transition-leave-to,
+.hero-image-transition-leave-to {
+  opacity: 0;
+  transform: translateY(-18px);
+}
+
 .primary-button {
   min-height: 46px;
   display: inline-flex;
@@ -269,6 +615,164 @@ h3 {
   font-size: 0.88rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+
+.catalog-preview {
+  padding: 26px;
+  display: grid;
+  gap: 18px;
+}
+
+.tab-row,
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tab-button,
+.filter-chip {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border: 1px solid rgba(18, 18, 18, 0.08);
+  background: #fbfbfc;
+  color: #4a4f58;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.tab-button-active,
+.filter-chip-active,
+.tab-button:hover,
+.filter-chip:hover {
+  background: #121212;
+  border-color: #121212;
+  color: white;
+}
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.catalog-card {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid rgba(18, 18, 18, 0.08);
+  background: linear-gradient(180deg, #fbfbfc, #f5f5f7);
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.catalog-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(239, 108, 47, 0.28);
+}
+
+.catalog-item-media {
+  aspect-ratio: 1 / 1;
+  background: #eef0f4;
+  overflow: hidden;
+}
+
+.catalog-item-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.catalog-item-fallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: #7a7f92;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.catalog-item-copy {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.catalog-item-copy h3 {
+  font-size: 1rem;
+  line-height: 1.18;
+}
+
+.catalog-price {
+  color: #121212;
+  font-weight: 800;
+}
+
+.catalog-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.catalog-tag {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid rgba(18, 18, 18, 0.08);
+  background: white;
+  color: #4a4f58;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.catalog-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.catalog-cart-button,
+.catalog-link-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 14px;
+  border: 1px solid #121212;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.catalog-cart-button {
+  background: #121212;
+  color: white;
+  cursor: pointer;
+}
+
+.catalog-cart-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.catalog-link-button {
+  background: white;
+  color: #121212;
 }
 
 .hero-price {
@@ -419,6 +923,10 @@ h3 {
     grid-template-columns: 1fr;
   }
 
+  .catalog-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .hero-copy {
     border-right: 0;
     border-bottom: 1px solid rgba(18, 18, 18, 0.08);
@@ -452,6 +960,10 @@ h3 {
     padding: 20px;
   }
 
+  .catalog-preview {
+    padding: 20px;
+  }
+
   .story-placeholder {
     min-height: 220px;
   }
@@ -463,6 +975,10 @@ h3 {
 }
 
 @media (max-width: 520px) {
+  .catalog-grid {
+    grid-template-columns: 1fr;
+  }
+
   .latest-grid {
     grid-template-columns: 1fr;
   }

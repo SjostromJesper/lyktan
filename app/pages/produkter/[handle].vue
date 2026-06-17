@@ -8,8 +8,8 @@ import {
 } from '~/utils/catalog'
 
 const route = useRoute()
+const router = useRouter()
 const handle = computed(() => String(route.params.handle || ''))
-const publicHandle = 'magic-the-gathering-marvel-prerelease'
 const selectedVariantId = ref('')
 const productResponse = ref<{ handle?: string | null; routeHandle?: string | null; product?: any | null } | null>(null)
 const error = ref<Error | null>(null)
@@ -130,6 +130,15 @@ const addCurrentVariant = async () => {
   await addVariantToCart(selectedVariant.value.id, product.value.title)
 }
 
+const goBack = async () => {
+  if (import.meta.client && window.history.length > 1) {
+    await router.back()
+    return
+  }
+
+  await router.push('/')
+}
+
 const variantAvailability = (variant: any) => {
   if (!variant) {
     return ''
@@ -140,6 +149,10 @@ const variantAvailability = (variant: any) => {
   }
 
   if (typeof variant.quantityAvailable === 'number') {
+    if (variant.quantityAvailable > 99) {
+      return '99+ kvar'
+    }
+
     return `${variant.quantityAvailable} kvar`
   }
 
@@ -155,13 +168,6 @@ useSeoMeta({
 <template>
   <main class="product-page">
     <section class="product-shell">
-      <UnderConstructionPanel
-        v-if="handle !== publicHandle"
-        title="Den här produkten är inte öppen ännu."
-        text="Vi håller resten av sajten låst medan vi bygger klart. Just nu är det bara Magic: The Gathering - Marvel-prereleasen som är öppen."
-      />
-
-      <template v-else>
       <nav v-if="breadcrumbItems.length" class="breadcrumb-nav" aria-label="Breadcrumb">
         <NuxtLink to="/butik" class="breadcrumb-link">Butik</NuxtLink>
         <template v-for="item in breadcrumbItems" :key="item.to">
@@ -172,12 +178,13 @@ useSeoMeta({
         <span class="breadcrumb-current">{{ product?.title }}</span>
       </nav>
 
-      <NuxtLink
-        :to="breadcrumbItems.length ? breadcrumbItems[breadcrumbItems.length - 1].to : '/butik'"
+      <button
+        type="button"
         class="back-link"
+        @click="goBack"
       >
-        Tillbaka till butik
-      </NuxtLink>
+        Tillbaka
+      </button>
 
       <div v-if="loadingProduct" class="product-layout skeleton-layout" aria-hidden="true">
         <div class="image-panel surface-card skeleton-card">
@@ -272,7 +279,6 @@ useSeoMeta({
         <h1>Den här produkten finns inte.</h1>
         <p>Kontrollera handlet i Shopify eller länken du försökte öppna.</p>
       </div>
-      </template>
     </section>
   </main>
 </template>
