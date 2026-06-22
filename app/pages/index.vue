@@ -30,11 +30,11 @@ const categoryTabs = [
 
 const heroSlides = [
   {
-    handle: 'magic-the-gathering-marvel-prerelease',
-    link: '/produkter/magic-the-gathering-marvel-prerelease',
+    handle: 'pokemon-pitch-black-prerelease',
+    link: '/produkter/pokemon-pitch-black-prerelease',
     eyebrow: 'Kommande event',
-    title: 'Magic: The Gathering - Marvel Prerelease',
-    text: 'Var med på Butik Lyktans Magic: The Gathering - Marvel-prerelease. Säkra din plats direkt och hoppa rakt in i eventet via produktsidan.'
+    title: 'Pokemon Pitch Black Prerelease',
+    text: 'Var med på Butik Lyktans Pokemon Pitch Black-prerelease. Säkra din plats direkt och hoppa rakt in i eventet via produktsidan.'
   },
   {
     handle: 'riftbound-unleashed-postrift-event',
