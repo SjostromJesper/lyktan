@@ -1,4 +1,5 @@
-import event26 from '~/data/event26.json'
+import { recurringEvents } from '~/data/recurringEvents'
+import specialEventsData from '~/data/specialEvents.json'
 
 type EventEntry = {
   titel: string
@@ -6,11 +7,8 @@ type EventEntry = {
   tid: string
   beskrivning: string
   kostnad: string
-}
-
-type EventMonthMap = Record<string, Record<string, EventEntry[]>>
-type EventYearFile = {
-  months: EventMonthMap
+  produktHandle?: string
+  visaIKarusell?: boolean
 }
 
 type EventSeries = {
@@ -20,9 +18,9 @@ type EventSeries = {
   matches: (event: EventEntry) => boolean
 }
 
-const eventFilesByYear = new Map<string, EventYearFile>([
-  ['26', event26 as EventYearFile]
-])
+const specialEvents = specialEventsData as EventEntry[]
+
+const weekdayLabels = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag']
 
 const eventSeriesList: EventSeries[] = [
   {
@@ -63,84 +61,92 @@ const eventSeriesList: EventSeries[] = [
   }
 ]
 
-export const getEventYearKey = (date = new Date()) => String(date.getFullYear()).slice(-2)
+const toIsoDate = (date: Date) =>
+  [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-')
 
-export const getEventFileForYear = (yearKey: string) => eventFilesByYear.get(yearKey) ?? null
+const compareEvents = (left: EventEntry, right: EventEntry) =>
+  left.datum === right.datum
+    ? left.tid.localeCompare(right.tid, 'sv-SE')
+    : left.datum.localeCompare(right.datum, 'sv-SE')
 
-export const getAllEventEntries = (yearKey: string) => {
-  const file = getEventFileForYear(yearKey)
+/**
+ * Expands the recurring weekly rules into concrete dated occurrences for
+ * a window starting at `fromDate`. This is what lets the schedule stay
+ * "up to date" without anyone manually adding dates — it always looks
+ * as far ahead as `days` from today.
+ */
+export const expandRecurringEvents = (fromDate = new Date(), days = 60): EventEntry[] => {
+  const occurrences: EventEntry[] = []
 
-  if (!file) {
-    return []
-  }
+  for (let offset = 0; offset < days; offset++) {
+    const date = new Date(fromDate)
+    date.setDate(date.getDate() + offset)
+    const weekday = date.getDay()
 
-  return Object.entries(file.months)
-    .flatMap(([monthKey, days]) =>
-      Object.entries(days).flatMap(([dayKey, events]) =>
-        events.map((event) => ({
-          ...event,
-          monthKey,
-          dayKey
-        }))
-      )
-    )
-    .sort((left, right) => {
-      if (left.datum === right.datum) {
-        return left.tid.localeCompare(right.tid, 'sv-SE')
+    for (const rule of recurringEvents) {
+      if (rule.weekday !== weekday) {
+        continue
       }
 
-      return left.datum.localeCompare(right.datum, 'sv-SE')
-    })
-}
-
-export const getMonthOptions = (yearKey: string) => {
-  const file = getEventFileForYear(yearKey)
-
-  if (!file) {
-    return []
+      occurrences.push({
+        titel: rule.titel,
+        datum: toIsoDate(date),
+        tid: rule.tid,
+        beskrivning: rule.beskrivning,
+        kostnad: rule.kostnad
+      })
+    }
   }
 
-  return Object.keys(file.months)
-    .sort((left, right) => Number(left) - Number(right))
-    .map((monthKey) => {
-      const label = new Intl.DateTimeFormat('sv-SE', {
-        month: 'long',
-        year: 'numeric'
-      }).format(new Date(2000 + Number(yearKey), Number(monthKey) - 1, 1))
-
-      return {
-        value: monthKey,
-        label: label.charAt(0).toUpperCase() + label.slice(1)
-      }
-    })
+  return occurrences
 }
 
-export const getEventsForMonth = (yearKey: string, monthKey: string) => {
-  const file = getEventFileForYear(yearKey)
-  const month = file?.months?.[monthKey] ?? {}
+/** The regular week at a glance, Monday through Sunday. */
+export const getWeeklyPattern = () =>
+  [1, 2, 3, 4, 5, 6, 0].map((weekday) => ({
+    weekday,
+    label: weekdayLabels[weekday],
+    events: recurringEvents
+      .filter((rule) => rule.weekday === weekday)
+      .sort((left, right) => left.tid.localeCompare(right.tid, 'sv-SE'))
+  }))
 
-  return Object.keys(month)
-    .sort((left, right) => Number(left) - Number(right))
-    .map((dayKey) => ({
-      dayKey,
-      date: month[dayKey]?.[0]?.datum ?? `${2000 + Number(yearKey)}-${monthKey}-${dayKey}`,
-      events: month[dayKey] ?? []
-    }))
-}
+/** Special (one-off) events on or after `fromDate`. */
+export const getUpcomingSpecialEvents = (limit = 20, fromDate = new Date()) => {
+  const fromIso = toIsoDate(fromDate)
 
-export const getUpcomingEvents = (limit = 4, fromDate = new Date()) => {
-  const yearKey = getEventYearKey(fromDate)
-
-  const fromIso = [
-    fromDate.getFullYear(),
-    String(fromDate.getMonth() + 1).padStart(2, '0'),
-    String(fromDate.getDate()).padStart(2, '0')
-  ].join('-')
-
-  const entries = getAllEventEntries(yearKey)
+  return specialEvents
     .filter((event) => event.datum >= fromIso)
+    .sort(compareEvents)
+    .slice(0, limit)
+}
 
-  return entries.slice(0, limit)
+/** Recurring occurrences and special events on or after `fromDate`, merged and sorted. */
+export const getUpcomingEvents = (limit = 20, fromDate = new Date(), windowDays = 60) => {
+  const fromIso = toIsoDate(fromDate)
+  const recurringOccurrences = expandRecurringEvents(fromDate, windowDays)
+  const specials = specialEvents.filter((event) => event.datum >= fromIso)
+
+  return [...recurringOccurrences, ...specials]
+    .sort(compareEvents)
+    .slice(0, limit)
+}
+
+export const isSpecialEvent = (event: EventEntry) =>
+  specialEvents.some((special) => special.datum === event.datum && special.titel === event.titel)
+
+/**
+ * Special events flagged with `visaIKarusell: true` (and with a
+ * `produktHandle` set, so there's something to link/fetch an image for),
+ * on or after `fromDate`. Meant to be shown alongside the homepage's
+ * regular hero slides, not instead of them.
+ */
+export const getCarouselEvents = (fromDate = new Date()) => {
+  const fromIso = toIsoDate(fromDate)
+
+  return specialEvents
+    .filter((event) => event.visaIKarusell && event.produktHandle && event.datum >= fromIso)
+    .sort(compareEvents)
 }
 
 export const getEventSeriesList = () => eventSeriesList
@@ -150,48 +156,5 @@ export const getEventSeriesBySlug = (slug: string) =>
 
 export const getPrimarySeriesForEvent = (event: EventEntry) =>
   eventSeriesList.find((series) => series.matches(event)) ?? null
-
-export const getEventsForSeries = (yearKey: string, slug: string) => {
-  const series = getEventSeriesBySlug(slug)
-
-  if (!series) {
-    return []
-  }
-
-  return getAllEventEntries(yearKey).filter((event) => series.matches(event))
-}
-
-export const getMonthOptionsForSeries = (yearKey: string, slug: string) => {
-  const events = getEventsForSeries(yearKey, slug)
-  const usedMonths = [...new Set(events.map((event) => event.monthKey))]
-
-  return usedMonths.map((monthKey) => {
-    const label = new Intl.DateTimeFormat('sv-SE', {
-      month: 'long',
-      year: 'numeric'
-    }).format(new Date(2000 + Number(yearKey), Number(monthKey) - 1, 1))
-
-    return {
-      value: monthKey,
-      label: label.charAt(0).toUpperCase() + label.slice(1)
-    }
-  })
-}
-
-export const getEventsForSeriesMonth = (yearKey: string, slug: string, monthKey: string) => {
-  const events = getEventsForSeries(yearKey, slug).filter((event) => event.monthKey === monthKey)
-  const grouped = new Map<string, typeof events>()
-
-  for (const event of events) {
-    const existing = grouped.get(event.datum) ?? []
-    existing.push(event)
-    grouped.set(event.datum, existing)
-  }
-
-  return [...grouped.entries()].map(([date, dateEvents]) => ({
-    date,
-    events: dateEvents
-  }))
-}
 
 export type { EventEntry, EventSeries }

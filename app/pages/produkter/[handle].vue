@@ -11,11 +11,22 @@ const route = useRoute()
 const router = useRouter()
 const handle = computed(() => String(route.params.handle || ''))
 const selectedVariantId = ref('')
-const productResponse = ref<{ handle?: string | null; routeHandle?: string | null; product?: any | null } | null>(null)
+const productResponse = useState<{ handle?: string | null; routeHandle?: string | null; product?: any | null } | null>('shopify-product', () => null)
 const error = ref<Error | null>(null)
 const loadingProduct = ref(false)
+let inventoryRefreshInterval: ReturnType<typeof window.setInterval> | undefined
 
-const loadProduct = async () => {
+const refreshProductInventory = () => {
+  loadProduct(true)
+}
+
+const refreshWhenVisible = () => {
+  if (document.visibilityState === 'visible') {
+    loadProduct(true)
+  }
+}
+
+const loadProduct = async (force = false) => {
   if (!handle.value) {
     return
   }
@@ -23,7 +34,10 @@ const loadProduct = async () => {
   loadingProduct.value = true
 
   try {
+    const query = force ? { t: Date.now() } : undefined
+
     productResponse.value = await $fetch(`/api/shopify/product/${handle.value}`, {
+      query,
       cache: 'no-store'
     })
     error.value = null
@@ -119,7 +133,25 @@ const breadcrumbItems = computed(() => {
 })
 
 onMounted(() => {
-  loadProduct()
+  loadProduct(true)
+
+  inventoryRefreshInterval = window.setInterval(() => {
+    loadProduct(true)
+  }, 30000)
+
+  window.addEventListener('pageshow', refreshProductInventory)
+  window.addEventListener('focus', refreshProductInventory)
+  document.addEventListener('visibilitychange', refreshWhenVisible)
+})
+
+onBeforeUnmount(() => {
+  if (inventoryRefreshInterval) {
+    window.clearInterval(inventoryRefreshInterval)
+  }
+
+  window.removeEventListener('pageshow', refreshProductInventory)
+  window.removeEventListener('focus', refreshProductInventory)
+  document.removeEventListener('visibilitychange', refreshWhenVisible)
 })
 
 const addCurrentVariant = async () => {
@@ -128,6 +160,7 @@ const addCurrentVariant = async () => {
   }
 
   await addVariantToCart(selectedVariant.value.id, product.value.title)
+  await loadProduct(true)
 }
 
 const goBack = async () => {
@@ -166,98 +199,104 @@ useSeoMeta({
 </script>
 
 <template>
-  <main class="product-page">
-    <section class="product-shell">
-      <nav v-if="breadcrumbItems.length" class="breadcrumb-nav" aria-label="Breadcrumb">
-        <NuxtLink to="/butik" class="breadcrumb-link">Butik</NuxtLink>
+  <main class="px-4 pb-24 pt-8 sm:px-6">
+    <section class="page-shell grid gap-6">
+      <nav v-if="breadcrumbItems.length" class="flex flex-wrap items-center gap-2 text-sm text-lyktan-mute">
+        <NuxtLink to="/butik" class="transition hover:text-lyktan-ink">Butik</NuxtLink>
         <template v-for="item in breadcrumbItems" :key="item.to">
-          <span class="breadcrumb-separator">/</span>
-          <NuxtLink :to="item.to" class="breadcrumb-link">{{ item.label }}</NuxtLink>
+          <span class="text-black/20">/</span>
+          <NuxtLink :to="item.to" class="transition hover:text-lyktan-ink">{{ item.label }}</NuxtLink>
         </template>
-        <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-current">{{ product?.title }}</span>
+        <span class="text-black/20">/</span>
+        <span class="text-lyktan-ink">{{ product?.title }}</span>
       </nav>
 
-      <button
-        type="button"
-        class="back-link"
-        @click="goBack"
-      >
-        Tillbaka
+      <button type="button" class="secondary-cta w-fit !min-h-9 !px-4 !text-[0.84rem]" @click="goBack">
+        ← Tillbaka
       </button>
 
-      <div v-if="loadingProduct" class="product-layout skeleton-layout" aria-hidden="true">
-        <div class="image-panel surface-card skeleton-card">
-          <div class="skeleton-block skeleton-image"></div>
+      <div v-if="loadingProduct" class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.84fr)]" aria-hidden="true">
+        <div class="bg-lyktan-surface p-5">
+          <div class="skeleton-block h-[500px] w-full" />
         </div>
 
-        <div class="details-panel surface-card skeleton-card">
-          <div class="skeleton-line skeleton-eyebrow"></div>
-          <div class="skeleton-line skeleton-title"></div>
-          <div class="skeleton-line skeleton-title short"></div>
-          <div class="skeleton-line skeleton-text"></div>
-          <div class="skeleton-line skeleton-text"></div>
-          <div class="skeleton-line skeleton-text short"></div>
+        <div class="grid gap-4">
+          <div class="skeleton-block h-2.5 w-24 rounded-full" />
+          <div class="skeleton-block mt-3 h-7 w-4/5 rounded-full" />
+          <div class="skeleton-block h-7 w-3/5 rounded-full" />
+          <div class="skeleton-block mt-2 h-3 w-full rounded-full" />
+          <div class="skeleton-block h-3 w-full rounded-full" />
+          <div class="skeleton-block h-3 w-2/3 rounded-full" />
 
-          <div class="purchase-card skeleton-purchase">
-            <div class="skeleton-line skeleton-label"></div>
-            <div class="skeleton-line skeleton-price"></div>
-            <div class="skeleton-line skeleton-stock"></div>
-            <div class="skeleton-button"></div>
+          <div class="mt-4 grid gap-4 border-t border-black/8 pt-4">
+            <div class="skeleton-block h-2.5 w-14 rounded-full" />
+            <div class="skeleton-block h-8 w-32 rounded-full" />
+            <div class="skeleton-block h-3 w-28 rounded-full" />
+            <div class="skeleton-block h-11 w-full rounded-full" />
           </div>
         </div>
       </div>
 
-      <div v-else-if="error" class="surface-card state-card">
+      <div v-else-if="error" class="bg-lyktan-surface p-8">
         <p class="eyebrow">API-fel</p>
-        <h1>Produkten kunde inte laddas.</h1>
-        <p>{{ error.message }}</p>
+        <h1 class="mt-3 text-[clamp(1.6rem,2.8vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">Produkten kunde inte laddas.</h1>
+        <p class="mt-4 text-sm leading-7 text-lyktan-mute">{{ error.message }}</p>
       </div>
 
-      <div v-else-if="product" class="product-layout">
-        <div class="image-panel surface-card">
+      <div v-else-if="product" class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.84fr)]">
+        <div class="flex items-center justify-center bg-lyktan-surface p-6">
           <img
             v-if="product.featuredImage?.url"
             :src="product.featuredImage.url"
             :alt="product.featuredImage.altText || product.title"
+            class="max-h-[500px] w-full object-contain"
           >
-          <div v-else class="image-fallback">{{ product.title.slice(0, 2).toUpperCase() }}</div>
+          <div v-else class="grid min-h-[420px] w-full place-items-center text-5xl font-medium text-lyktan-mute">
+            {{ product.title.slice(0, 2).toUpperCase() }}
+          </div>
         </div>
 
-        <div class="details-panel surface-card">
+        <div>
           <p class="eyebrow">Produkt</p>
-          <h1>{{ product.title }}</h1>
+          <h1 class="mt-3 text-[clamp(1.7rem,2.8vw,2.3rem)] font-semibold leading-[1.15] tracking-[-0.01em] text-lyktan-ink">
+            {{ product.title }}
+          </h1>
           <div
             v-if="productDescriptionHtml"
-            class="description description-richtext"
+            class="description-richtext mt-4 text-sm leading-7 text-lyktan-mute"
             v-html="productDescriptionHtml"
           />
-          <p v-else class="description">
+          <p v-else class="mt-4 text-sm leading-7 text-lyktan-mute">
             Lägg till en produktbeskrivning i Shopify så visas den här automatiskt.
           </p>
 
-          <div class="purchase-card">
-            <div class="price-row">
-              <div class="price-block">
-                <span class="meta-label">Pris</span>
-                <strong>{{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}</strong>
+          <div class="mt-6 border-t border-black/8 pt-5">
+            <div class="flex items-end justify-between gap-4 pb-5">
+              <strong class="text-[1.6rem] font-semibold tracking-[-0.01em] text-lyktan-ink">
+                {{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}
+              </strong>
+              <span class="text-[0.84rem]" :class="isSoldOut ? 'text-lyktan-mute' : 'text-emerald-600'">
+                {{ variantAvailability(selectedVariant) }}
+              </span>
+            </div>
+
+            <div class="grid gap-4">
+              <div v-if="variants.length > 1" class="grid gap-2">
+                <label for="variant" class="eyebrow">Välj variant</label>
+                <select
+                  id="variant"
+                  v-model="selectedVariantId"
+                  class="min-h-12 rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+                >
+                  <option v-for="variant in variants" :key="variant.id" :value="variant.id">
+                    {{ variant.title }} · {{ formatMoney(variant.price?.amount, variant.price?.currencyCode) }}
+                  </option>
+                </select>
               </div>
-              <span class="meta-stock">{{ variantAvailability(selectedVariant) }}</span>
-            </div>
 
-            <div v-if="variants.length > 1" class="variant-selector">
-              <label for="variant" class="meta-label">Välj variant</label>
-              <select id="variant" v-model="selectedVariantId" class="variant-select">
-                <option v-for="variant in variants" :key="variant.id" :value="variant.id">
-                  {{ variant.title }} · {{ formatMoney(variant.price?.amount, variant.price?.currencyCode) }}
-                </option>
-              </select>
-            </div>
-
-            <div class="actions">
               <button
                 type="button"
-                class="buy-button"
+                class="primary-cta w-full"
                 :disabled="loadingVariantId === selectedVariant?.id || isSoldOut"
                 @click="addCurrentVariant"
               >
@@ -274,162 +313,19 @@ useSeoMeta({
         </div>
       </div>
 
-      <div v-else class="surface-card state-card">
+      <div v-else class="bg-lyktan-surface p-8">
         <p class="eyebrow">Ingen produkt</p>
-        <h1>Den här produkten finns inte.</h1>
-        <p>Kontrollera handlet i Shopify eller länken du försökte öppna.</p>
+        <h1 class="mt-3 text-[clamp(1.6rem,2.8vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">Den här produkten finns inte.</h1>
+        <p class="mt-4 text-sm leading-7 text-lyktan-mute">Kontrollera handlet i Shopify eller länken du försökte öppna.</p>
       </div>
     </section>
   </main>
 </template>
 
 <style scoped>
-:global(body) {
-  margin: 0;
-  background: #f5f5f7;
-  color: #121212;
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-}
-
-:global(*) {
-  box-sizing: border-box;
-}
-
-:global(a) {
-  color: inherit;
-  text-decoration: none;
-}
-
-:global(button),
-:global(select) {
-  font: inherit;
-}
-
-.product-page {
-  min-height: 100vh;
-  padding: 18px 16px 48px;
-}
-
-.product-shell {
-  width: min(1280px, 100%);
-  margin: 0 auto;
-  display: grid;
-  gap: 18px;
-}
-
-.breadcrumb-nav {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  color: #666b73;
-  font-size: 0.86rem;
-}
-
-.breadcrumb-link {
-  transition: color 0.2s ease;
-}
-
-.breadcrumb-link:hover {
-  color: #121212;
-}
-
-.breadcrumb-separator {
-  color: rgba(18, 18, 18, 0.34);
-}
-
-.breadcrumb-current {
-  color: #121212;
-  font-weight: 700;
-}
-
-.back-link {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  min-height: 42px;
-  padding: 0 14px;
-  border-radius: 6px;
-  background: white;
-  border: 1px solid rgba(18, 18, 18, 0.08);
-  font-weight: 700;
-  font-size: 0.88rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.product-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.84fr);
-  gap: 18px;
-}
-
-.surface-card {
-  border: 1px solid rgba(18, 18, 18, 0.08);
-  border-radius: 8px;
-  background: white;
-  box-shadow: 0 14px 34px rgba(24, 26, 32, 0.04);
-}
-
-.image-panel {
-  overflow: hidden;
-  background: #eef0f4;
-  display: grid;
-  place-items: center;
-  padding: 18px;
-}
-
-.image-panel img {
-  width: 100%;
-  height: 100%;
-  min-height: 560px;
-  max-height: 620px;
-  object-fit: contain;
-  object-position: center;
-  display: block;
-}
-
-.image-fallback {
-  min-height: 560px;
-  display: grid;
-  place-items: center;
-  color: #ef6c2f;
-  font-size: 4rem;
-  font-weight: 800;
-}
-
-.details-panel,
-.state-card {
-  padding: 32px;
-}
-
-.eyebrow,
-.meta-label {
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: #ef6c2f;
-}
-
-h1,
-p {
-  margin: 0;
-}
-
-h1 {
-  margin-top: 12px;
-  font-size: clamp(2.1rem, 3.8vw, 3.8rem);
-  line-height: 0.98;
-  letter-spacing: -0.05em;
-}
-
-.description,
-.state-card p {
-  margin-top: 16px;
-  color: #666b73;
-  line-height: 1.65;
+.description-richtext {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .description-richtext :deep(p),
@@ -448,153 +344,13 @@ h1 {
 }
 
 .description-richtext :deep(strong) {
-  color: #121212;
-}
-
-.purchase-card {
-  margin-top: 26px;
-  padding: 18px;
-  border: 1px solid rgba(18, 18, 18, 0.08);
-  background: linear-gradient(180deg, #fbfbfc, #f5f5f7);
-  display: grid;
-  gap: 16px;
-}
-
-.price-row {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 14px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(18, 18, 18, 0.08);
-}
-
-.price-block {
-  display: grid;
-  gap: 6px;
-}
-
-.price-block strong {
-  font-size: 1.6rem;
-  letter-spacing: -0.03em;
-}
-
-.meta-stock {
   color: #111111;
-  font-weight: 700;
-  font-size: 0.92rem;
 }
 
-.variant-selector {
-  display: grid;
-  gap: 8px;
-}
-
-.variant-select {
-  min-height: 48px;
-  padding: 0 14px;
-  border: 1px solid rgba(18, 18, 18, 0.08);
-  border-radius: 4px;
-  background: white;
-}
-
-.actions {
-  margin-top: 2px;
-}
-
-.buy-button {
-  min-height: 48px;
-  width: 100%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 20px;
-  border: 1px solid #121212;
-  border-radius: 4px;
-  background: #121212;
-  color: white;
-  font-weight: 800;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-}
-
-.buy-button:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.skeleton-card {
-  overflow: hidden;
-}
-
-.skeleton-block,
-.skeleton-line,
-.skeleton-button {
+.skeleton-block {
   background: linear-gradient(90deg, #eceef2 0%, #f6f7f9 50%, #eceef2 100%);
   background-size: 200% 100%;
   animation: shimmer 1.4s ease-in-out infinite;
-}
-
-.skeleton-image {
-  width: 100%;
-  min-height: 560px;
-}
-
-.skeleton-line {
-  height: 12px;
-}
-
-.skeleton-eyebrow {
-  width: 96px;
-  height: 10px;
-}
-
-.skeleton-title {
-  width: 82%;
-  height: 28px;
-  margin-top: 18px;
-}
-
-.skeleton-title.short {
-  width: 58%;
-  margin-top: 10px;
-}
-
-.skeleton-text {
-  width: 100%;
-  margin-top: 16px;
-}
-
-.skeleton-text.short {
-  width: 72%;
-}
-
-.skeleton-purchase {
-  margin-top: 26px;
-}
-
-.skeleton-label {
-  width: 52px;
-  height: 10px;
-}
-
-.skeleton-price {
-  width: 120px;
-  height: 30px;
-  margin-top: 12px;
-}
-
-.skeleton-stock {
-  width: 110px;
-  margin-top: 18px;
-}
-
-.skeleton-button {
-  width: 100%;
-  height: 48px;
-  margin-top: 24px;
 }
 
 @keyframes shimmer {
@@ -604,48 +360,6 @@ h1 {
 
   100% {
     background-position: -200% 0;
-  }
-}
-
-.state-card h1 {
-  margin-top: 10px;
-}
-
-@media (max-width: 920px) {
-  .product-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .image-panel img,
-  .image-fallback,
-  .skeleton-image {
-    min-height: 320px;
-    max-height: 360px;
-  }
-
-  .details-panel,
-  .state-card {
-    padding: 24px;
-  }
-}
-
-@media (max-width: 720px) {
-  .product-page {
-    padding: 16px 12px 32px;
-  }
-
-  .surface-card {
-    border-radius: 8px;
-  }
-
-  .details-panel,
-  .state-card {
-    padding: 22px;
-  }
-
-  .price-row {
-    display: grid;
-    align-items: start;
   }
 }
 </style>
