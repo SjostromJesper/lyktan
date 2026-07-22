@@ -81,6 +81,10 @@ export default defineEventHandler(async (event) => {
 
   const product = result.data?.product ?? null
 
+  if (product && !privateToken) {
+    console.warn('[shopify/product] SHOPIFY_STOREFRONT_PRIVATE_TOKEN is not set — using Storefront API stock counts, which Shopify may cache briefly.')
+  }
+
   if (product && privateToken) {
     const adminQuery = `#graphql
       query ProductInventory($query: String!) {
@@ -114,14 +118,27 @@ export default defineEventHandler(async (event) => {
       })
 
       const adminResult = await adminResponse.json()
+
+      if (!adminResponse.ok || adminResult.errors?.length) {
+        console.warn(
+          '[shopify/product] Admin API inventory lookup failed, falling back to Storefront stock counts:',
+          adminResponse.status,
+          adminResult.errors ?? adminResult
+        )
+      }
+
       const adminProduct = adminResult.data?.products?.nodes?.[0]
       const inventoryByVariantId = new Map(
         (adminProduct?.variants?.nodes ?? []).map((variant: any) => [
           variant.id,
-          typeof variant.inventoryQuantity === 'number'
-            ? variant.inventoryQuantity
-            : typeof variant.sellableOnlineQuantity === 'number'
-              ? variant.sellableOnlineQuantity
+          // Prefer sellableOnlineQuantity — it reflects what's actually available
+          // to sell via the online store channel. inventoryQuantity can include
+          // stock at other locations/channels that isn't sellable here, which
+          // was overstating the count shown on the site.
+          typeof variant.sellableOnlineQuantity === 'number'
+            ? variant.sellableOnlineQuantity
+            : typeof variant.inventoryQuantity === 'number'
+              ? variant.inventoryQuantity
               : null
         ])
       )
@@ -139,9 +156,11 @@ export default defineEventHandler(async (event) => {
             quantityAvailable: inventoryQuantity
           }
         })
+      } else {
+        console.warn('[shopify/product] Admin API returned no inventory data for handle:', handle, adminResult)
       }
-    } catch {
-      // Fall back to Storefront inventory if Admin API scopes are unavailable.
+    } catch (adminError) {
+      console.warn('[shopify/product] Admin API inventory lookup threw, falling back to Storefront stock counts:', adminError)
     }
   }
 
