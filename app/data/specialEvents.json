@@ -14,5 +14,14 @@
     "kostnad": "Se produkt",
     "produktHandle": "magic-the-gathering-the-hobbit-prerelease",
     "visaIKarusell": true
+  },
+  {
+    "titel": "Vendetta Prerift Event",
+    "datum": "2026-07-30",
+    "tid": "18:00",
+    "beskrivning": "Prerift event för Riftbounds senaste set, Vendetta! Kom och slåss om både priser och ära!",
+    "kostnad": "Se produkt",
+    "produktHandle": "vendetta-prerift-event",
+    "visaIKarusell": true
   }
 ]

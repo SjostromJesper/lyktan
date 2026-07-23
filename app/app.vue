@@ -66,7 +66,10 @@ onBeforeUnmount(() => {
       </div>
 
       <div class="border-t border-black/8">
-        <p class="page-shell px-4 py-4 text-xs text-lyktan-mute sm:px-6">© Butik Lyktan</p>
+        <div class="page-shell flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          <p class="text-xs text-lyktan-mute">© Butik Lyktan</p>
+          <SocialLinks />
+        </div>
       </div>
     </footer>
   </div>

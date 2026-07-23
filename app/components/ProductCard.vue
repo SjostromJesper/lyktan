@@ -19,14 +19,14 @@ const addToCart = async () => {
 
 <template>
   <article class="group flex w-full flex-col">
-    <NuxtLink :to="`/produkter/${product.handle}`" class="flex aspect-square items-center justify-center bg-lyktan-surface">
+    <NuxtLink :to="`/produkter/${product.handle}`" class="relative aspect-square overflow-hidden bg-lyktan-surface">
       <img
         v-if="product.featuredImage?.url"
         :src="product.featuredImage.url"
         :alt="product.featuredImage.altText || product.title"
-        class="h-full w-full object-contain p-5 transition duration-300 group-hover:scale-[1.03]"
+        class="absolute inset-0 h-full w-full object-contain p-5 transition duration-300 group-hover:scale-[1.03]"
       >
-      <div v-else class="text-lg font-medium text-lyktan-mute">
+      <div v-else class="grid h-full w-full place-items-center text-lg font-medium text-lyktan-mute">
         {{ product.title.slice(0, 2).toUpperCase() }}
       </div>
     </NuxtLink>

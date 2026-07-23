@@ -50,6 +50,13 @@ useSeoMeta({
           </div>
 
           <div>
+            <span class="eyebrow">Sociala medier</span>
+            <div class="mt-2 -ml-2">
+              <SocialLinks />
+            </div>
+          </div>
+
+          <div>
             <span class="eyebrow">Öppettider</span>
             <div class="mt-2 space-y-1">
               <p
