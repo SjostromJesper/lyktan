@@ -16,7 +16,7 @@ export const recurringEvents: RecurringEventRule[] = [
   {
     weekday: 1,
     titel: 'Warhammer på måndag',
-    tid: '17:00',
+    tid: '18:00',
     beskrivning: 'Öppen figurspelskväll för Warhammer 40,000, Age of Sigmar och andra projekt du vill få till butiken.',
     kostnad: 'dagspass/medlem'
   },
@@ -30,28 +30,28 @@ export const recurringEvents: RecurringEventRule[] = [
   {
     weekday: 3,
     titel: 'Commander',
-    tid: '17:30',
+    tid: '18:00',
     beskrivning: 'Commander-kväll för dig som vill spela multiplayer och träffa andra Magic-spelare.',
     kostnad: 'dagspass/medlem'
   },
   {
     weekday: 3,
     titel: 'One Piece',
-    tid: '17:30',
+    tid: '18:00',
     beskrivning: 'Öppen spelkväll för One Piece TCG med casual-spel och communityhäng i butik.',
     kostnad: '50kr'
   },
   {
     weekday: 4,
     titel: 'Riftbound',
-    tid: '17:30',
+    tid: '18:00',
     beskrivning: 'Torsdagskväll för Riftbound med öppet spel och communityhäng.',
     kostnad: '50kr'
   },
   {
     weekday: 4,
     titel: 'Pokemon',
-    tid: '17:30',
+    tid: '18:00',
     beskrivning: 'Torsdagskväll för Pokemon TCG med öppet spel och communityhäng.',
     kostnad: '50kr'
   },
