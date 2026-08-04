@@ -1,38 +1,26 @@
 <script setup lang="ts">
 import { getCarouselEvents } from '~/utils/events'
 
-// The hero carousel shows only events flagged visaIKarusell in specialEvents.json.
-const heroSlides = getCarouselEvents().map((event) => ({
-  handle: event.produktHandle as string,
-  link: `/produkter/${event.produktHandle}`,
-  eyebrow: 'Kommande event',
-  title: event.titel,
-  text: event.beskrivning
-}))
+// The hero carousel shows Shopify products tagged "event" that are flagged
+// event_show_in_carousel via metafield and have an upcoming event_date.
+const { data: specialEvents } = await useSpecialEvents()
 
-// Aliased exact-handle lookups, one per hero slide — the same reliable
-// mechanism as the single-product API route, just repeated dynamically.
-// (Shopify's free-text `products(query: "handle:...")` search turned out
-// to not reliably exact-match hyphenated handles, so that's avoided here.)
-const heroProductFields = heroSlides
-  .map(
-    (slide, index) => `
-    hero${index}: product(handle: "${slide.handle}") {
-      id
-      title
-      handle
-      featuredImage {
-        url
-        altText
-      }
+const heroItems = computed(() =>
+  getCarouselEvents(specialEvents.value ?? []).map((event) => ({
+    handle: event.produktHandle as string,
+    link: `/produkter/${event.produktHandle}`,
+    eyebrow: 'Kommande event',
+    title: event.titel,
+    text: event.beskrivning,
+    product: {
+      title: event.titel,
+      featuredImage: event.featuredImage ?? null
     }
-  `
-  )
-  .join('\n')
+  }))
+)
 
 const homepageQuery = `#graphql
   query HomepageProducts {
-    ${heroProductFields}
     showcaseProducts: products(first: 8, sortKey: TITLE, query: "tag:kortspel OR tag:figurspel OR tag:bradspel OR tag:brädspel OR tag:rollspel OR tag:tillbehor OR tag:tillbehör") {
       nodes {
         id
@@ -59,20 +47,12 @@ const homepageQuery = `#graphql
 
 const { data } = await useStorefrontData('homepage-products', homepageQuery, {
   transform: (result) => ({
-    heroProducts: heroSlides.map((_, index) => result[`hero${index}`] ?? null),
     showcaseProducts: result.showcaseProducts?.nodes ?? []
   })
 })
 
 const activeHeroIndex = ref(0)
 let heroInterval: ReturnType<typeof window.setInterval> | undefined
-
-const heroItems = computed(() =>
-  heroSlides.map((slide, index) => ({
-    ...slide,
-    product: data.value?.heroProducts?.[index] ?? null
-  }))
-)
 
 const activeHero = computed(() => heroItems.value[activeHeroIndex.value] ?? heroItems.value[0] ?? null)
 

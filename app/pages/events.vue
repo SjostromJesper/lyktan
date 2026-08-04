@@ -4,7 +4,8 @@ import { getUpcomingSpecialEvents, getWeeklyPattern } from '~/utils/events'
 const now = new Date()
 
 const weeklyPattern = getWeeklyPattern()
-const otherUpcomingEvents = getUpcomingSpecialEvents(20, now)
+const { data: specialEvents } = await useSpecialEvents()
+const otherUpcomingEvents = computed(() => getUpcomingSpecialEvents(specialEvents.value ?? [], 20, now))
 
 const formatEventDate = (iso: string) => {
   const date = new Date(`${iso}T00:00:00`)

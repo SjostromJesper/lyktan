@@ -10,7 +10,7 @@ export type RecurringEventRule = {
  * The regular weekly schedule, defined once per weekday instead of once
  * per date. The site expands this into concrete upcoming dates on the
  * fly, so the schedule itself never needs manual date-by-date upkeep —
- * only real one-off events (see specialEvents.json) need adding by hand.
+ * only real one-off events (Shopify products tagged "event") need adding by hand.
  */
 export const recurringEvents: RecurringEventRule[] = [
   {

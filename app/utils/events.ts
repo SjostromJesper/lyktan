@@ -1,5 +1,4 @@
 import { recurringEvents } from '~/data/recurringEvents'
-import specialEventsData from '~/data/specialEvents.json'
 
 type EventEntry = {
   titel: string
@@ -9,6 +8,7 @@ type EventEntry = {
   kostnad: string
   produktHandle?: string
   visaIKarusell?: boolean
+  featuredImage?: { url: string, altText?: string | null } | null
 }
 
 type EventSeries = {
@@ -17,8 +17,6 @@ type EventSeries = {
   description: string
   matches: (event: EventEntry) => boolean
 }
-
-const specialEvents = specialEventsData as EventEntry[]
 
 const weekdayLabels = ['Söndag', 'Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag', 'Lördag']
 
@@ -112,7 +110,7 @@ export const getWeeklyPattern = () =>
   }))
 
 /** Special (one-off) events on or after `fromDate`. */
-export const getUpcomingSpecialEvents = (limit = 20, fromDate = new Date()) => {
+export const getUpcomingSpecialEvents = (specialEvents: EventEntry[], limit = 20, fromDate = new Date()) => {
   const fromIso = toIsoDate(fromDate)
 
   return specialEvents
@@ -122,7 +120,7 @@ export const getUpcomingSpecialEvents = (limit = 20, fromDate = new Date()) => {
 }
 
 /** Recurring occurrences and special events on or after `fromDate`, merged and sorted. */
-export const getUpcomingEvents = (limit = 20, fromDate = new Date(), windowDays = 60) => {
+export const getUpcomingEvents = (specialEvents: EventEntry[], limit = 20, fromDate = new Date(), windowDays = 60) => {
   const fromIso = toIsoDate(fromDate)
   const recurringOccurrences = expandRecurringEvents(fromDate, windowDays)
   const specials = specialEvents.filter((event) => event.datum >= fromIso)
@@ -132,7 +130,7 @@ export const getUpcomingEvents = (limit = 20, fromDate = new Date(), windowDays 
     .slice(0, limit)
 }
 
-export const isSpecialEvent = (event: EventEntry) =>
+export const isSpecialEvent = (specialEvents: EventEntry[], event: EventEntry) =>
   specialEvents.some((special) => special.datum === event.datum && special.titel === event.titel)
 
 /**
@@ -141,7 +139,7 @@ export const isSpecialEvent = (event: EventEntry) =>
  * on or after `fromDate`. Meant to be shown alongside the homepage's
  * regular hero slides, not instead of them.
  */
-export const getCarouselEvents = (fromDate = new Date()) => {
+export const getCarouselEvents = (specialEvents: EventEntry[], fromDate = new Date()) => {
   const fromIso = toIsoDate(fromDate)
 
   return specialEvents
