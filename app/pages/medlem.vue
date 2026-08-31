@@ -1,12 +1,16 @@
 <script setup lang="ts">
-// Page isn't finished yet (purchase flow still pending Shopify Subscriptions
-// setup) — redirect away until it's ready. Remove this line to re-enable.
-await navigateTo('/', { redirectCode: 302 })
+type Plan = {
+  variantId: string
+  tier: 'litet' | 'stort'
+  months: 1 | 6 | 12
+  priceKr: number
+  availableForSale: boolean
+}
 
 const tiers = [
   {
-    name: 'Vanligt medlemskap',
-    price: '125 kr',
+    tier: 'litet' as const,
+    name: 'Litet medlemskap',
     highlight: false,
     benefits: [
       'Medlemspris istället för dagspass på våra ordinarie spelkvällar, som Commander-kvällarna.',
@@ -14,17 +18,88 @@ const tiers = [
     ]
   },
   {
+    tier: 'stort' as const,
     name: 'Stort medlemskap',
-    price: '200 kr',
     highlight: true,
     benefits: [
-      'Allt som ingår i vanligt medlemskap.',
+      'Allt som ingår i litet medlemskap.',
       'Dessutom medlemspris istället för dagspass på våra miniatyrspelskvällar, som Warhammer 40 000 och Age of Sigmar.'
     ]
   }
 ]
 
-const durations = ['1 månad', '3 månader', '6 månader', '1 år']
+const monthLabels: Record<number, string> = { 1: '1 månad', 6: '6 månader', 12: '12 månader' }
+
+const steps = [
+  {
+    number: '1',
+    title: 'Välj nivå och period',
+    text: 'Litet eller stort medlemskap, för 1, 6 eller 12 månader — precis så länge du vill binda dig.'
+  },
+  {
+    number: '2',
+    title: 'Fyll i dina uppgifter och betala',
+    text: 'Namn och e-post kopplas till medlemskapet, sen går du vidare till vår vanliga betalning.'
+  },
+  {
+    number: '3',
+    title: 'Redo att användas i butiken',
+    text: 'Medlemskapet aktiveras automatiskt direkt efter köpet — personalen kan slå upp det i kassan.'
+  }
+]
+
+const { data } = await useAsyncData('membership-plans', () => $fetch<{ plans: Plan[] }>('/api/shopify/membership-plans'))
+const plans = computed(() => data.value?.plans ?? [])
+
+const plansForTier = (tier: 'litet' | 'stort') =>
+  [...plans.value.filter((p) => p.tier === tier)].sort((a, b) => a.months - b.months)
+
+const { startMembershipCheckout } = useShopifyCart()
+
+const selectedPlan = ref<Plan | null>(null)
+const name = ref('')
+const phone = ref('')
+const email = ref('')
+const submitting = ref(false)
+const formError = ref('')
+
+const openPlan = (plan: Plan) => {
+  selectedPlan.value = plan
+  formError.value = ''
+}
+
+const closeForm = () => {
+  if (submitting.value) return
+  selectedPlan.value = null
+}
+
+const submit = async () => {
+  if (!selectedPlan.value) return
+
+  if (!name.value.trim() || !email.value.trim()) {
+    formError.value = 'Namn och e-post krävs.'
+    return
+  }
+
+  submitting.value = true
+  formError.value = ''
+
+  try {
+    const url = await startMembershipCheckout({
+      variantId: selectedPlan.value.variantId,
+      tier: selectedPlan.value.tier,
+      months: selectedPlan.value.months,
+      name: name.value.trim(),
+      email: email.value.trim(),
+      phone: phone.value.trim()
+    })
+
+    window.location.href = url
+  } catch (err: any) {
+    formError.value = err?.message || 'Något gick fel, försök igen.'
+    submitting.value = false
+  }
+}
 
 useSeoMeta({
   title: 'Medlemskap | Butik Lyktan',
@@ -42,74 +117,132 @@ useSeoMeta({
         </h1>
         <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
           Som medlem får du medlemspris istället för dagspass på våra spelkvällar, och du är med
-          och bygger vidare på communityn i butiken. Vi har två nivåer beroende på vad du vill spela.
+          och bygger vidare på communityn i butiken. Välj nivå och period, betala direkt här —
+          medlemskapet aktiveras automatiskt.
         </p>
       </div>
 
-      <section>
-        <div class="grid gap-6 sm:grid-cols-2">
-          <div
-            v-for="tier in tiers"
-            :key="tier.name"
-            class="rounded-2xl p-6 sm:p-8"
-            :class="tier.highlight ? 'bg-lyktan-ink text-white' : 'bg-lyktan-surface text-lyktan-ink'"
-          >
-            <p
-              class="eyebrow"
-              :class="tier.highlight ? '!text-white/60' : ''"
-            >
-              {{ tier.highlight ? 'Störst tillgång' : 'Grundnivå' }}
-            </p>
-            <h2 class="mt-2 text-[1.4rem] font-semibold tracking-[-0.01em]">
-              {{ tier.name }}
-            </h2>
-            <p class="mt-3 text-3xl font-semibold tracking-[-0.01em]">
-              {{ tier.price }}
-              <span class="text-sm font-normal" :class="tier.highlight ? 'text-white/60' : 'text-lyktan-mute'">
-                / period
-              </span>
-            </p>
+      <section class="grid gap-6 sm:grid-cols-2">
+        <div
+          v-for="t in tiers"
+          :key="t.tier"
+          class="rounded-2xl p-6 sm:p-8"
+          :class="t.highlight ? 'bg-lyktan-ink text-white' : 'bg-lyktan-surface text-lyktan-ink'"
+        >
+          <p class="eyebrow" :class="t.highlight ? '!text-white/60' : ''">
+            {{ t.highlight ? 'Störst tillgång' : 'Grundnivå' }}
+          </p>
+          <h2 class="mt-2 text-[1.4rem] font-semibold tracking-[-0.01em]">
+            {{ t.name }}
+          </h2>
 
-            <ul class="mt-6 grid gap-3 text-sm leading-6">
-              <li v-for="benefit in tier.benefits" :key="benefit" class="flex gap-2">
-                <span :class="tier.highlight ? 'text-white/60' : 'text-lyktan-accent'">·</span>
-                <span :class="tier.highlight ? 'text-white/85' : 'text-lyktan-mute'">{{ benefit }}</span>
-              </li>
-            </ul>
+          <ul class="mt-4 grid gap-3 text-sm leading-6">
+            <li v-for="benefit in t.benefits" :key="benefit" class="flex gap-2">
+              <span :class="t.highlight ? 'text-white/60' : 'text-lyktan-accent'">·</span>
+              <span :class="t.highlight ? 'text-white/85' : 'text-lyktan-mute'">{{ benefit }}</span>
+            </li>
+          </ul>
+
+          <div class="mt-6 grid gap-2">
+            <button
+              v-for="plan in plansForTier(t.tier)"
+              :key="plan.variantId"
+              type="button"
+              class="flex min-h-11 items-center justify-between rounded-lg px-4 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40"
+              :class="t.highlight ? 'bg-white/10 text-white hover:bg-white/15' : 'bg-white text-lyktan-ink hover:bg-black/[0.04]'"
+              :disabled="!plan.availableForSale"
+              @click="openPlan(plan)"
+            >
+              <span>{{ monthLabels[plan.months] }}</span>
+              <span>{{ plan.priceKr }} kr</span>
+            </button>
+
+            <p v-if="!plansForTier(t.tier).length" class="text-sm" :class="t.highlight ? 'text-white/60' : 'text-lyktan-mute'">
+              Inga alternativ tillgängliga just nu.
+            </p>
           </div>
         </div>
       </section>
 
       <section>
-        <p class="eyebrow">Längd</p>
+        <p class="eyebrow">Så funkar det</p>
         <h2 class="mt-2 text-[clamp(1.3rem,2.4vw,1.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-          Välj hur länge du vill vara medlem
+          Klart direkt när betalningen gått igenom
         </h2>
-        <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
-          Båda nivåerna går att teckna för olika perioder, så du kan välja det som passar dig bäst.
+
+        <div class="mt-6 grid gap-6 sm:grid-cols-3">
+          <div v-for="step in steps" :key="step.title">
+            <p class="text-2xl font-semibold tracking-[-0.01em] text-lyktan-accent">{{ step.number }}</p>
+            <h3 class="mt-2 text-[0.95rem] font-semibold text-lyktan-ink">{{ step.title }}</h3>
+            <p class="mt-1 text-sm leading-6 text-lyktan-mute">{{ step.text }}</p>
+          </div>
+        </div>
+
+        <p class="mt-6 max-w-xl text-sm leading-7 text-lyktan-mute">
+          Redan medlem sedan tidigare? Fyll i samma namn och e-post som du använde förra gången —
+          då förlängs ditt befintliga medlemskap med de nya månaderna istället för att ett nytt skapas.
         </p>
-
-        <div class="mt-6 flex flex-wrap gap-3">
-          <span
-            v-for="duration in durations"
-            :key="duration"
-            class="inline-flex min-h-9 items-center rounded-full bg-lyktan-surface px-4 text-sm text-lyktan-ink"
-          >
-            {{ duration }}
-          </span>
-        </div>
-
-        <div class="mt-8 rounded-2xl bg-lyktan-surface p-6 sm:p-8">
-          <p class="eyebrow">Så blir du medlem</p>
-          <h3 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
-            Just nu tecknar du medlemskap i butiken
-          </h3>
-          <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
-            Kom förbi butiken i Järfälla så ordnar vi ditt medlemskap på plats. Vi bygger just nu
-            ut sajten så att du snart kan välja nivå och period och köpa medlemskapet direkt här.
-          </p>
-        </div>
       </section>
+    </div>
+
+    <div v-if="selectedPlan" class="fixed inset-0 z-[95] flex items-center justify-center bg-black/30 p-4" @click.self="closeForm">
+      <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl sm:p-8">
+        <div class="mb-5 flex items-start justify-between gap-3">
+          <div>
+            <p class="eyebrow">{{ selectedPlan.tier === 'stort' ? 'Stort medlemskap' : 'Litet medlemskap' }}</p>
+            <h2 class="mt-1 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
+              {{ monthLabels[selectedPlan.months] }} — {{ selectedPlan.priceKr }} kr
+            </h2>
+          </div>
+          <button type="button" aria-label="Stäng" class="text-lyktan-mute hover:text-lyktan-ink" @click="closeForm">✕</button>
+        </div>
+
+        <form class="grid gap-4" @submit.prevent="submit">
+          <div>
+            <label for="member-name" class="eyebrow">Namn</label>
+            <input
+              id="member-name"
+              v-model="name"
+              type="text"
+              required
+              class="mt-2 min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+            >
+          </div>
+
+          <div>
+            <label for="member-email" class="eyebrow">E-post</label>
+            <input
+              id="member-email"
+              v-model="email"
+              type="email"
+              required
+              class="mt-2 min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+            >
+          </div>
+
+          <div>
+            <label for="member-phone" class="eyebrow">Telefon</label>
+            <input
+              id="member-phone"
+              v-model="phone"
+              type="tel"
+              class="mt-2 min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+            >
+          </div>
+
+          <p class="text-[0.8rem] text-lyktan-mute">
+            Har du redan ett medlemskap läggs de köpta månaderna på ditt nuvarande. Annars skapas ett nytt.
+          </p>
+
+          <p v-if="formError" class="text-sm text-lyktan-accent">
+            {{ formError }}
+          </p>
+
+          <button type="submit" class="primary-cta" :disabled="submitting">
+            {{ submitting ? 'Skickar till betalning...' : 'Gå till betalning' }}
+          </button>
+        </form>
+      </div>
     </div>
   </main>
 </template>

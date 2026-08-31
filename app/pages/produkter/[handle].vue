@@ -31,7 +31,15 @@ const loadProduct = async (force = false) => {
     return
   }
 
-  loadingProduct.value = true
+  // Background refreshes (interval/focus/visibility) refetch the same
+  // product to keep stock counts live — only show the loading skeleton
+  // when there's nothing for this handle on screen yet, so those don't
+  // flash the page back to a loading state every time.
+  const isSameProductAlreadyShown = productResponse.value?.handle === handle.value
+
+  if (!isSameProductAlreadyShown) {
+    loadingProduct.value = true
+  }
 
   try {
     const query = force ? { t: Date.now() } : undefined

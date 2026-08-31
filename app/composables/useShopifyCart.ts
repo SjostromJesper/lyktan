@@ -111,6 +111,21 @@ export const useShopifyCart = () => {
     }
   `
 
+  const createCheckoutCartMutation = `#graphql
+    mutation CreateCheckoutCart($lines: [CartLineInput!]!, $attributes: [AttributeInput!], $buyerIdentity: CartBuyerIdentityInput) {
+      cartCreate(input: { lines: $lines, attributes: $attributes, buyerIdentity: $buyerIdentity }) {
+        cart {
+          id
+          checkoutUrl
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `
+
   const cart = useState<any | null>('shopify-cart', () => null)
   const cartOpen = useState('shopify-cart-open', () => false)
   const cartBusy = useState('shopify-cart-busy', () => false)
@@ -272,6 +287,98 @@ export const useShopifyCart = () => {
     }
   }
 
+  // Membership purchases get their own, independent cart — never mixed into
+  // the shared shopping cart — so a physical-goods checkout in the same
+  // session can't force a shipping address onto a membership-only order.
+  const startMembershipCheckout = async (options: {
+    variantId: string
+    tier: string
+    months: number
+    name: string
+    email: string
+    phone: string
+  }) => {
+    const response = await storefront.request(createCheckoutCartMutation, {
+      variables: {
+        lines: [{ quantity: 1, merchandiseId: options.variantId }],
+        attributes: [
+          { key: 'member_purchase', value: 'true' },
+          { key: 'member_name', value: options.name },
+          { key: 'member_email', value: options.email },
+          { key: 'member_phone', value: options.phone },
+          { key: 'member_tier', value: options.tier },
+          { key: 'member_months', value: String(options.months) }
+        ],
+        buyerIdentity: options.email ? { email: options.email } : undefined
+      }
+    })
+
+    const payload = response.data?.cartCreate
+    const userErrors = payload?.userErrors ?? []
+
+    if (userErrors.length) {
+      throw new Error(userErrors.map((entry: { message: string }) => entry.message).join(', '))
+    }
+
+    const url = payload?.cart?.checkoutUrl
+
+    if (!url) {
+      throw new Error('Kunde inte skapa betalningen.')
+    }
+
+    return url as string
+  }
+
+  const startBookingDepositCheckout = async (options: {
+    variantId: string
+    bookingId: string
+    tableName: string
+    date: string
+    startTime: string
+    name: string
+    email: string
+    phone: string
+  }) => {
+    const response = await storefront.request(createCheckoutCartMutation, {
+      variables: {
+        lines: [
+          {
+            quantity: 1,
+            merchandiseId: options.variantId,
+            attributes: [
+              { key: 'Bord', value: options.tableName },
+              { key: 'Datum', value: options.date },
+              { key: 'Tid', value: options.startTime }
+            ]
+          }
+        ],
+        attributes: [
+          { key: 'booking_deposit', value: 'true' },
+          { key: 'booking_id', value: options.bookingId },
+          { key: 'booking_name', value: options.name },
+          { key: 'booking_email', value: options.email },
+          { key: 'booking_phone', value: options.phone }
+        ],
+        buyerIdentity: options.email ? { email: options.email } : undefined
+      }
+    })
+
+    const payload = response.data?.cartCreate
+    const userErrors = payload?.userErrors ?? []
+
+    if (userErrors.length) {
+      throw new Error(userErrors.map((entry: { message: string }) => entry.message).join(', '))
+    }
+
+    const url = payload?.cart?.checkoutUrl
+
+    if (!url) {
+      throw new Error('Kunde inte skapa betalningen.')
+    }
+
+    return url as string
+  }
+
   return {
     cart,
     cartBusy,
@@ -285,6 +392,8 @@ export const useShopifyCart = () => {
     formatMoney,
     loadExistingCart,
     addVariantToCart,
-    updateLineQuantity
+    updateLineQuantity,
+    startMembershipCheckout,
+    startBookingDepositCheckout
   }
 }
