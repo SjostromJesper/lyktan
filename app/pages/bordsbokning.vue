@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { getStockholmTodayIso } from '#shared/utils/bookingSlots'
 
+// Not ready for production yet (missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
+// on the live host) — redirect away until that's configured. Remove this
+// line to re-enable.
+await navigateTo('/', { redirectCode: 302 })
+
 type BookingTable = { id: string, name: string, kind: 'bord' | 'rum', capacity: number, priceKr: number | null }
 type OccupiedSlot = { tableId: string, time: string, type: 'booking' | 'event' | 'room-locked', label: string }
 type AvailabilityResponse = { date: string, slotTimes: string[], tables: BookingTable[], occupiedSlots: OccupiedSlot[] }

@@ -16,9 +16,6 @@ const { cartOpen, cartQuantity } = useShopifyCart()
         <NuxtLink to="/events" class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink">
           Event
         </NuxtLink>
-        <NuxtLink to="/bordsbokning" class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink">
-          Boka bord
-        </NuxtLink>
         <NuxtLink to="/kontakt" class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink">
           Kontakt
         </NuxtLink>
