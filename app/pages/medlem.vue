@@ -1,4 +1,8 @@
 <script setup lang="ts">
+// Purchase flow isn't finished yet — redirect away until it's ready.
+// Remove this line to re-enable.
+await navigateTo('/', { redirectCode: 302 })
+
 type Plan = {
   variantId: string
   tier: 'litet' | 'stort'
