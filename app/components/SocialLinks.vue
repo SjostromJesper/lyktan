@@ -15,7 +15,7 @@ const links = [
   },
   {
     label: 'Discord',
-    href: 'https://discord.gg/JRMEXuqqB'
+    href: 'https://discord.gg/r8RS4N6cqQ'
   }
 ]
 </script>
