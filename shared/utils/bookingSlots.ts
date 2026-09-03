@@ -43,6 +43,14 @@ export const getSlotsForDate = (isoDate: string): string[] => {
 
 export const isPastIsoDate = (isoDate: string): boolean => isoDate < getStockholmTodayIso()
 
+/** Adds whole hours to a "HH:MM" time string, capped at 23:xx. */
+export const addHours = (time: string, hours: number): string => {
+  const [h, m] = time.split(':').map(Number)
+  const total = h * 60 + m + hours * 60
+  const cappedHour = Math.min(23, Math.floor(total / 60))
+  return `${String(cappedHour).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+}
+
 /** Closing time (e.g. "19:00") for a given YYYY-MM-DD date, or null if closed. */
 export const getClosingTimeForDate = (isoDate: string): string | null => {
   const schedule = openingHours.find((entry) => entry.key === getWeekdayForIsoDate(isoDate))

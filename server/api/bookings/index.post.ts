@@ -1,4 +1,4 @@
-import { BOOKING_MAX_DURATION_HOURS, PENDING_BOOKING_HOLD_MINUTES, getClosingTimeForDate, getSlotsForDate, getStockholmTodayIso, isPastIsoDate } from '#shared/utils/bookingSlots'
+import { BOOKING_MAX_DURATION_HOURS, PENDING_BOOKING_HOLD_MINUTES, addHours, getClosingTimeForDate, getSlotsForDate, getStockholmTodayIso, isPastIsoDate } from '#shared/utils/bookingSlots'
 
 // recurring_events.weekday: 0=Måndag..6=Söndag — matches the admin panel's
 // convention, which differs from JS Date#getDay() (0=Sunday..6=Saturday).
@@ -6,13 +6,6 @@ const toRecurringWeekday = (isoDate: string): number => {
   const [year, month, day] = isoDate.split('-').map(Number)
   const jsWeekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay()
   return jsWeekday === 0 ? 6 : jsWeekday - 1
-}
-
-const addHours = (time: string, hours: number): string => {
-  const [h, m] = time.split(':').map(Number)
-  const total = h * 60 + m + hours * 60
-  const cappedHour = Math.min(23, Math.floor(total / 60))
-  return `${String(cappedHour).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }
 
 type BookingBody = {

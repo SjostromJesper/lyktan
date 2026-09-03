@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getStockholmTodayIso } from '#shared/utils/bookingSlots'
+import { BOOKING_MAX_DURATION_HOURS, addHours, getClosingTimeForDate, getStockholmTodayIso } from '#shared/utils/bookingSlots'
 
 type BookingTable = { id: string, name: string, kind: 'bord' | 'rum', capacity: number, priceKr: number | null }
 type OccupiedSlot = { tableId: string, time: string, type: 'booking' | 'event' | 'room-locked', label: string }
@@ -53,6 +53,24 @@ const occupiedMap = computed(() => new Map(occupiedSlots.value.map((slot) => [`$
 const occupiedAt = (tableId: string, time: string | null) => (time ? occupiedMap.value.get(`${tableId}|${time}`) ?? null : null)
 
 const selectedTable = computed(() => tables.value.find((table) => table.id === selectedTableId.value) ?? null)
+
+// Mirrors the server's own end-time calculation (index.post.ts) so the
+// customer sees the real hold time before confirming, not just the start.
+const projectedEndTime = computed(() => {
+  if (!selectedTableId.value || !selectedTime.value) {
+    return null
+  }
+
+  const nextBlockingTime = occupiedSlots.value
+    .filter((slot) => slot.tableId === selectedTableId.value && slot.time > selectedTime.value! && (slot.type === 'booking' || slot.type === 'event'))
+    .map((slot) => slot.time)
+    .sort()[0] ?? null
+
+  const maxEnd = addHours(selectedTime.value, BOOKING_MAX_DURATION_HOURS)
+  const closingTime = getClosingTimeForDate(selectedDate.value)
+
+  return [maxEnd, nextBlockingTime, closingTime].filter((time): time is string => Boolean(time)).sort()[0]
+})
 
 const loadAvailability = async () => {
   selectedTableId.value = null
@@ -402,6 +420,9 @@ useSeoMeta({
             <h2 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
               {{ selectedTable?.name }} — {{ formatSelectedDate }} kl. {{ selectedTime }}
             </h2>
+            <p class="mt-2 text-[0.82rem] text-lyktan-mute">
+              Bordet är ditt {{ selectedTime }}–{{ projectedEndTime }}.
+            </p>
             <p v-if="selectedTable?.priceKr" class="mt-2 text-[0.82rem] text-lyktan-mute">
               Rummet kostar {{ selectedTable.priceKr }} kr, betalas i butiken.
             </p>
@@ -508,7 +529,7 @@ useSeoMeta({
           <dl class="grid gap-3 text-sm">
             <div class="flex justify-between gap-4">
               <dt class="text-lyktan-mute">Datum & tid</dt>
-              <dd class="text-right text-lyktan-ink">{{ formatSelectedDate }} kl. {{ selectedTime }}</dd>
+              <dd class="text-right text-lyktan-ink">{{ formatSelectedDate }} kl. {{ selectedTime }}–{{ projectedEndTime }}</dd>
             </div>
             <div class="flex justify-between gap-4">
               <dt class="text-lyktan-mute">Antal personer</dt>
