@@ -1,5 +1,19 @@
 <script setup lang="ts">
 const { cartOpen, cartQuantity } = useShopifyCart()
+
+const mobileMenuOpen = ref(false)
+const route = useRoute()
+
+watch(() => route.fullPath, () => {
+  mobileMenuOpen.value = false
+})
+
+const navLinks = [
+  { to: '/butik', label: 'Butik' },
+  { to: '/events', label: 'Event' },
+  { to: '/bordsbokning', label: 'Boka bord' },
+  { to: '/kontakt', label: 'Kontakt' }
+]
 </script>
 
 <template>
@@ -10,19 +24,18 @@ const { cartOpen, cartQuantity } = useShopifyCart()
       </NuxtLink>
 
       <nav aria-label="Huvudnavigation" class="hidden items-center gap-6 sm:flex">
-        <NuxtLink to="/butik" class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink">
-          Butik
-        </NuxtLink>
-        <NuxtLink to="/events" class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink">
-          Event
-        </NuxtLink>
-        <NuxtLink to="/kontakt" class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink">
-          Kontakt
+        <NuxtLink
+          v-for="link in navLinks"
+          :key="link.to"
+          :to="link.to"
+          class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink"
+        >
+          {{ link.label }}
         </NuxtLink>
       </nav>
 
       <div class="flex items-center gap-1">
-        <button type="button" aria-label="Sök" class="inline-grid h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-black/5">
+        <button type="button" aria-label="Sök" class="hidden h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-black/5 sm:inline-grid">
           <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.6">
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-3.5-3.5" stroke-linecap="round" />
@@ -48,7 +61,46 @@ const { cartOpen, cartQuantity } = useShopifyCart()
             {{ cartQuantity }}
           </span>
         </button>
+
+        <button
+          type="button"
+          aria-label="Öppna meny"
+          :aria-expanded="mobileMenuOpen"
+          class="inline-grid h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-black/5 sm:hidden"
+          @click="mobileMenuOpen = !mobileMenuOpen"
+        >
+          <svg v-if="!mobileMenuOpen" viewBox="0 0 24 24" aria-hidden="true" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+          </svg>
+          <svg v-else viewBox="0 0 24 24" aria-hidden="true" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
+            <path d="m6 6 12 12M18 6 6 18" stroke-linecap="round" />
+          </svg>
+        </button>
       </div>
     </div>
+
+    <Transition
+      enter-active-class="transition duration-150 ease-out"
+      enter-from-class="opacity-0 -translate-y-1"
+      enter-to-class="opacity-100 translate-y-0"
+      leave-active-class="transition duration-100 ease-in"
+      leave-from-class="opacity-100 translate-y-0"
+      leave-to-class="opacity-0 -translate-y-1"
+    >
+      <nav
+        v-if="mobileMenuOpen"
+        aria-label="Mobilnavigation"
+        class="border-t border-black/8 bg-white px-4 py-3 sm:hidden"
+      >
+        <NuxtLink
+          v-for="link in navLinks"
+          :key="link.to"
+          :to="link.to"
+          class="block min-h-11 rounded-lg px-3 py-2.5 text-[0.95rem] text-lyktan-ink transition hover:bg-black/5"
+        >
+          {{ link.label }}
+        </NuxtLink>
+      </nav>
+    </Transition>
   </header>
 </template>

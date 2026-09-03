@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { getStockholmTodayIso } from '#shared/utils/bookingSlots'
 
-// Not ready for production yet (missing SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
-// on the live host) — redirect away until that's configured. Remove this
-// line to re-enable.
-await navigateTo('/', { redirectCode: 302 })
-
 type BookingTable = { id: string, name: string, kind: 'bord' | 'rum', capacity: number, priceKr: number | null }
 type OccupiedSlot = { tableId: string, time: string, type: 'booking' | 'event' | 'room-locked', label: string }
 type AvailabilityResponse = { date: string, slotTimes: string[], tables: BookingTable[], occupiedSlots: OccupiedSlot[] }
@@ -280,7 +275,7 @@ useSeoMeta({
       </div>
 
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <div class="space-y-8">
+        <div class="min-w-0 space-y-8">
           <div>
             <span class="eyebrow">Bokar du för miniatyrspel?</span>
             <div class="mt-2 flex gap-2">
@@ -306,8 +301,8 @@ useSeoMeta({
             </p>
           </div>
 
-          <div class="flex flex-wrap gap-8">
-            <div>
+          <div class="grid gap-8 sm:flex sm:flex-wrap">
+            <div class="min-w-0">
               <span class="eyebrow">Antal personer</span>
               <div class="mt-2 flex flex-wrap gap-2">
                 <button
@@ -323,7 +318,7 @@ useSeoMeta({
               </div>
             </div>
 
-            <div>
+            <div class="min-w-0">
               <label for="booking-date" class="eyebrow">Datum</label>
               <input
                 id="booking-date"
@@ -351,13 +346,14 @@ useSeoMeta({
             <template v-else>
               <p class="mt-1 text-[0.8rem] text-lyktan-mute">
                 Se vilka bord som är lediga hela dagen — klicka en ledig ruta för att boka den tiden direkt.
+                <span class="sm:hidden">Svep i tabellen för fler tider →</span>
               </p>
 
               <div class="mt-3 overflow-x-auto rounded-xl border border-black/12">
               <table class="w-full min-w-[440px] border-collapse text-sm">
                 <thead>
                   <tr>
-                    <th class="border-b border-black/12 px-3 py-2 text-left text-[0.72rem] font-medium text-lyktan-mute">Bord</th>
+                    <th class="sticky left-0 z-10 border-b border-r border-black/12 bg-lyktan-paper px-3 py-2 text-left text-[0.72rem] font-medium text-lyktan-mute">Bord</th>
                     <th v-for="time in slotTimes" :key="time" class="border-b border-black/12 px-2 py-2 text-center text-[0.72rem] font-medium text-lyktan-mute">
                       {{ time }}
                     </th>
@@ -365,12 +361,12 @@ useSeoMeta({
                 </thead>
                 <tbody>
                   <tr v-for="table in tables" :key="table.id" class="border-b border-black/6 last:border-0">
-                    <td class="px-3 py-2 text-sm font-medium text-lyktan-ink">{{ table.name }}</td>
+                    <td class="sticky left-0 z-10 border-r border-black/12 bg-lyktan-paper px-3 py-2 text-sm font-medium text-lyktan-ink">{{ table.name }}</td>
                     <td v-for="time in slotTimes" :key="time" class="p-1 text-center">
                       <button
                         type="button"
                         :title="occupiedTitle(table, time)"
-                        class="inline-flex h-8 w-full min-w-[3.2rem] items-center justify-center rounded-md px-1 text-[0.68rem] font-medium transition disabled:cursor-not-allowed"
+                        class="inline-flex h-9 w-full min-w-[3.2rem] items-center justify-center rounded-md px-1 text-[0.68rem] font-medium transition disabled:cursor-not-allowed"
                         :class="overviewCellClass(table.id, time)"
                         :disabled="Boolean(occupiedAt(table.id, time))"
                         @click="selectFromOverview(table.id, time)"
@@ -400,7 +396,7 @@ useSeoMeta({
           </div>
         </div>
 
-        <div class="rounded-2xl bg-lyktan-surface p-6 sm:p-8">
+        <div class="min-w-0 rounded-2xl bg-lyktan-surface p-6 sm:p-8">
           <div v-if="selectedTableId && selectedTime">
             <p class="eyebrow">Dina uppgifter</p>
             <h2 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
