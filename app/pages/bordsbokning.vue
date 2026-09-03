@@ -2,7 +2,8 @@
 import { BOOKING_MAX_DURATION_HOURS, addHours, getClosingTimeForDate, getStockholmTodayIso } from '#shared/utils/bookingSlots'
 
 type BookingTable = { id: string, name: string, kind: 'bord' | 'rum', capacity: number, priceKr: number | null }
-type OccupiedSlot = { tableId: string, time: string, type: 'booking' | 'event' | 'room-locked', label: string }
+type OccupiedSlot = { tableId: string, time: string, type: 'booking' | 'event' | 'room-locked', label: string, groupId?: string }
+type OverviewCell = { time: string, colspan: number, occupied: OccupiedSlot | null }
 type AvailabilityResponse = { date: string, slotTimes: string[], tables: BookingTable[], occupiedSlots: OccupiedSlot[] }
 type BookingConfirmation = {
   id: string
@@ -53,6 +54,39 @@ const occupiedMap = computed(() => new Map(occupiedSlots.value.map((slot) => [`$
 const occupiedAt = (tableId: string, time: string | null) => (time ? occupiedMap.value.get(`${tableId}|${time}`) ?? null : null)
 
 const selectedTable = computed(() => tables.value.find((table) => table.id === selectedTableId.value) ?? null)
+
+// Groups consecutive slots that belong to the same booking/event (or are
+// all room-locked) into one wide cell instead of repeating the label in
+// every slot — free slots always stay their own cell so each stays
+// individually clickable.
+const overviewRows = computed<Map<string, OverviewCell[]>>(() => {
+  const rows = new Map<string, OverviewCell[]>()
+
+  for (const table of tables.value) {
+    const cells: OverviewCell[] = []
+
+    for (const time of slotTimes.value) {
+      const occ = occupiedAt(table.id, time)
+      const last = cells[cells.length - 1]
+      const sameAsLast = Boolean(
+        last?.occupied
+        && occ
+        && last.occupied.type === occ.type
+        && (occ.type === 'room-locked' ? true : Boolean(occ.groupId) && last.occupied.groupId === occ.groupId)
+      )
+
+      if (sameAsLast) {
+        last.colspan += 1
+      } else {
+        cells.push({ time, colspan: 1, occupied: occ })
+      }
+    }
+
+    rows.set(table.id, cells)
+  }
+
+  return rows
+})
 
 // Mirrors the server's own end-time calculation (index.post.ts) so the
 // customer sees the real hold time before confirming, not just the start.
@@ -380,16 +414,16 @@ useSeoMeta({
                 <tbody>
                   <tr v-for="table in tables" :key="table.id" class="border-b border-black/6 last:border-0">
                     <td class="sticky left-0 z-10 border-r border-black/12 bg-lyktan-paper px-3 py-2 text-sm font-medium text-lyktan-ink">{{ table.name }}</td>
-                    <td v-for="time in slotTimes" :key="time" class="p-1 text-center">
+                    <td v-for="cell in overviewRows.get(table.id)" :key="cell.time" class="p-1 text-center" :colspan="cell.colspan">
                       <button
                         type="button"
-                        :title="occupiedTitle(table, time)"
+                        :title="occupiedTitle(table, cell.time)"
                         class="inline-flex h-9 w-full min-w-[3.2rem] items-center justify-center rounded-md px-1 text-[0.68rem] font-medium transition disabled:cursor-not-allowed"
-                        :class="overviewCellClass(table.id, time)"
-                        :disabled="Boolean(occupiedAt(table.id, time))"
-                        @click="selectFromOverview(table.id, time)"
+                        :class="overviewCellClass(table.id, cell.time)"
+                        :disabled="Boolean(cell.occupied)"
+                        @click="selectFromOverview(table.id, cell.time)"
                       >
-                        <span v-if="occupiedAt(table.id, time)" class="truncate">{{ occupiedAt(table.id, time)?.label }}</span>
+                        <span v-if="cell.occupied" class="truncate">{{ cell.occupied.label }}</span>
                         <span v-else>·</span>
                       </button>
                     </td>

@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
 
   const { data: bookings, error: bookingsError } = await supabase
     .from('bookings')
-    .select('table_id, start_time, end_time, status, created_at')
+    .select('id, table_id, start_time, end_time, status, created_at')
     .eq('booking_date', date)
     .in('status', ['confirmed', 'pending'])
 
@@ -72,12 +72,12 @@ export default defineEventHandler(async (event) => {
 
     return slotTimes
       .filter((time) => time >= start && time < end)
-      .map((time) => ({ tableId: booking.table_id as string, time, type: 'booking' as const, label: 'Bokat' }))
+      .map((time) => ({ tableId: booking.table_id as string, time, type: 'booking' as const, label: 'Bokat', groupId: `booking:${booking.id}` }))
   })
 
   const { data: recurringEvents, error: recurringError } = await supabase
     .from('recurring_events')
-    .select('name, start_time, end_time, table_ids')
+    .select('id, name, start_time, end_time, table_ids')
     .eq('active', true)
     .eq('weekday', toRecurringWeekday(date))
 
@@ -91,7 +91,7 @@ export default defineEventHandler(async (event) => {
     const coveredSlots = slotTimes.filter((time) => time >= start && time < end)
 
     return (recurringEvent.table_ids as string[]).flatMap((tableId) =>
-      coveredSlots.map((time) => ({ tableId, time, type: 'event' as const, label: recurringEvent.name as string }))
+      coveredSlots.map((time) => ({ tableId, time, type: 'event' as const, label: recurringEvent.name as string, groupId: `event:${recurringEvent.id}` }))
     )
   })
 
