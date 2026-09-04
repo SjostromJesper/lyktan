@@ -95,10 +95,30 @@ export default defineEventHandler(async (event) => {
     )
   })
 
+  const { data: oneOffEvents, error: oneOffError } = await supabase
+    .from('one_off_events')
+    .select('id, name, start_time, end_time, table_ids')
+    .eq('active', true)
+    .eq('event_date', date)
+
+  if (oneOffError) {
+    throw createError({ statusCode: 500, statusMessage: oneOffError.message })
+  }
+
+  const oneOffSlots = ((oneOffEvents ?? []) as any[]).flatMap((oneOffEvent) => {
+    const start = String(oneOffEvent.start_time).slice(0, 5)
+    const end = String(oneOffEvent.end_time).slice(0, 5)
+    const coveredSlots = slotTimes.filter((time) => time >= start && time < end)
+
+    return (oneOffEvent.table_ids as string[]).flatMap((tableId) =>
+      coveredSlots.map((time) => ({ tableId, time, type: 'event' as const, label: oneOffEvent.name as string, groupId: `one-off:${oneOffEvent.id}` }))
+    )
+  })
+
   // The room is a fallback — only bookable at a given time once every
   // regular table is booked at that same time (not necessarily the whole
   // day). Otherwise that slot is blocked with an explanatory label.
-  const combinedSlots = [...bookingSlots, ...eventSlots]
+  const combinedSlots = [...bookingSlots, ...eventSlots, ...oneOffSlots]
   const occupiedKeys = new Set(combinedSlots.map((slot) => `${slot.tableId}|${slot.time}`))
   const regularTableIds = tableList.filter((table) => table.kind === 'bord').map((table) => table.id)
   const roomTableIds = tableList.filter((table) => table.kind === 'rum').map((table) => table.id)

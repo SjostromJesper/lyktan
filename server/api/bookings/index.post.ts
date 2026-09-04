@@ -130,12 +130,22 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 500, statusMessage: regularEventsError.message })
       }
 
-      for (const recurringEvent of (regularEvents ?? []) as any[]) {
-        const start = String(recurringEvent.start_time).slice(0, 5)
-        const end = String(recurringEvent.end_time).slice(0, 5)
+      const { data: regularOneOffEvents, error: regularOneOffError } = await supabase
+        .from('one_off_events')
+        .select('start_time, end_time, table_ids')
+        .eq('active', true)
+        .eq('event_date', date)
+
+      if (regularOneOffError) {
+        throw createError({ statusCode: 500, statusMessage: regularOneOffError.message })
+      }
+
+      for (const blockingEvent of [...((regularEvents ?? []) as any[]), ...((regularOneOffEvents ?? []) as any[])]) {
+        const start = String(blockingEvent.start_time).slice(0, 5)
+        const end = String(blockingEvent.end_time).slice(0, 5)
         const coveredSlots = validSlots.filter((time) => time >= start && time < end)
 
-        for (const eventTableId of recurringEvent.table_ids as string[]) {
+        for (const eventTableId of blockingEvent.table_ids as string[]) {
           for (const time of coveredSlots) {
             occupiedKeys.add(`${eventTableId}|${time}`)
           }
@@ -163,12 +173,22 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 500, statusMessage: recurringError.message })
   }
 
-  const tableEvents = ((recurringEvents ?? []) as any[])
-    .filter((recurringEvent) => (recurringEvent.table_ids as string[]).includes(tableId))
-    .map((recurringEvent) => ({
-      name: recurringEvent.name as string,
-      start: String(recurringEvent.start_time).slice(0, 5),
-      end: String(recurringEvent.end_time).slice(0, 5)
+  const { data: oneOffEvents, error: oneOffError } = await supabase
+    .from('one_off_events')
+    .select('name, start_time, end_time, table_ids')
+    .eq('active', true)
+    .eq('event_date', date)
+
+  if (oneOffError) {
+    throw createError({ statusCode: 500, statusMessage: oneOffError.message })
+  }
+
+  const tableEvents = [...((recurringEvents ?? []) as any[]), ...((oneOffEvents ?? []) as any[])]
+    .filter((tableEvent) => (tableEvent.table_ids as string[]).includes(tableId))
+    .map((tableEvent) => ({
+      name: tableEvent.name as string,
+      start: String(tableEvent.start_time).slice(0, 5),
+      end: String(tableEvent.end_time).slice(0, 5)
     }))
 
   const blockingEvent = tableEvents.find((e) => startTime >= e.start && startTime < e.end)
