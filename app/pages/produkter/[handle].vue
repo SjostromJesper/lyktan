@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { formatReleaseDate, isRecentRelease, isUpcomingRelease } from '#shared/utils/productRelease'
+
 const route = useRoute()
 const router = useRouter()
 const handle = computed(() => String(route.params.handle || ''))
@@ -107,6 +109,40 @@ const hasDiscount = computed(() => {
 })
 
 const breadcrumbCollection = computed(() => product.value?.collections?.nodes?.[0] ?? null)
+
+const releaseDate = computed(() => product.value?.releaseDate?.value ?? null)
+const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
+const isNew = computed(() => isRecentRelease(releaseDate.value))
+
+const interestEmail = ref('')
+const interestSubmitting = ref(false)
+const interestError = ref('')
+const interestSubmitted = ref(false)
+
+watch(handle, () => {
+  interestEmail.value = ''
+  interestSubmitted.value = false
+  interestError.value = ''
+})
+
+const submitInterest = async () => {
+  if (!product.value?.handle) return
+
+  interestSubmitting.value = true
+  interestError.value = ''
+
+  try {
+    await $fetch('/api/products/interest', {
+      method: 'POST',
+      body: { productHandle: product.value.handle, email: interestEmail.value.trim() }
+    })
+    interestSubmitted.value = true
+  } catch (err: any) {
+    interestError.value = err?.data?.statusMessage || 'Något gick fel, försök igen.'
+  } finally {
+    interestSubmitting.value = false
+  }
+}
 
 const productImages = computed(() => {
   const images = product.value?.images?.nodes ?? []
@@ -266,7 +302,9 @@ useSeoMeta({
         </div>
 
         <div>
-          <p class="eyebrow">Produkt</p>
+          <p class="eyebrow">
+            Produkt<span v-if="isNew"> · Nyhet</span>
+          </p>
           <h1 class="mt-3 text-[clamp(1.7rem,2.8vw,2.3rem)] font-semibold leading-[1.15] tracking-[-0.01em] text-lyktan-ink">
             {{ product.title }}
           </h1>
@@ -279,7 +317,34 @@ useSeoMeta({
             Lägg till en produktbeskrivning i Shopify så visas den här automatiskt.
           </p>
 
-          <div class="mt-6 border-t border-black/8 pt-5">
+          <div v-if="isUpcoming" class="mt-6 border-t border-black/8 pt-5">
+            <p class="text-[0.84rem] font-medium text-lyktan-accent">Kommer snart</p>
+            <p class="mt-1 text-sm text-lyktan-mute">
+              Beräknad release: {{ formatReleaseDate(releaseDate) }}. Lämna din e-post så mailar vi dig när den går att förboka eller köpa.
+            </p>
+
+            <template v-if="interestSubmitted">
+              <p class="mt-4 text-sm font-medium text-emerald-600">Tack! Vi mailar dig när den blir tillgänglig.</p>
+            </template>
+            <form v-else class="mt-4 flex flex-col gap-3 sm:flex-row" @submit.prevent="submitInterest">
+              <label class="flex-1">
+                <span class="sr-only">E-post</span>
+                <input
+                  v-model="interestEmail"
+                  type="email"
+                  required
+                  placeholder="din@epost.se"
+                  class="min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+                >
+              </label>
+              <button type="submit" class="primary-cta shrink-0" :disabled="interestSubmitting">
+                {{ interestSubmitting ? 'Skickar...' : 'Få en påminnelse' }}
+              </button>
+            </form>
+            <p v-if="interestError" class="mt-2 text-sm text-lyktan-accent">{{ interestError }}</p>
+          </div>
+
+          <div v-else class="mt-6 border-t border-black/8 pt-5">
             <div class="flex items-end justify-between gap-4 pb-5">
               <span class="flex items-baseline gap-2">
                 <strong class="text-[1.6rem] font-semibold tracking-[-0.01em] text-lyktan-ink">

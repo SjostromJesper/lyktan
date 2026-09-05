@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { isRecentRelease, isUpcomingRelease } from '#shared/utils/productRelease'
+
 const props = defineProps<{
   product: any
 }>()
@@ -7,6 +9,10 @@ const { addVariantToCart, loadingVariantId, formatMoney } = useShopifyCart()
 
 const firstVariant = computed(() => props.product?.variants?.nodes?.[0] ?? null)
 const primaryTag = computed(() => props.product?.tags?.[0] ?? null)
+
+const releaseDate = computed(() => props.product?.releaseDate?.value ?? null)
+const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
+const isNew = computed(() => isRecentRelease(releaseDate.value))
 
 const isSoldOut = computed(() => firstVariant.value && firstVariant.value.availableForSale === false)
 
@@ -37,8 +43,14 @@ const addToCart = async () => {
       <div v-else class="grid h-full w-full place-items-center text-lg font-medium text-lyktan-mute">
         {{ product.title.slice(0, 2).toUpperCase() }}
       </div>
-      <span v-if="isSoldOut" class="absolute left-2 top-2 rounded-full bg-lyktan-ink px-2.5 py-1 text-[0.68rem] font-medium text-white">
+      <span v-if="isUpcoming" class="absolute left-2 top-2 rounded-full bg-lyktan-accent px-2.5 py-1 text-[0.68rem] font-medium text-white">
+        Kommer snart
+      </span>
+      <span v-else-if="isSoldOut" class="absolute left-2 top-2 rounded-full bg-lyktan-ink px-2.5 py-1 text-[0.68rem] font-medium text-white">
         Slutsåld
+      </span>
+      <span v-else-if="isNew" class="absolute left-2 top-2 rounded-full bg-emerald-600 px-2.5 py-1 text-[0.68rem] font-medium text-white">
+        Nyhet
       </span>
     </NuxtLink>
 
@@ -54,7 +66,11 @@ const addToCart = async () => {
         </span>
       </p>
 
+      <NuxtLink v-if="isUpcoming" :to="`/produkter/${product.handle}`" class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]">
+        Få en påminnelse
+      </NuxtLink>
       <button
+        v-else
         type="button"
         class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]"
         :disabled="loadingVariantId === firstVariant?.id || isSoldOut"

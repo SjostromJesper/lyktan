@@ -35,6 +35,9 @@ const homepageQuery = `#graphql
           url
           altText
         }
+        releaseDate: metafield(namespace: "custom", key: "release_date") {
+          value
+        }
         variants(first: 1) {
           nodes {
             id

@@ -53,6 +53,9 @@ export default defineEventHandler(async (event) => {
             handle
           }
         }
+        releaseDate: metafield(namespace: "custom", key: "release_date") {
+          value
+        }
         variants(first: 25) {
           nodes {
             id
