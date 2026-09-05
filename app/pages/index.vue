@@ -19,9 +19,13 @@ const heroItems = computed(() =>
   }))
 )
 
+// Utility products (membership/booking deposit) have no tags, so they can't
+// be excluded via a "-tag:event"-style query filter — filtered out below instead.
+const EXCLUDED_SHOWCASE_HANDLES = new Set(['medlemskap', 'bordsbokning-forskott'])
+
 const homepageQuery = `#graphql
   query HomepageProducts {
-    showcaseProducts: products(first: 8, sortKey: TITLE, query: "tag:kortspel OR tag:figurspel OR tag:bradspel OR tag:brädspel OR tag:rollspel OR tag:tillbehor OR tag:tillbehör") {
+    showcaseProducts: products(first: 10, sortKey: CREATED_AT, reverse: true, query: "-tag:event") {
       nodes {
         id
         title
@@ -34,7 +38,12 @@ const homepageQuery = `#graphql
         variants(first: 1) {
           nodes {
             id
+            availableForSale
             price {
+              amount
+              currencyCode
+            }
+            compareAtPrice {
               amount
               currencyCode
             }
@@ -47,7 +56,9 @@ const homepageQuery = `#graphql
 
 const { data } = await useStorefrontData('homepage-products', homepageQuery, {
   transform: (result) => ({
-    showcaseProducts: result.showcaseProducts?.nodes ?? []
+    showcaseProducts: (result.showcaseProducts?.nodes ?? [])
+      .filter((product: any) => !EXCLUDED_SHOWCASE_HANDLES.has(product.handle))
+      .slice(0, 8)
   })
 })
 

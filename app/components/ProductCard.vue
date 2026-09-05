@@ -8,6 +8,14 @@ const { addVariantToCart, loadingVariantId, formatMoney } = useShopifyCart()
 const firstVariant = computed(() => props.product?.variants?.nodes?.[0] ?? null)
 const primaryTag = computed(() => props.product?.tags?.[0] ?? null)
 
+const isSoldOut = computed(() => firstVariant.value && firstVariant.value.availableForSale === false)
+
+const hasDiscount = computed(() => {
+  const compareAt = Number(firstVariant.value?.compareAtPrice?.amount)
+  const price = Number(firstVariant.value?.price?.amount)
+  return Number.isFinite(compareAt) && Number.isFinite(price) && compareAt > price
+})
+
 const addToCart = async () => {
   if (!firstVariant.value?.id) {
     return
@@ -29,6 +37,9 @@ const addToCart = async () => {
       <div v-else class="grid h-full w-full place-items-center text-lg font-medium text-lyktan-mute">
         {{ product.title.slice(0, 2).toUpperCase() }}
       </div>
+      <span v-if="isSoldOut" class="absolute left-2 top-2 rounded-full bg-lyktan-ink px-2.5 py-1 text-[0.68rem] font-medium text-white">
+        Slutsåld
+      </span>
     </NuxtLink>
 
     <div class="mt-3 flex flex-1 flex-col gap-1">
@@ -36,17 +47,20 @@ const addToCart = async () => {
       <NuxtLink :to="`/produkter/${product.handle}`" class="text-[0.9rem] leading-tight text-lyktan-ink line-clamp-2">
         {{ product.title }}
       </NuxtLink>
-      <p class="text-[0.9rem] font-medium text-lyktan-ink">
-        {{ formatMoney(firstVariant?.price?.amount, firstVariant?.price?.currencyCode) }}
+      <p class="flex items-baseline gap-2 text-[0.9rem] font-medium text-lyktan-ink">
+        <span>{{ formatMoney(firstVariant?.price?.amount, firstVariant?.price?.currencyCode) }}</span>
+        <span v-if="hasDiscount" class="text-[0.8rem] font-normal text-lyktan-mute line-through">
+          {{ formatMoney(firstVariant?.compareAtPrice?.amount, firstVariant?.compareAtPrice?.currencyCode) }}
+        </span>
       </p>
 
       <button
         type="button"
         class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]"
-        :disabled="loadingVariantId === firstVariant?.id"
+        :disabled="loadingVariantId === firstVariant?.id || isSoldOut"
         @click="addToCart"
       >
-        {{ loadingVariantId === firstVariant?.id ? 'Lägger till...' : 'Lägg i kundvagn' }}
+        {{ isSoldOut ? 'Slutsåld' : loadingVariantId === firstVariant?.id ? 'Lägger till...' : 'Lägg i kundvagn' }}
       </button>
     </div>
   </article>

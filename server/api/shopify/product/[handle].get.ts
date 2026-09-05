@@ -41,6 +41,18 @@ export default defineEventHandler(async (event) => {
           url
           altText
         }
+        images(first: 10) {
+          nodes {
+            url
+            altText
+          }
+        }
+        collections(first: 3) {
+          nodes {
+            title
+            handle
+          }
+        }
         variants(first: 25) {
           nodes {
             id
@@ -48,6 +60,10 @@ export default defineEventHandler(async (event) => {
             availableForSale
             quantityAvailable
             price {
+              amount
+              currencyCode
+            }
+            compareAtPrice {
               amount
               currencyCode
             }

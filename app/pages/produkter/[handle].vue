@@ -1,12 +1,4 @@
 <script setup lang="ts">
-import {
-  buildButikLink,
-  findCatalogCategory,
-  findCatalogSubcategory,
-  findCatalogSystem,
-  getCatalogLocation
-} from '~/utils/catalog'
-
 const route = useRoute()
 const router = useRouter()
 const handle = computed(() => String(route.params.handle || ''))
@@ -108,37 +100,31 @@ const isSoldOut = computed(
   () => !selectedVariant.value?.availableForSale || selectedVariant.value?.quantityAvailable === 0
 )
 
-const catalogLocation = computed(() => getCatalogLocation(product.value?.handle))
-const breadcrumbItems = computed(() => {
-  const location = catalogLocation.value
-
-  if (!location) {
-    return []
-  }
-
-  const category = findCatalogCategory(location.categorySlug)
-  const system = findCatalogSystem(location.categorySlug, location.systemSlug)
-  const subcategory = findCatalogSubcategory(location.categorySlug, location.systemSlug, location.subcategorySlug)
-
-  if (!category || !system || !subcategory) {
-    return []
-  }
-
-  return [
-    {
-      label: category.label,
-      to: buildButikLink(category.slug)
-    },
-    {
-      label: system.label,
-      to: buildButikLink(category.slug, system.slug)
-    },
-    {
-      label: subcategory.label,
-      to: buildButikLink(category.slug, system.slug, subcategory.slug)
-    }
-  ]
+const hasDiscount = computed(() => {
+  const compareAt = Number(selectedVariant.value?.compareAtPrice?.amount)
+  const price = Number(selectedVariant.value?.price?.amount)
+  return Number.isFinite(compareAt) && Number.isFinite(price) && compareAt > price
 })
+
+const breadcrumbCollection = computed(() => product.value?.collections?.nodes?.[0] ?? null)
+
+const productImages = computed(() => {
+  const images = product.value?.images?.nodes ?? []
+
+  if (images.length) {
+    return images
+  }
+
+  return product.value?.featuredImage ? [product.value.featuredImage] : []
+})
+
+const selectedImageIndex = ref(0)
+
+watch(productImages, () => {
+  selectedImageIndex.value = 0
+})
+
+const selectedImage = computed(() => productImages.value[selectedImageIndex.value] ?? null)
 
 onMounted(() => {
   loadProduct(true)
@@ -209,11 +195,11 @@ useSeoMeta({
 <template>
   <main class="px-4 pb-24 pt-8 sm:px-6">
     <section class="page-shell grid gap-6">
-      <nav v-if="breadcrumbItems.length" class="flex flex-wrap items-center gap-2 text-sm text-lyktan-mute">
+      <nav class="flex flex-wrap items-center gap-2 text-sm text-lyktan-mute">
         <NuxtLink to="/butik" class="transition hover:text-lyktan-ink">Butik</NuxtLink>
-        <template v-for="item in breadcrumbItems" :key="item.to">
+        <template v-if="breadcrumbCollection">
           <span class="text-black/20">/</span>
-          <NuxtLink :to="item.to" class="transition hover:text-lyktan-ink">{{ item.label }}</NuxtLink>
+          <NuxtLink :to="`/butik/${breadcrumbCollection.handle}`" class="transition hover:text-lyktan-ink">{{ breadcrumbCollection.title }}</NuxtLink>
         </template>
         <span class="text-black/20">/</span>
         <span class="text-lyktan-ink">{{ product?.title }}</span>
@@ -252,15 +238,30 @@ useSeoMeta({
       </div>
 
       <div v-else-if="product" class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.84fr)]">
-        <div class="flex items-center justify-center bg-lyktan-surface p-6">
-          <img
-            v-if="product.featuredImage?.url"
-            :src="product.featuredImage.url"
-            :alt="product.featuredImage.altText || product.title"
-            class="max-h-[500px] w-full object-contain"
-          >
-          <div v-else class="grid min-h-[420px] w-full place-items-center text-5xl font-medium text-lyktan-mute">
-            {{ product.title.slice(0, 2).toUpperCase() }}
+        <div class="grid gap-3">
+          <div class="flex items-center justify-center bg-lyktan-surface p-6">
+            <img
+              v-if="selectedImage?.url"
+              :src="selectedImage.url"
+              :alt="selectedImage.altText || product.title"
+              class="max-h-[500px] w-full object-contain"
+            >
+            <div v-else class="grid min-h-[420px] w-full place-items-center text-5xl font-medium text-lyktan-mute">
+              {{ product.title.slice(0, 2).toUpperCase() }}
+            </div>
+          </div>
+
+          <div v-if="productImages.length > 1" class="flex flex-wrap gap-2">
+            <button
+              v-for="(image, index) in productImages"
+              :key="image.url"
+              type="button"
+              class="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-lyktan-surface transition"
+              :class="index === selectedImageIndex ? 'ring-2 ring-lyktan-ink' : 'opacity-70 hover:opacity-100'"
+              @click="selectedImageIndex = index"
+            >
+              <img :src="image.url" :alt="image.altText || product.title" class="h-full w-full object-contain p-1">
+            </button>
           </div>
         </div>
 
@@ -280,9 +281,14 @@ useSeoMeta({
 
           <div class="mt-6 border-t border-black/8 pt-5">
             <div class="flex items-end justify-between gap-4 pb-5">
-              <strong class="text-[1.6rem] font-semibold tracking-[-0.01em] text-lyktan-ink">
-                {{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}
-              </strong>
+              <span class="flex items-baseline gap-2">
+                <strong class="text-[1.6rem] font-semibold tracking-[-0.01em] text-lyktan-ink">
+                  {{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}
+                </strong>
+                <span v-if="hasDiscount" class="text-sm text-lyktan-mute line-through">
+                  {{ formatMoney(selectedVariant?.compareAtPrice?.amount, selectedVariant?.compareAtPrice?.currencyCode) }}
+                </span>
+              </span>
               <span class="text-[0.84rem]" :class="isSoldOut ? 'text-lyktan-mute' : 'text-emerald-600'">
                 {{ variantAvailability(selectedVariant) }}
               </span>
