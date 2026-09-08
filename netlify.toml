@@ -1,0 +1,46 @@
+# Automated vulnerability scanners repeatedly probe these paths looking for
+# leaked secrets / known CMS installs (see Netlify Analytics "Top resources
+# not found"). None of them are real app routes, so short-circuit them at
+# the edge with a static file instead of invoking the Nuxt SSR function on
+# every hit.
+[[redirects]]
+  from = "/.env*"
+  to = "/blocked.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/.git/*"
+  to = "/blocked.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/wordpress/*"
+  to = "/blocked.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/wp/*"
+  to = "/blocked.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/xmlrpc.php"
+  to = "/blocked.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/graphql"
+  to = "/blocked.html"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/products.json"
+  to = "/blocked.html"
+  status = 404
+  force = true
