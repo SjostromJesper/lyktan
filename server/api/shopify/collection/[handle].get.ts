@@ -11,7 +11,6 @@ export default defineEventHandler(async (event) => {
   }
 
   const query = getQuery(event)
-  const after = query.after ? String(query.after) : null
   const sortKeyParam = String(query.sort || 'TITLE').toUpperCase()
   const sortKey: SortKey = (ALLOWED_SORT_KEYS as readonly string[]).includes(sortKeyParam) ? (sortKeyParam as SortKey) : 'TITLE'
   const reverse = query.reverse === 'true'
@@ -22,21 +21,16 @@ export default defineEventHandler(async (event) => {
       title: string
       handle: string
       products: {
-        pageInfo: { hasNextPage: boolean, endCursor: string | null }
         nodes: any[]
       }
     } | null
   }>(`#graphql
-    query CollectionProducts($handle: String!, $first: Int!, $after: String, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean!) {
+    query CollectionProducts($handle: String!, $first: Int!, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean!) {
       collection(handle: $handle) {
         id
         title
         handle
-        products(first: $first, after: $after, sortKey: $sortKey, reverse: $reverse) {
-          pageInfo {
-            hasNextPage
-            endCursor
-          }
+        products(first: $first, sortKey: $sortKey, reverse: $reverse) {
           nodes {
             id
             title
@@ -70,7 +64,10 @@ export default defineEventHandler(async (event) => {
         }
       }
     }
-  `, { handle, first: 24, after, sortKey, reverse })
+    # 250 is the Storefront API's max page size — comfortably covers this
+    # store's whole catalog (biggest collection is under 30 today), so the
+    # page can filter/sort everything client-side with no pagination.
+  `, { handle, first: 250, sortKey, reverse })
 
   if (!data.collection) {
     throw createError({ statusCode: 404, statusMessage: 'Kollektionen hittades inte' })
@@ -78,7 +75,6 @@ export default defineEventHandler(async (event) => {
 
   return {
     collection: { id: data.collection.id, title: data.collection.title, handle: data.collection.handle },
-    products: data.collection.products.nodes,
-    pageInfo: data.collection.products.pageInfo
+    products: data.collection.products.nodes
   }
 })

@@ -10,7 +10,6 @@ type Product = {
 type CollectionResponse = {
   collection: { id: string, title: string, handle: string }
   products: Product[]
-  pageInfo: { hasNextPage: boolean, endCursor: string | null }
 }
 
 const SORT_OPTIONS = [
@@ -28,11 +27,8 @@ const activeSort = computed(() => SORT_OPTIONS.find((option) => option.value ===
 
 const collectionTitle = ref('')
 const products = ref<Product[]>([])
-const pageInfo = ref<{ hasNextPage: boolean, endCursor: string | null }>({ hasNextPage: false, endCursor: null })
 const loading = ref(true)
-const loadingMore = ref(false)
 const loadError = ref('')
-const activeFilterTag = ref('alla')
 
 const normalizeTag = (tag?: string | null) =>
   String(tag ?? '')
@@ -41,10 +37,26 @@ const normalizeTag = (tag?: string | null) =>
     .trim()
     .toLowerCase()
 
+const priceOf = (product: Product) => Number(product.variants?.nodes?.[0]?.price?.amount ?? 0)
+const isAvailable = (product: Product) => product.variants?.nodes?.[0]?.availableForSale !== false
+
+// --- Filters ---
+const selectedTags = ref<Set<string>>(new Set())
+const inStockOnly = ref(false)
+const priceMin = ref<number | null>(null)
+const priceMax = ref<number | null>(null)
+
+const resetFilters = () => {
+  selectedTags.value = new Set()
+  inStockOnly.value = false
+  priceMin.value = null
+  priceMax.value = null
+}
+
 const loadProducts = async () => {
   loading.value = true
   loadError.value = ''
-  activeFilterTag.value = 'alla'
+  resetFilters()
 
   try {
     const res = await $fetch<CollectionResponse>(`/api/shopify/collection/${handle.value}`, {
@@ -52,30 +64,11 @@ const loadProducts = async () => {
     })
     collectionTitle.value = res.collection.title
     products.value = res.products
-    pageInfo.value = res.pageInfo
   } catch (err: any) {
     loadError.value = err?.data?.statusMessage || 'Kunde inte hämta produkter'
     products.value = []
   } finally {
     loading.value = false
-  }
-}
-
-const loadMore = async () => {
-  if (!pageInfo.value.hasNextPage || loadingMore.value) return
-
-  loadingMore.value = true
-
-  try {
-    const res = await $fetch<CollectionResponse>(`/api/shopify/collection/${handle.value}`, {
-      query: { sort: activeSort.value.sort, reverse: String(activeSort.value.reverse), after: pageInfo.value.endCursor }
-    })
-    products.value = [...products.value, ...res.products]
-    pageInfo.value = res.pageInfo
-  } catch (err: any) {
-    loadError.value = err?.data?.statusMessage || 'Kunde inte hämta fler produkter'
-  } finally {
-    loadingMore.value = false
   }
 }
 
@@ -101,12 +94,45 @@ const availableFilterTags = computed(() => {
     .map(([value, label]) => ({ value, label }))
 })
 
-const filteredProducts = computed(() => {
-  if (activeFilterTag.value === 'alla') {
-    return products.value
-  }
+const priceBounds = computed(() => {
+  if (!products.value.length) return { min: 0, max: 0 }
+  const prices = products.value.map(priceOf)
+  return { min: Math.floor(Math.min(...prices)), max: Math.ceil(Math.max(...prices)) }
+})
 
-  return products.value.filter((product) => product.tags?.some((tag) => normalizeTag(tag) === activeFilterTag.value))
+const toggleTag = (tag: string) => {
+  const next = new Set(selectedTags.value)
+  if (next.has(tag)) next.delete(tag)
+  else next.add(tag)
+  selectedTags.value = next
+}
+
+const hasActiveFilters = computed(() =>
+  selectedTags.value.size > 0 || inStockOnly.value || priceMin.value !== null || priceMax.value !== null
+)
+
+const filteredProducts = computed(() => {
+  return products.value.filter((product) => {
+    if (selectedTags.value.size && !product.tags?.some((tag) => selectedTags.value.has(normalizeTag(tag)))) {
+      return false
+    }
+
+    if (inStockOnly.value && !isAvailable(product)) {
+      return false
+    }
+
+    const price = priceOf(product)
+
+    if (priceMin.value !== null && price < priceMin.value) {
+      return false
+    }
+
+    if (priceMax.value !== null && price > priceMax.value) {
+      return false
+    }
+
+    return true
+  })
 })
 
 useSeoMeta({
@@ -124,41 +150,70 @@ useSeoMeta({
         <span class="text-lyktan-ink">{{ collectionTitle || '…' }}</span>
       </nav>
 
-      <div class="flex flex-col gap-4 border-b border-black/8 pb-4 lg:flex-row lg:items-center lg:justify-between">
-        <h1 class="text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-          {{ collectionTitle || 'Kategori' }}
-        </h1>
+      <h1 class="text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
+        {{ collectionTitle || 'Kategori' }}
+      </h1>
 
-        <label class="block">
-          <span class="sr-only">Sortera</span>
-          <select
-            v-model="sortValue"
-            class="min-h-10 rounded-lg border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
+      <div v-if="!loading && !loadError" class="rounded-2xl border border-black/8 bg-lyktan-surface/60 p-4 sm:p-5">
+        <div class="flex flex-wrap items-end gap-x-6 gap-y-4">
+          <label class="block">
+            <span class="eyebrow mb-1 block">Sortera</span>
+            <select
+              v-model="sortValue"
+              class="min-h-10 rounded-lg border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
+            >
+              <option v-for="option in SORT_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
+            </select>
+          </label>
+
+          <div class="block">
+            <span class="eyebrow mb-1 block">Pris (kr)</span>
+            <div class="flex items-center gap-2">
+              <input
+                v-model.number="priceMin"
+                type="number"
+                min="0"
+                :placeholder="String(priceBounds.min)"
+                class="min-h-10 w-24 rounded-lg border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
+              >
+              <span class="text-lyktan-mute">–</span>
+              <input
+                v-model.number="priceMax"
+                type="number"
+                min="0"
+                :placeholder="String(priceBounds.max)"
+                class="min-h-10 w-24 rounded-lg border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
+              >
+            </div>
+          </div>
+
+          <label class="flex min-h-10 items-center gap-2 text-sm text-lyktan-ink">
+            <input v-model="inStockOnly" type="checkbox" class="h-4 w-4 rounded border-black/25">
+            Bara i lager
+          </label>
+
+          <button
+            v-if="hasActiveFilters"
+            type="button"
+            class="min-h-10 text-sm font-medium text-lyktan-accent hover:underline"
+            @click="resetFilters"
           >
-            <option v-for="option in SORT_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
-          </select>
-        </label>
-      </div>
+            Rensa filter
+          </button>
+        </div>
 
-      <div v-if="availableFilterTags.length" class="flex flex-wrap gap-4">
-        <button
-          type="button"
-          class="text-[0.82rem] transition"
-          :class="activeFilterTag === 'alla' ? 'font-medium text-lyktan-ink' : 'text-lyktan-mute hover:text-lyktan-ink'"
-          @click="activeFilterTag = 'alla'"
-        >
-          Alla
-        </button>
-        <button
-          v-for="tag in availableFilterTags"
-          :key="tag.value"
-          type="button"
-          class="text-[0.82rem] transition"
-          :class="activeFilterTag === tag.value ? 'font-medium text-lyktan-ink' : 'text-lyktan-mute hover:text-lyktan-ink'"
-          @click="activeFilterTag = tag.value"
-        >
-          {{ tag.label }}
-        </button>
+        <div v-if="availableFilterTags.length" class="mt-4 flex flex-wrap gap-2 border-t border-black/8 pt-4">
+          <button
+            v-for="tag in availableFilterTags"
+            :key="tag.value"
+            type="button"
+            class="rounded-full border px-3 py-1 text-[0.82rem] font-medium transition"
+            :class="selectedTags.has(tag.value) ? 'border-lyktan-ink bg-lyktan-ink text-white' : 'border-black/15 text-lyktan-ink hover:bg-black/[0.04]'"
+            @click="toggleTag(tag.value)"
+          >
+            {{ tag.label }}
+          </button>
+        </div>
       </div>
 
       <div v-if="loading" class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
@@ -171,22 +226,23 @@ useSeoMeta({
 
       <p v-else-if="loadError" class="text-sm text-red-600">{{ loadError }}</p>
 
-      <div v-else-if="filteredProducts.length" class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
-        <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
-      </div>
+      <template v-else>
+        <p class="text-sm text-lyktan-mute">
+          {{ filteredProducts.length }} av {{ products.length }} produkter
+        </p>
 
-      <div v-else class="rounded-2xl bg-lyktan-surface p-8 text-center">
-        <p class="eyebrow">Inga produkter</p>
-        <h3 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
-          Det finns inga produkter här ännu.
-        </h3>
-      </div>
+        <div v-if="filteredProducts.length" class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
+          <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
+        </div>
 
-      <div v-if="!loading && pageInfo.hasNextPage && activeFilterTag === 'alla'" class="flex justify-center">
-        <button type="button" class="secondary-cta" :disabled="loadingMore" @click="loadMore">
-          {{ loadingMore ? 'Hämtar…' : 'Visa fler' }}
-        </button>
-      </div>
+        <div v-else class="rounded-2xl bg-lyktan-surface p-8 text-center">
+          <p class="eyebrow">Inga produkter</p>
+          <h3 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
+            Inga produkter matchar filtren.
+          </h3>
+          <button type="button" class="secondary-cta mt-4" @click="resetFilters">Rensa filter</button>
+        </div>
+      </template>
     </div>
   </main>
 </template>
