@@ -15,6 +15,7 @@ const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
 const isNew = computed(() => isRecentRelease(releaseDate.value))
 
 const isSoldOut = computed(() => firstVariant.value && firstVariant.value.availableForSale === false)
+const isInStoreOnly = computed(() => props.product?.inStoreOnly?.value === 'true')
 
 const hasDiscount = computed(() => {
   const compareAt = Number(firstVariant.value?.compareAtPrice?.amount)
@@ -46,6 +47,9 @@ const addToCart = async () => {
       <span v-if="isUpcoming" class="absolute left-2 top-2 rounded-full bg-lyktan-accent px-2.5 py-1 text-[0.68rem] font-medium text-white">
         Kommer snart
       </span>
+      <span v-else-if="isInStoreOnly" class="absolute left-2 top-2 rounded-full bg-lyktan-mute px-2.5 py-1 text-[0.68rem] font-medium text-white">
+        Endast i butik
+      </span>
       <span v-else-if="isSoldOut" class="absolute left-2 top-2 rounded-full bg-lyktan-ink px-2.5 py-1 text-[0.68rem] font-medium text-white">
         Slutsåld
       </span>
@@ -68,6 +72,9 @@ const addToCart = async () => {
 
       <NuxtLink v-if="isUpcoming" :to="`/produkter/${product.handle}`" class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]">
         Få en påminnelse
+      </NuxtLink>
+      <NuxtLink v-else-if="isInStoreOnly" :to="`/produkter/${product.handle}`" class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]">
+        Endast i butik
       </NuxtLink>
       <button
         v-else

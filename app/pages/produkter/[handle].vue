@@ -113,6 +113,7 @@ const breadcrumbCollection = computed(() => product.value?.collections?.nodes?.[
 const releaseDate = computed(() => product.value?.releaseDate?.value ?? null)
 const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
 const isNew = computed(() => isRecentRelease(releaseDate.value))
+const isInStoreOnly = computed(() => product.value?.inStoreOnly?.value === 'true')
 
 const interestEmail = ref('')
 const interestSubmitting = ref(false)
@@ -342,6 +343,18 @@ useSeoMeta({
               </button>
             </form>
             <p v-if="interestError" class="mt-2 text-sm text-lyktan-accent">{{ interestError }}</p>
+          </div>
+
+          <div v-else-if="isInStoreOnly" class="mt-6 border-t border-black/8 pt-5">
+            <span class="flex items-baseline gap-2">
+              <strong class="text-[1.6rem] font-semibold tracking-[-0.01em] text-lyktan-ink">
+                {{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}
+              </strong>
+            </span>
+            <p class="mt-3 text-[0.84rem] font-medium text-lyktan-ink">Endast i butik</p>
+            <p class="mt-1 text-sm text-lyktan-mute">
+              Den här produkten går inte att köpa online — kom förbi butiken i Järfälla för att handla den.
+            </p>
           </div>
 
           <div v-else class="mt-6 border-t border-black/8 pt-5">

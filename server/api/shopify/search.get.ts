@@ -30,6 +30,9 @@ export default defineEventHandler(async (event) => {
           releaseDate: metafield(namespace: "custom", key: "release_date") {
             value
           }
+          inStoreOnly: metafield(namespace: "custom", key: "in_store_only") {
+            value
+          }
           variants(first: 1) {
             nodes {
               id
