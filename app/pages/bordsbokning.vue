@@ -508,7 +508,7 @@ useSeoMeta({
                 />
               </div>
 
-              <p v-if="formError" class="text-sm text-lyktan-accent">
+              <p v-if="formError" class="text-sm text-red-600">
                 {{ formError }}
               </p>
 
@@ -605,7 +605,7 @@ useSeoMeta({
             </template>
           </div>
 
-          <p v-if="formError" class="mt-3 text-sm text-lyktan-accent">
+          <p v-if="formError" class="mt-3 text-sm text-red-600">
             {{ formError }}
           </p>
 

@@ -47,7 +47,8 @@ onBeforeUnmount(() => {
 
     <footer class="mt-24 border-t border-black/8 bg-lyktan-surface">
       <div class="page-shell flex flex-col gap-8 px-4 py-12 sm:flex-row sm:items-start sm:justify-between sm:px-6">
-        <div class="space-y-1">
+        <div class="space-y-2">
+          <img src="/images/logo/ink-solo.svg" alt="" aria-hidden="true" class="h-7 w-auto">
           <p class="font-semibold text-lyktan-ink">Butik Lyktan</p>
           <p class="text-sm text-lyktan-mute">Veddestabron 8B, 177 48 Järfälla</p>
           <p class="text-sm text-lyktan-mute">hej@butiklyktan.se</p>

@@ -176,7 +176,7 @@ useSeoMeta({
 
         <div class="mt-6 grid gap-6 sm:grid-cols-3">
           <div v-for="step in steps" :key="step.title">
-            <p class="text-2xl font-semibold tracking-[-0.01em] text-lyktan-accent">{{ step.number }}</p>
+            <p class="text-2xl font-semibold tracking-[-0.01em] text-lyktan-brand">{{ step.number }}</p>
             <h3 class="mt-2 text-[0.95rem] font-semibold text-lyktan-ink">{{ step.title }}</h3>
             <p class="mt-1 text-sm leading-6 text-lyktan-mute">{{ step.text }}</p>
           </div>
@@ -238,7 +238,7 @@ useSeoMeta({
             Har du redan ett medlemskap läggs de köpta månaderna på ditt nuvarande. Annars skapas ett nytt.
           </p>
 
-          <p v-if="formError" class="text-sm text-lyktan-accent">
+          <p v-if="formError" class="text-sm text-red-600">
             {{ formError }}
           </p>
 

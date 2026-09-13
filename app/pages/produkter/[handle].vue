@@ -342,7 +342,7 @@ useSeoMeta({
                 {{ interestSubmitting ? 'Skickar...' : 'Få en påminnelse' }}
               </button>
             </form>
-            <p v-if="interestError" class="mt-2 text-sm text-lyktan-accent">{{ interestError }}</p>
+            <p v-if="interestError" class="mt-2 text-sm text-red-600">{{ interestError }}</p>
           </div>
 
           <div v-else-if="isInStoreOnly" class="mt-6 border-t border-black/8 pt-5">

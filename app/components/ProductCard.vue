@@ -44,7 +44,7 @@ const addToCart = async () => {
       <div v-else class="grid h-full w-full place-items-center text-lg font-medium text-lyktan-mute">
         {{ product.title.slice(0, 2).toUpperCase() }}
       </div>
-      <span v-if="isUpcoming" class="absolute left-2 top-2 rounded-full bg-lyktan-accent px-2.5 py-1 text-[0.68rem] font-medium text-white">
+      <span v-if="isUpcoming" class="absolute left-2 top-2 rounded-full bg-lyktan-brand px-2.5 py-1 text-[0.68rem] font-semibold text-lyktan-ink">
         Kommer snart
       </span>
       <span v-else-if="isInStoreOnly" class="absolute left-2 top-2 rounded-full bg-lyktan-mute px-2.5 py-1 text-[0.68rem] font-medium text-white">

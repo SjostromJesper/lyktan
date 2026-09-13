@@ -23,6 +23,10 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      link: [
+        { rel: 'icon', type: 'image/svg+xml', href: '/images/logo/orange-solo.svg' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }
+      ],
       script: [
         {
           src: 'https://plausible.io/js/pa-k2Gasfpyo_eWit1Unqy2J.js',

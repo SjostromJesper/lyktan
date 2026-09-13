@@ -19,8 +19,8 @@ const navLinks = [
 <template>
   <header class="sticky top-0 z-40 border-b border-black/8 bg-white/90 backdrop-blur">
     <div class="page-shell flex min-h-[64px] items-center justify-between gap-6 px-4 sm:px-6">
-      <NuxtLink to="/" class="text-[1.1rem] font-semibold tracking-[-0.01em] text-lyktan-ink">
-        Butik Lyktan
+      <NuxtLink to="/" aria-label="Butik Lyktan – till startsidan" class="shrink-0">
+        <img src="/images/logo/ink-wide.svg" alt="Butik Lyktan" class="h-8 w-auto sm:h-9">
       </NuxtLink>
 
       <nav aria-label="Huvudnavigation" class="hidden items-center gap-6 sm:flex">
@@ -29,13 +29,14 @@ const navLinks = [
           :key="link.to"
           :to="link.to"
           class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink"
+          active-class="!text-lyktan-ink font-medium"
         >
           {{ link.label }}
         </NuxtLink>
       </nav>
 
       <div class="flex items-center gap-1">
-        <button type="button" aria-label="Sök" class="hidden h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-black/5 sm:inline-grid">
+        <button type="button" aria-label="Sök" class="hidden h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-brand/10 sm:inline-grid">
           <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.6">
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-3.5-3.5" stroke-linecap="round" />
@@ -45,7 +46,7 @@ const navLinks = [
         <button
           type="button"
           aria-label="Öppna kundvagnen"
-          class="relative inline-grid h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-black/5"
+          class="relative inline-grid h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-brand/10"
           @click="cartOpen = true"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true" class="h-[18px] w-[18px]">
@@ -56,7 +57,7 @@ const navLinks = [
           </svg>
           <span
             v-if="cartQuantity"
-            class="absolute -right-0.5 -top-0.5 inline-grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-lyktan-ink px-1 text-[0.6rem] font-semibold text-white"
+            class="absolute -right-0.5 -top-0.5 inline-grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-lyktan-brand px-1 text-[0.6rem] font-semibold text-lyktan-ink"
           >
             {{ cartQuantity }}
           </span>
@@ -66,7 +67,7 @@ const navLinks = [
           type="button"
           aria-label="Öppna meny"
           :aria-expanded="mobileMenuOpen"
-          class="inline-grid h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-black/5 sm:hidden"
+          class="inline-grid h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-brand/10 sm:hidden"
           @click="mobileMenuOpen = !mobileMenuOpen"
         >
           <svg v-if="!mobileMenuOpen" viewBox="0 0 24 24" aria-hidden="true" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -96,7 +97,7 @@ const navLinks = [
           v-for="link in navLinks"
           :key="link.to"
           :to="link.to"
-          class="block min-h-11 rounded-lg px-3 py-2.5 text-[0.95rem] text-lyktan-ink transition hover:bg-black/5"
+          class="block min-h-11 rounded-lg px-3 py-2.5 text-[0.95rem] text-lyktan-ink transition hover:bg-lyktan-brand/10"
         >
           {{ link.label }}
         </NuxtLink>
