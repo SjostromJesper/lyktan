@@ -30,24 +30,19 @@ const products = ref<Product[]>([])
 const loading = ref(true)
 const loadError = ref('')
 
-const normalizeTag = (tag?: string | null) =>
-  String(tag ?? '')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .trim()
-    .toLowerCase()
-
 const priceOf = (product: Product) => Number(product.variants?.nodes?.[0]?.price?.amount ?? 0)
 const isAvailable = (product: Product) => product.variants?.nodes?.[0]?.availableForSale !== false
 
-// --- Filters ---
-const selectedTags = ref<Set<string>>(new Set())
+// --- Filters — kept deliberately minimal: sort, price, in-stock. This
+// store's tags are SEO/all-purpose (single designer names, individual game
+// titles, etc.), not a curated facet list, so a full tag cloud is noise
+// rather than a useful filter. ---
 const inStockOnly = ref(false)
 const priceMin = ref<number | null>(null)
 const priceMax = ref<number | null>(null)
+const filtersOpen = ref(false)
 
 const resetFilters = () => {
-  selectedTags.value = new Set()
   inStockOnly.value = false
   priceMin.value = null
   priceMax.value = null
@@ -74,49 +69,16 @@ const loadProducts = async () => {
 
 watch([handle, sortValue], loadProducts, { immediate: true })
 
-const availableFilterTags = computed(() => {
-  const tags = new Map<string, string>()
-
-  for (const product of products.value) {
-    for (const tag of product.tags ?? []) {
-      const normalizedTag = normalizeTag(tag)
-
-      if (!normalizedTag || tags.has(normalizedTag)) {
-        continue
-      }
-
-      tags.set(normalizedTag, tag)
-    }
-  }
-
-  return [...tags.entries()]
-    .sort((left, right) => left[1].localeCompare(right[1], 'sv-SE'))
-    .map(([value, label]) => ({ value, label }))
-})
-
 const priceBounds = computed(() => {
   if (!products.value.length) return { min: 0, max: 0 }
   const prices = products.value.map(priceOf)
   return { min: Math.floor(Math.min(...prices)), max: Math.ceil(Math.max(...prices)) }
 })
 
-const toggleTag = (tag: string) => {
-  const next = new Set(selectedTags.value)
-  if (next.has(tag)) next.delete(tag)
-  else next.add(tag)
-  selectedTags.value = next
-}
-
-const hasActiveFilters = computed(() =>
-  selectedTags.value.size > 0 || inStockOnly.value || priceMin.value !== null || priceMax.value !== null
-)
+const hasActiveFilters = computed(() => inStockOnly.value || priceMin.value !== null || priceMax.value !== null)
 
 const filteredProducts = computed(() => {
   return products.value.filter((product) => {
-    if (selectedTags.value.size && !product.tags?.some((tag) => selectedTags.value.has(normalizeTag(tag)))) {
-      return false
-    }
-
     if (inStockOnly.value && !isAvailable(product)) {
       return false
     }
@@ -150,70 +112,70 @@ useSeoMeta({
         <span class="text-lyktan-ink">{{ collectionTitle || '…' }}</span>
       </nav>
 
-      <h1 class="text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-        {{ collectionTitle || 'Kategori' }}
-      </h1>
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <h1 class="text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
+          {{ collectionTitle || 'Kategori' }}
+        </h1>
 
-      <div v-if="!loading && !loadError" class="rounded-2xl border border-black/8 bg-lyktan-surface/60 p-4 sm:p-5">
-        <div class="flex flex-wrap items-end gap-x-6 gap-y-4">
+        <div v-if="!loading && !loadError" class="flex items-center gap-3">
           <label class="block">
-            <span class="eyebrow mb-1 block">Sortera</span>
+            <span class="sr-only">Sortera</span>
             <select
               v-model="sortValue"
-              class="min-h-10 rounded-lg border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
+              class="min-h-10 rounded-full border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
             >
               <option v-for="option in SORT_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
             </select>
           </label>
 
-          <div class="block">
-            <span class="eyebrow mb-1 block">Pris (kr)</span>
-            <div class="flex items-center gap-2">
-              <input
-                v-model.number="priceMin"
-                type="number"
-                min="0"
-                :placeholder="String(priceBounds.min)"
-                class="min-h-10 w-24 rounded-lg border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
-              >
-              <span class="text-lyktan-mute">–</span>
-              <input
-                v-model.number="priceMax"
-                type="number"
-                min="0"
-                :placeholder="String(priceBounds.max)"
-                class="min-h-10 w-24 rounded-lg border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
-              >
-            </div>
-          </div>
-
-          <label class="flex min-h-10 items-center gap-2 text-sm text-lyktan-ink">
-            <input v-model="inStockOnly" type="checkbox" class="h-4 w-4 rounded border-black/25">
-            Bara i lager
-          </label>
-
           <button
-            v-if="hasActiveFilters"
             type="button"
-            class="min-h-10 text-sm font-medium text-lyktan-accent hover:underline"
-            @click="resetFilters"
+            class="inline-flex min-h-10 items-center gap-1.5 rounded-full border px-4 text-sm font-medium transition"
+            :class="hasActiveFilters ? 'border-lyktan-ink bg-lyktan-ink text-white' : 'border-black/15 text-lyktan-ink hover:bg-black/[0.04]'"
+            @click="filtersOpen = !filtersOpen"
           >
-            Rensa filter
+            Filter
+            <span v-if="hasActiveFilters" class="inline-grid h-4 w-4 place-items-center rounded-full bg-white text-[0.62rem] font-semibold text-lyktan-ink">
+              {{ (priceMin !== null ? 1 : 0) + (priceMax !== null ? 1 : 0) + (inStockOnly ? 1 : 0) }}
+            </span>
           </button>
         </div>
+      </div>
 
-        <div v-if="availableFilterTags.length" class="mt-4 flex flex-wrap gap-2 border-t border-black/8 pt-4">
-          <button
-            v-for="tag in availableFilterTags"
-            :key="tag.value"
-            type="button"
-            class="rounded-full border px-3 py-1 text-[0.82rem] font-medium transition"
-            :class="selectedTags.has(tag.value) ? 'border-lyktan-ink bg-lyktan-ink text-white' : 'border-black/15 text-lyktan-ink hover:bg-black/[0.04]'"
-            @click="toggleTag(tag.value)"
+      <div v-if="filtersOpen" class="flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-black/8 py-4">
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-lyktan-mute">Pris</span>
+          <input
+            v-model.number="priceMin"
+            type="number"
+            min="0"
+            :placeholder="String(priceBounds.min)"
+            class="min-h-9 w-20 rounded-lg border border-black/12 bg-white px-2.5 text-sm text-lyktan-ink"
           >
-            {{ tag.label }}
-          </button>
+          <span class="text-lyktan-mute">–</span>
+          <input
+            v-model.number="priceMax"
+            type="number"
+            min="0"
+            :placeholder="String(priceBounds.max)"
+            class="min-h-9 w-20 rounded-lg border border-black/12 bg-white px-2.5 text-sm text-lyktan-ink"
+          >
+          <span class="text-sm text-lyktan-mute">kr</span>
         </div>
+
+        <label class="flex items-center gap-2 text-sm text-lyktan-ink">
+          <input v-model="inStockOnly" type="checkbox" class="h-4 w-4 rounded border-black/25">
+          Bara i lager
+        </label>
+
+        <button
+          v-if="hasActiveFilters"
+          type="button"
+          class="text-sm font-medium text-lyktan-accent hover:underline"
+          @click="resetFilters"
+        >
+          Rensa
+        </button>
       </div>
 
       <div v-if="loading" class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
@@ -227,7 +189,7 @@ useSeoMeta({
       <p v-else-if="loadError" class="text-sm text-red-600">{{ loadError }}</p>
 
       <template v-else>
-        <p class="text-sm text-lyktan-mute">
+        <p v-if="hasActiveFilters" class="text-sm text-lyktan-mute">
           {{ filteredProducts.length }} av {{ products.length }} produkter
         </p>
 
