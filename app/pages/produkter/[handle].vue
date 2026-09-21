@@ -266,7 +266,7 @@ useSeoMeta({
           <div class="skeleton-block h-3 w-full rounded-full" />
           <div class="skeleton-block h-3 w-2/3 rounded-full" />
 
-          <div class="mt-4 grid gap-4 border-t border-black/8 pt-4">
+          <div class="mt-4 grid gap-4 border-t border-lyktan-line pt-4">
             <div class="skeleton-block h-2.5 w-14 rounded-full" />
             <div class="skeleton-block h-8 w-32 rounded-full" />
             <div class="skeleton-block h-3 w-28 rounded-full" />
@@ -283,7 +283,7 @@ useSeoMeta({
 
       <div v-else-if="product" class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.84fr)]">
         <div class="grid gap-3">
-          <div class="flex items-center justify-center bg-lyktan-surface p-6">
+          <div class="flex items-center justify-center rounded-[10px] border border-lyktan-line bg-lyktan-surface p-6">
             <img
               v-if="selectedImage?.url"
               :src="selectedImage.url"
@@ -300,7 +300,7 @@ useSeoMeta({
               v-for="(image, index) in productImages"
               :key="image.url"
               type="button"
-              class="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-lyktan-surface transition"
+              class="h-16 w-16 shrink-0 overflow-hidden rounded-[7px] border border-lyktan-line bg-lyktan-surface transition"
               :class="index === selectedImageIndex ? 'ring-2 ring-lyktan-ink' : 'opacity-70 hover:opacity-100'"
               @click="selectedImageIndex = index"
             >
@@ -325,7 +325,7 @@ useSeoMeta({
             {{ t('product.noDescription') }}
           </p>
 
-          <div v-if="isUpcoming" class="mt-6 border-t border-black/8 pt-5">
+          <div v-if="isUpcoming" class="mt-6 border-t border-lyktan-line pt-5">
             <p class="text-[0.84rem] font-medium text-lyktan-accent">{{ t('product.comingSoon') }}</p>
             <p class="mt-1 text-sm text-lyktan-mute">
               {{ t('product.estimatedRelease', { date: formatReleaseDate(releaseDate, locale === 'en' ? 'en-GB' : 'sv-SE') }) }}
@@ -342,7 +342,7 @@ useSeoMeta({
                   type="email"
                   required
                   :placeholder="t('product.emailPlaceholder')"
-                  class="min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+                  class="min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
                 >
               </label>
               <button type="submit" class="primary-cta shrink-0" :disabled="interestSubmitting">
@@ -352,9 +352,9 @@ useSeoMeta({
             <p v-if="interestError" class="mt-2 text-sm text-red-600">{{ interestError }}</p>
           </div>
 
-          <div v-else-if="isInStoreOnly" class="mt-6 border-t border-black/8 pt-5">
+          <div v-else-if="isInStoreOnly" class="mt-6 border-t border-lyktan-line pt-5">
             <span class="flex items-baseline gap-2">
-              <strong class="text-[1.6rem] font-semibold tracking-[-0.01em] text-lyktan-ink">
+              <strong class="font-mono tabular-nums text-[1.6rem] font-medium tracking-[-0.01em] text-lyktan-ink">
                 {{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}
               </strong>
             </span>
@@ -364,13 +364,13 @@ useSeoMeta({
             </p>
           </div>
 
-          <div v-else class="mt-6 border-t border-black/8 pt-5">
+          <div v-else class="mt-6 border-t border-lyktan-line pt-5">
             <div class="flex items-end justify-between gap-4 pb-5">
               <span class="flex items-baseline gap-2">
-                <strong class="text-[1.6rem] font-semibold tracking-[-0.01em] text-lyktan-ink">
+                <strong class="font-mono tabular-nums text-[1.6rem] font-medium tracking-[-0.01em] text-lyktan-ink">
                   {{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}
                 </strong>
-                <span v-if="hasDiscount" class="text-sm text-lyktan-mute line-through">
+                <span v-if="hasDiscount" class="font-mono tabular-nums text-sm text-lyktan-mute line-through">
                   {{ formatMoney(selectedVariant?.compareAtPrice?.amount, selectedVariant?.compareAtPrice?.currencyCode) }}
                 </span>
               </span>
@@ -385,7 +385,7 @@ useSeoMeta({
                 <select
                   id="variant"
                   v-model="selectedVariantId"
-                  class="min-h-12 rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+                  class="min-h-12 rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
                 >
                   <option v-for="variant in variants" :key="variant.id" :value="variant.id">
                     {{ variant.title }} · {{ formatMoney(variant.price?.amount, variant.price?.currencyCode) }}

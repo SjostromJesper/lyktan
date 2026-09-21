@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import '~/assets/css/singelkort.css'
+
 type Variant = {
   id: string
   title: string
@@ -44,6 +46,10 @@ const CONDITION_KEYS: Record<string, string> = {
 }
 
 const conditionLabel = (condition: string | null) => (condition && CONDITION_KEYS[condition] ? t(CONDITION_KEYS[condition]) : condition)
+
+// Outline chip in the condition's own colour (see singelkort.css .cond-*)
+const conditionClass = (condition: string | null) =>
+  'cond cond-' + (condition || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
 const cards = ref<SingleCard[]>([])
 const loading = ref(true)
@@ -271,9 +277,9 @@ useSeoMeta({
 </script>
 
 <template>
-  <main class="organic min-h-screen pb-24">
+  <main class="lykta min-h-screen pb-24">
     <div class="page-shell px-4 pt-8 sm:px-6">
-      <nav class="mb-2 text-[12px]" style="color: var(--color-neutral-600)">
+      <nav class="label mb-2 !text-[11.5px]">
         <NuxtLink :to="localePath('/')" class="hover:underline">{{ t('singles.breadcrumbHome') }}</NuxtLink> / {{ t('singles.title') }}
       </nav>
 
@@ -293,19 +299,18 @@ useSeoMeta({
 
       <!-- Desktop filter row -->
       <div
-        class="relative mt-6 hidden items-center gap-2 rounded-full p-2 sm:flex"
-        style="background: var(--color-surface)"
+        class="relative mt-6 hidden items-center gap-2 rounded-[10px] border p-2 sm:flex"
+        style="background: var(--color-surface); border-color: var(--color-divider)"
       >
         <input
           v-model="search"
           type="search"
           :placeholder="t('singles.searchPlaceholder')"
           class="input flex-1"
-          style="background: var(--color-bg)"
         >
 
         <div class="relative">
-          <button type="button" class="btn btn-secondary" style="background: var(--color-bg)" @click="toggleDropdown('game')">
+          <button type="button" class="btn btn-secondary" @click="toggleDropdown('game')">
             {{ t('singles.game') }} <span v-if="selectedGames.size">({{ selectedGames.size }})</span> ▾
           </button>
           <div
@@ -326,7 +331,7 @@ useSeoMeta({
         </div>
 
         <div class="relative">
-          <button type="button" class="btn btn-secondary" style="background: var(--color-bg)" @click="toggleDropdown('set')">
+          <button type="button" class="btn btn-secondary" @click="toggleDropdown('set')">
             {{ t('singles.set') }} <span v-if="selectedSets.size">({{ selectedSets.size }})</span> ▾
           </button>
           <div
@@ -351,7 +356,7 @@ useSeoMeta({
         </div>
 
         <div class="relative">
-          <button type="button" class="btn btn-secondary" style="background: var(--color-bg)" @click="toggleDropdown('condition')">
+          <button type="button" class="btn btn-secondary" @click="toggleDropdown('condition')">
             {{ t('singles.condition') }} <span v-if="selectedConditions.size">({{ selectedConditions.size }})</span> ▾
           </button>
           <div
@@ -372,7 +377,7 @@ useSeoMeta({
         </div>
 
         <div class="relative">
-          <button type="button" class="btn btn-secondary" style="background: var(--color-bg)" @click="toggleDropdown('price')">
+          <button type="button" class="btn btn-secondary" @click="toggleDropdown('price')">
             {{ t('singles.price') }} ▾
           </button>
           <div
@@ -407,7 +412,7 @@ useSeoMeta({
 
       <!-- Mobile filter strip -->
       <div class="mt-6 grid gap-2 sm:hidden">
-        <input v-model="search" type="search" :placeholder="t('singles.searchPlaceholderShort')" class="input" style="background: var(--color-neutral-100)">
+        <input v-model="search" type="search" :placeholder="t('singles.searchPlaceholderShort')" class="input">
         <div class="flex gap-2 overflow-x-auto pb-1">
           <button type="button" class="btn btn-selected shrink-0" style="min-height: 44px" @click="mobileFilterDrawerOpen = true">
             {{ t('shop.filter') }} <span v-if="activeFilterCount">· {{ activeFilterCount }}</span>
@@ -420,7 +425,7 @@ useSeoMeta({
 
       <!-- Active filter chips -->
       <div v-if="!loading && !loadError" class="mt-4 flex flex-wrap items-center gap-1.5 text-[13px]" style="color: var(--color-neutral-700)">
-        <span>{{ t('singles.cardCount', filteredCards.length) }}</span>
+        <span class="num">{{ t('singles.cardCount', filteredCards.length) }}</span>
         <template v-if="activeChips.length">
           <span style="color: var(--color-neutral-400)">·</span>
           <button v-for="chip in activeChips" :key="chip.key" type="button" class="tag tag-accent" @click="chip.remove">
@@ -480,7 +485,7 @@ useSeoMeta({
             </div>
             <div class="truncate text-[14px] font-bold leading-snug">{{ card.title }}</div>
             <div class="mt-0.5 flex items-baseline gap-1.5">
-              <span class="text-[15px] font-bold" :style="{ color: cardIsInStock(card) ? 'var(--color-accent-700)' : 'var(--color-neutral-600)' }">
+              <span class="num text-[15px] font-medium" :style="{ color: cardIsInStock(card) ? 'var(--color-text)' : 'var(--color-neutral-600)' }">
                 {{ cardLowestPrice(card) !== null ? formatMoney(String(cardLowestPrice(card)), cardVariants(card)[0]?.price.currencyCode || 'SEK') : '—' }}
               </span>
               <span class="text-[11px]" style="color: var(--color-neutral-600)">
@@ -495,17 +500,16 @@ useSeoMeta({
       <div v-else class="mt-4">
         <div
           class="hidden gap-3 px-3 pb-2 text-[11px] font-bold uppercase sm:grid"
-          style="grid-template-columns: 56px 1fr 150px 110px 90px 90px 130px; letter-spacing: .08em; color: var(--color-neutral-600)"
+          style="grid-template-columns: 56px 1fr 150px 110px 90px 90px 130px; letter-spacing: .07em; color: var(--color-neutral-600)"
         >
           <div /><div>{{ t('singles.card') }}</div><div>{{ t('singles.set') }}</div><div>{{ t('singles.condition') }}</div><div>{{ t('singles.stock') }}</div><div>{{ t('singles.price') }}</div><div />
         </div>
 
-        <div class="grid gap-1.5">
+        <div class="lykta-table">
           <div
             v-for="row in rows"
             :key="row.key"
-            class="grid items-center gap-3 rounded-[var(--radius-md)] p-3 sm:grid-cols-[56px_1fr_150px_110px_90px_90px_130px]"
-            style="background: var(--color-neutral-100)"
+            class="lykta-row grid items-center gap-3 p-3 sm:grid-cols-[56px_1fr_150px_110px_90px_90px_130px]"
             :class="{ 'opacity-60': !row.variant.availableForSale }"
           >
             <NuxtLink :to="localePath(`/singelkort/${row.card.handle}`)" class="hidden sm:block">
@@ -523,28 +527,28 @@ useSeoMeta({
                 <span v-if="row.foil" class="tag tag-accent align-middle text-[10px]">{{ t('singles.foil') }}</span>
               </div>
               <div class="truncate text-[12px]" style="color: var(--color-neutral-600)">
-                {{ [row.card.cardGame?.value, row.card.collectorNumber?.value, row.card.rarity?.value].filter(Boolean).join(' · ') }}
+                {{ row.card.cardGame?.value }}<template v-if="row.card.collectorNumber?.value"> · <span class="num">{{ row.card.collectorNumber.value }}</span></template><template v-if="row.card.rarity?.value"> · {{ row.card.rarity.value }}</template>
               </div>
             </NuxtLink>
 
             <div class="hidden truncate text-[13px] sm:block">{{ row.card.cardSet?.value }}</div>
 
             <div>
-              <span class="tag" :class="row.condition === 'Nyskick' ? 'tag-accent-2' : 'tag-outline'">{{ conditionLabel(row.condition) }}</span>
+              <span :class="conditionClass(row.condition)">{{ conditionLabel(row.condition) }}</span>
             </div>
 
             <div
-              class="text-[13px] font-bold"
+              class="num text-[13px] font-medium"
               :style="{ color: !row.variant.availableForSale ? 'var(--color-neutral-600)' : (row.variant.quantityAvailable ?? 2) <= 1 ? 'var(--color-accent-700)' : 'var(--color-accent-2-700)' }"
             >
               {{ row.variant.availableForSale ? t('singles.stockCount', { count: row.variant.quantityAvailable ?? '—' }) : t('singles.soldOutShort') }}
             </div>
 
-            <div class="text-[16px] font-bold">{{ formatMoney(row.variant.price.amount, row.variant.price.currencyCode) }}</div>
+            <div class="num text-[15px] font-medium">{{ formatMoney(row.variant.price.amount, row.variant.price.currencyCode) }}</div>
 
             <div class="flex items-center gap-1.5">
               <template v-if="row.variant.availableForSale">
-                <div class="flex items-center gap-2 rounded-full px-2.5 py-1 text-[13px]" style="border: 1px solid var(--color-divider)">
+                <div class="num flex items-center gap-2 rounded-[7px] px-2.5 py-1 text-[13px]" style="border: 1px solid var(--color-divider); background: var(--color-surface)">
                   <button type="button" class="leading-none" @click="setQuantity(row, quantityFor(row.variant.id) - 1)">−</button>
                   <span class="w-4 text-center">{{ quantityFor(row.variant.id) }}</span>
                   <button type="button" class="leading-none" @click="setQuantity(row, quantityFor(row.variant.id) + 1)">+</button>
@@ -569,12 +573,12 @@ useSeoMeta({
 
         <div
           v-if="selectedCount > 0"
-          class="sticky bottom-4 mt-4 flex items-center justify-between rounded-full px-4 py-3"
-          style="background: var(--color-surface); box-shadow: var(--shadow-md)"
+          class="sticky bottom-4 mt-4 flex items-center justify-between rounded-[10px] border px-4 py-3"
+          style="background: var(--color-surface); border-color: var(--color-divider); box-shadow: var(--shadow-md)"
         >
           <div class="text-[14px]">
             <strong>{{ t('singles.cardsSelected', selectedCount) }}</strong>
-            <span style="color: var(--color-neutral-700)"> · {{ formatMoney(String(selectedTotal), 'SEK') }}</span>
+            <span class="num" style="color: var(--color-neutral-700)"> · {{ formatMoney(String(selectedTotal), 'SEK') }}</span>
           </div>
           <button type="button" class="btn btn-primary" :disabled="cartBusy" @click="addAllSelected">{{ t('singles.addAllToCart') }}</button>
         </div>
@@ -583,7 +587,7 @@ useSeoMeta({
 
     <!-- Mobile filter drawer -->
     <div v-if="mobileFilterDrawerOpen" class="fixed inset-0 z-30 flex items-end sm:hidden" style="background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent)" @click.self="mobileFilterDrawerOpen = false">
-      <div class="organic w-full p-4" style="background: var(--color-surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0">
+      <div class="lykta w-full p-4" style="background: var(--color-surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0">
         <div class="mb-3 flex items-center justify-between">
           <h4 class="text-xl">{{ t('shop.filter') }}</h4>
           <button type="button" class="text-[13px] font-bold" style="color: var(--color-accent-700)" @click="resetFilters">{{ t('shop.clearFilters') }}</button>

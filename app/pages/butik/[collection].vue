@@ -125,7 +125,7 @@ useSeoMeta({
             <span class="sr-only">{{ t('shop.sort') }}</span>
             <select
               v-model="sortValue"
-              class="min-h-10 rounded-full border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
+              class="min-h-10 rounded-[7px] border border-lyktan-line bg-lyktan-field px-3 text-sm text-lyktan-ink"
             >
               <option v-for="option in SORT_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
             </select>
@@ -133,8 +133,8 @@ useSeoMeta({
 
           <button
             type="button"
-            class="inline-flex min-h-10 items-center gap-1.5 rounded-full border px-4 text-sm font-medium transition"
-            :class="hasActiveFilters ? 'border-lyktan-ink bg-lyktan-ink text-white' : 'border-black/15 text-lyktan-ink hover:bg-black/[0.04]'"
+            class="inline-flex min-h-10 items-center gap-1.5 rounded-[7px] border px-4 text-sm font-medium transition"
+            :class="hasActiveFilters ? 'border-lyktan-ink bg-lyktan-ink text-white' : 'border-lyktan-line text-lyktan-ink hover:bg-black/[0.04]'"
             @click="filtersOpen = !filtersOpen"
           >
             {{ t('shop.filter') }}
@@ -145,7 +145,7 @@ useSeoMeta({
         </div>
       </div>
 
-      <div v-if="filtersOpen" class="flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-black/8 py-4">
+      <div v-if="filtersOpen" class="flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-lyktan-line py-4">
         <div class="flex items-center gap-2">
           <span class="text-sm text-lyktan-mute">{{ t('shop.price') }}</span>
           <input
@@ -153,7 +153,7 @@ useSeoMeta({
             type="number"
             min="0"
             :placeholder="String(priceBounds.min)"
-            class="min-h-9 w-20 rounded-lg border border-black/12 bg-white px-2.5 text-sm text-lyktan-ink"
+            class="min-h-9 w-20 rounded-[7px] border border-lyktan-line bg-lyktan-field px-2.5 text-sm text-lyktan-ink"
           >
           <span class="text-lyktan-mute">–</span>
           <input
@@ -161,7 +161,7 @@ useSeoMeta({
             type="number"
             min="0"
             :placeholder="String(priceBounds.max)"
-            class="min-h-9 w-20 rounded-lg border border-black/12 bg-white px-2.5 text-sm text-lyktan-ink"
+            class="min-h-9 w-20 rounded-[7px] border border-lyktan-line bg-lyktan-field px-2.5 text-sm text-lyktan-ink"
           >
           <span class="text-sm text-lyktan-mute">{{ t('shop.currency') }}</span>
         </div>
@@ -183,7 +183,7 @@ useSeoMeta({
 
       <div v-if="loading" class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
         <div v-for="i in 8" :key="i" class="grid gap-3">
-          <div class="skeleton-block aspect-square w-full rounded-xl" />
+          <div class="skeleton-block aspect-square w-full rounded-[10px]" />
           <div class="skeleton-block h-3 w-3/4 rounded-full" />
           <div class="skeleton-block h-3 w-1/3 rounded-full" />
         </div>
@@ -200,7 +200,7 @@ useSeoMeta({
           <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
         </div>
 
-        <div v-else class="rounded-2xl bg-lyktan-surface p-8 text-center">
+        <div v-else class="rounded-[10px] border border-lyktan-line bg-lyktan-surface p-8 text-center">
           <p class="eyebrow">{{ t('shop.noProducts') }}</p>
           <h3 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
             {{ t('shop.noProductsMatch') }}

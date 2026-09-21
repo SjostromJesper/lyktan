@@ -130,8 +130,8 @@ useSeoMeta({
         <div
           v-for="t in tiers"
           :key="t.tier"
-          class="rounded-2xl p-6 sm:p-8"
-          :class="t.highlight ? 'bg-lyktan-ink text-white' : 'bg-lyktan-surface text-lyktan-ink'"
+          class="rounded-[10px] p-6 sm:p-8"
+          :class="t.highlight ? 'bg-lyktan-ink text-white' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink'"
         >
           <p class="eyebrow" :class="t.highlight ? '!text-white/60' : ''">
             {{ t.highlight ? 'Störst tillgång' : 'Grundnivå' }}
@@ -152,13 +152,13 @@ useSeoMeta({
               v-for="plan in plansForTier(t.tier)"
               :key="plan.variantId"
               type="button"
-              class="flex min-h-11 items-center justify-between rounded-lg px-4 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40"
-              :class="t.highlight ? 'bg-white/10 text-white hover:bg-white/15' : 'bg-white text-lyktan-ink hover:bg-black/[0.04]'"
+              class="flex min-h-11 items-center justify-between rounded-[7px] px-4 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40"
+              :class="t.highlight ? 'bg-white/10 text-white hover:bg-white/15' : 'border border-lyktan-line bg-lyktan-field text-lyktan-ink hover:border-lyktan-mute'"
               :disabled="!plan.availableForSale"
               @click="openPlan(plan)"
             >
               <span>{{ monthLabels[plan.months] }}</span>
-              <span>{{ plan.priceKr }} kr</span>
+              <span class="font-mono tabular-nums">{{ plan.priceKr }} kr</span>
             </button>
 
             <p v-if="!plansForTier(t.tier).length" class="text-sm" :class="t.highlight ? 'text-white/60' : 'text-lyktan-mute'">
@@ -190,7 +190,7 @@ useSeoMeta({
     </div>
 
     <div v-if="selectedPlan" class="fixed inset-0 z-[95] flex items-center justify-center bg-black/30 p-4" @click.self="closeForm">
-      <div class="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl sm:p-8">
+      <div class="w-full max-w-sm rounded-[10px] bg-white p-6 shadow-xl sm:p-8">
         <div class="mb-5 flex items-start justify-between gap-3">
           <div>
             <p class="eyebrow">{{ selectedPlan.tier === 'stort' ? 'Stort medlemskap' : 'Litet medlemskap' }}</p>
@@ -209,7 +209,7 @@ useSeoMeta({
               v-model="name"
               type="text"
               required
-              class="mt-2 min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+              class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
             >
           </div>
 
@@ -220,7 +220,7 @@ useSeoMeta({
               v-model="email"
               type="email"
               required
-              class="mt-2 min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+              class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
             >
           </div>
 
@@ -230,7 +230,7 @@ useSeoMeta({
               id="member-phone"
               v-model="phone"
               type="tel"
-              class="mt-2 min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
+              class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
             >
           </div>
 

@@ -103,7 +103,7 @@ useSeoMeta({
 
 <template>
   <main class="pb-24">
-    <section v-if="heroItems.length" class="relative overflow-hidden bg-lyktan-surface">
+    <section v-if="heroItems.length" class="relative overflow-hidden border-b border-lyktan-line bg-lyktan-surface">
       <Transition name="hero-copy-transition" mode="out-in">
         <div :key="activeHero?.handle" class="page-shell grid grid-cols-1 items-center gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:py-20">
           <div>

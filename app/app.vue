@@ -20,7 +20,7 @@ onBeforeUnmount(() => {
   <div class="min-h-screen bg-lyktan-paper">
     <NuxtRouteAnnouncer />
 
-    <div class="flex min-h-8 items-center justify-center gap-2 bg-lyktan-surface px-4 text-center text-[0.76rem] text-lyktan-mute">
+    <div class="flex min-h-8 items-center justify-center gap-2 border-b border-lyktan-line bg-lyktan-surface px-4 text-center text-[0.76rem] text-lyktan-mute">
       <span class="inline-block h-1.5 w-1.5 rounded-full" :class="openStatus.isOpen ? 'bg-emerald-500' : 'bg-black/25'" />
       <span class="font-medium text-lyktan-ink">{{ openStatus.label }}</span>
       <span>·</span>
@@ -29,13 +29,13 @@ onBeforeUnmount(() => {
 
     <div
       v-if="!shippingBannerDismissed"
-      class="relative flex min-h-8 items-center justify-center border-b border-black/6 px-4 pr-12 text-center text-[0.76rem] text-lyktan-mute"
+      class="relative flex min-h-8 items-center justify-center border-b border-lyktan-line px-4 pr-12 text-center text-[0.76rem] text-lyktan-mute"
     >
       <span>{{ t('layout.shippingNotice') }}</span>
       <button
         type="button"
         :aria-label="t('layout.dismissShippingNotice')"
-        class="absolute right-2 top-1/2 inline-grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-base text-lyktan-mute hover:bg-black/5"
+        class="absolute right-2 top-1/2 inline-grid h-7 w-7 -translate-y-1/2 place-items-center rounded-[7px] text-base text-lyktan-mute hover:bg-black/5"
         @click="shippingBannerDismissed = true"
       >
         ×
@@ -46,7 +46,7 @@ onBeforeUnmount(() => {
     <CartDrawer />
     <NuxtPage />
 
-    <footer class="mt-24 border-t border-black/8 bg-lyktan-surface">
+    <footer class="mt-24 border-t border-lyktan-line bg-lyktan-surface">
       <div class="page-shell flex flex-col gap-8 px-4 py-12 sm:flex-row sm:items-start sm:justify-between sm:px-6">
         <div class="space-y-2">
           <img src="/images/logo/ink-solo.svg" alt="" aria-hidden="true" class="h-7 w-auto">
@@ -67,7 +67,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
 
-      <div class="border-t border-black/8">
+      <div class="border-t border-lyktan-line">
         <div class="page-shell flex items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <p class="text-xs text-lyktan-mute">© Butik Lyktan</p>
           <SocialLinks />

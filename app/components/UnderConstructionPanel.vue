@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-  <section class="rounded-2xl bg-lyktan-surface px-6 py-8 sm:px-8 sm:py-10">
+  <section class="rounded-[10px] border border-lyktan-line bg-lyktan-surface px-6 py-8 sm:px-8 sm:py-10">
     <p class="eyebrow">{{ t('underConstruction.eyebrow') }}</p>
     <h1 class="mt-3 max-w-2xl text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
       {{ title || t('underConstruction.defaultTitle') }}

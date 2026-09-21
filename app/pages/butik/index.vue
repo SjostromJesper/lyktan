@@ -75,7 +75,7 @@ useSeoMeta({
           v-model="searchTerm"
           type="search"
           :placeholder="t('shop.searchPlaceholder')"
-          class="min-h-12 w-full rounded-full border border-black/12 bg-white px-5 text-sm text-lyktan-ink"
+          class="min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-5 text-sm text-lyktan-ink"
         >
       </label>
 
@@ -96,7 +96,7 @@ useSeoMeta({
             v-for="collection in collections"
             :key="collection.id"
             :to="localePath(`/butik/${collection.handle}`)"
-            class="group flex flex-col overflow-hidden rounded-2xl bg-lyktan-surface transition hover:bg-black/[0.06]"
+            class="group flex flex-col overflow-hidden rounded-[10px] border border-lyktan-line bg-lyktan-surface transition hover:border-lyktan-mute"
           >
             <div class="relative aspect-[4/3] overflow-hidden bg-black/[0.04]">
               <img

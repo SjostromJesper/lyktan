@@ -77,7 +77,7 @@ useSeoMeta({
           </div>
         </div>
 
-        <div class="aspect-[4/3] overflow-hidden rounded-2xl bg-lyktan-surface lg:aspect-auto lg:min-h-[420px]">
+        <div class="aspect-[4/3] overflow-hidden rounded-[10px] border border-lyktan-line bg-lyktan-surface lg:aspect-auto lg:min-h-[420px]">
           <iframe
             :title="t('contact.mapTitle')"
             :src="`https://maps.google.com/maps?q=${mapQuery}&z=15&output=embed`"

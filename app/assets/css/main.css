@@ -1,13 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  /* Typography + neutrals follow docs/kortinkop/DESIGN.md (the kortinköp tool):
+     Familjen Grotesk for text, IBM Plex Mono for prices/numbers, grey-green
+     paper with white panels. Brand orange/maroon stay as the accent. */
+  --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   /* Brand palette (LyktanExport/Preview.jpg): ink/surface are near-identical to the
      old neutrals so most of the site is unaffected — accent/brand are the real change. */
-  --color-lyktan-ink: #191919;
-  --color-lyktan-paper: #ffffff;
-  --color-lyktan-surface: #eaeaea;
-  --color-lyktan-mute: #6e6e73;
+  --color-lyktan-ink: #1D2230;
+  --color-lyktan-paper: #EEF0EC;   /* page ground */
+  --color-lyktan-surface: #FFFFFF; /* panels, image wells — paired with lyktan-line borders */
+  --color-lyktan-field: #F6F7F4;   /* form fields */
+  --color-lyktan-line: #D9DBD4;    /* borders, dividers */
+  --color-lyktan-mute: #666B76;
   /* Maroon — used for accent TEXT (links, hover, small UI) since it holds contrast
      on white; the vivid orange below fails WCAG AA at text sizes on white. */
   --color-lyktan-accent: #720000;
@@ -27,6 +33,12 @@
   body {
     min-height: 100vh;
     overflow-x: hidden;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
   }
 
   * {
@@ -324,15 +336,15 @@
   }
 
   .eyebrow {
-    @apply text-[0.72rem] font-medium text-lyktan-mute;
+    @apply text-[0.72rem] font-semibold uppercase tracking-[0.07em] text-lyktan-mute;
   }
 
   .primary-cta {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-lyktan-brand px-6 text-[0.92rem] font-semibold !text-lyktan-ink transition hover:bg-lyktan-accent hover:!text-white disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[7px] bg-lyktan-brand px-5 text-[0.92rem] font-semibold !text-lyktan-ink transition hover:bg-lyktan-accent hover:!text-white disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .secondary-cta {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-black/15 bg-white px-6 text-[0.92rem] font-medium !text-lyktan-ink transition hover:border-lyktan-brand/50 hover:bg-lyktan-brand/[0.06];
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[7px] border border-lyktan-line bg-white px-5 text-[0.92rem] font-medium !text-lyktan-ink transition hover:border-lyktan-mute hover:bg-lyktan-field disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .tag-chip {

@@ -1,0 +1,225 @@
+/* --- Lykta: the singles corner's design system ---------------------------
+   Same look as the kortinköp tool (docs/kortinkop/DESIGN.md): grey-green
+   neutrals, ink text, one amber "lantern" accent, Familjen Grotesk + IBM
+   Plex Mono, flat bordered panels instead of shadows and pills.
+
+   Scoped under .lykta so nothing leaks into the lyktan-* tokens the rest of
+   the site uses. It exposes the same token and class names the old .organic
+   scope did (--color-neutral-*, .btn, .tag, .card …) so the singelkort
+   markup maps over directly. Fonts are loaded globally in nuxt.config.ts.
+
+   Accent is the site's brand orange (lyktan-brand), with maroon
+   (lyktan-accent) as the text-safe step — same as the rest of the site. */
+.lykta {
+  --color-bg: #EEF0EC;          /* page ground (paper) */
+  --color-surface: #FFFFFF;     /* panels, tiles */
+  --color-text: #1D2230;        /* ink */
+  --color-accent: #FE4D01;      /* brand orange — purchase actions only, always ink text */
+  --color-accent-hover: #720000;
+  --color-accent-2: #2E7D4F;
+  --color-divider: #D9DBD4;
+  --color-focus: #2F6FDB;
+
+  --color-neutral-100: #F6F7F4;
+  --color-neutral-200: #E8EAE5;
+  --color-neutral-300: #D9DBD4;
+  --color-neutral-400: #B9BCB5;
+  --color-neutral-500: #8E929A;
+  --color-neutral-600: #666B76;
+  --color-neutral-700: #4A4F5A;
+  --color-neutral-800: #2C313D;
+  --color-neutral-900: #1D2230;
+
+  --color-accent-100: #FDEEE6;
+  --color-accent-200: #FFD9C2;
+  --color-accent-500: #FE4D01;
+  --color-accent-700: #720000;  /* maroon — text-safe on white */
+  --color-accent-800: #5C0000;
+
+  --color-accent-2-100: #DCEFE3;
+  --color-accent-2-700: #2E7D4F;
+  --color-accent-2-800: #22603C;
+
+  --font-heading: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: var(--font-heading);
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+
+  --shadow-sm: none;
+  --shadow-md: 0 1px 3px rgb(29 34 48 / 0.08), 0 8px 24px rgb(29 34 48 / 0.08);
+  --shadow-lg: 0 1px 3px rgb(29 34 48 / 0.10), 0 12px 32px rgb(29 34 48 / 0.12);
+
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.lykta h1, .lykta h2, .lykta h3, .lykta h4, .lykta h5, .lykta h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  margin: 0;
+}
+
+/* Section labels — uppercase, tracked, muted. Signature of the system. */
+.lykta h6,
+.lykta .label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+}
+
+/* Numbers and codes: prices, collector numbers, counts */
+.lykta .num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+}
+
+.lykta :focus { outline: none; }
+.lykta :focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+
+/* --- Buttons --- */
+.lykta .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  padding: 7px 12px;
+  border-radius: 7px;
+  white-space: nowrap;
+  transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.lykta .btn:hover { border-color: var(--color-neutral-600); }
+.lykta .btn:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Amber is reserved for purchase actions; always dark text on it. */
+.lykta .btn-primary {
+  font-weight: 600;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text);
+}
+.lykta .btn-primary:hover:not(:disabled) { background: var(--color-accent-hover); border-color: var(--color-accent-hover); color: #FFFFFF; }
+
+/* Selected filters / toggles: ink, like the active tab in the tool. */
+.lykta .btn-selected {
+  font-weight: 600;
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: var(--color-bg);
+}
+.lykta .btn-selected:hover { background: var(--color-neutral-800); border-color: var(--color-neutral-800); }
+
+.lykta .btn-secondary { background: var(--color-surface); }
+.lykta .btn-secondary:hover { background: var(--color-neutral-100); }
+
+.lykta .btn-ghost { border-color: transparent; background: transparent; color: var(--color-accent-700); padding-inline: 4px; }
+.lykta .btn-ghost:hover { background: var(--color-accent-100); }
+
+.lykta .btn-icon { width: 36px; height: 36px; padding: 0; font-size: 18px; }
+.lykta .btn-block { width: 100%; }
+
+/* --- Fields --- */
+.lykta .input {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+  caret-color: var(--color-accent);
+  background: var(--color-neutral-100);
+  border: 1px solid var(--color-divider);
+  border-radius: 6px;
+}
+.lykta .input::placeholder { color: var(--color-neutral-600); }
+.lykta .input:hover { border-color: var(--color-neutral-400); }
+.lykta .input:focus-visible { border-color: var(--color-focus); outline: none; background: var(--color-surface); }
+
+.lykta .field { display: grid; gap: 4px; }
+.lykta .field > span { font-size: 12.5px; color: var(--color-neutral-600); }
+
+/* --- Panels (flat; shadow only on floating things) --- */
+.lykta .card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+}
+.lykta .card-kicker {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--color-neutral-600);
+}
+.lykta .card-title { font-family: var(--font-heading); font-weight: 600; font-size: 17px; line-height: 1.2; }
+
+.lykta .elev-sm { box-shadow: var(--shadow-sm); }
+.lykta .elev-md { box-shadow: var(--shadow-md); }
+.lykta .elev-lg { box-shadow: var(--shadow-lg); }
+
+/* --- Tags / chips --- */
+.lykta .tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+.lykta .tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.lykta .tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+.lykta .tag-neutral { background: var(--color-neutral-200); color: var(--color-neutral-800); }
+.lykta .tag-outline { border-color: var(--color-divider); color: var(--color-neutral-700); background: var(--color-surface); }
+
+/* Condition chips — outline in the condition's own colour (Cardmarket-style) */
+.lykta .cond {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 99px;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+  color: var(--color-neutral-700);
+}
+.lykta .cond-nyskick { color: #2E8B57; }
+.lykta .cond-utmarkt { color: #2B7F86; }
+.lykta .cond-bra     { color: #9A7B12; }
+.lykta .cond-ok      { color: #B7791F; }
+.lykta .cond-daligt  { color: #A23A3A; }
+
+/* --- List view as one table-like panel --- */
+.lykta .lykta-table {
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.lykta .lykta-table > .lykta-row + .lykta-row { border-top: 1px solid var(--color-divider); }
+.lykta .lykta-row:hover { background: var(--color-neutral-100); }

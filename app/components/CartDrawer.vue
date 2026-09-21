@@ -27,13 +27,13 @@ const {
     </transition>
 
     <aside
-      class="fixed right-0 top-0 z-[90] flex h-screen w-full max-w-[400px] flex-col gap-4 bg-white p-6 shadow-[-8px_0_32px_rgba(0,0,0,0.08)] transition-transform duration-200 ease-out"
+      class="fixed right-0 top-0 z-[90] flex h-screen w-full max-w-[400px] flex-col gap-4 border-l border-lyktan-line bg-white p-6 shadow-[-8px_0_32px_rgba(29,34,48,0.08)] transition-transform duration-200 ease-out"
       :class="cartOpen ? 'translate-x-0' : 'translate-x-full'"
       :aria-label="t('cart.title')"
     >
       <div class="flex shrink-0 items-start justify-between gap-3">
         <h2 class="text-[1.15rem] font-semibold tracking-[-0.01em] text-lyktan-ink">{{ t('cart.title') }}</h2>
-        <button type="button" :aria-label="t('cart.close')" class="inline-grid h-8 w-8 place-items-center rounded-full text-lyktan-mute hover:bg-black/5 hover:text-lyktan-ink" @click="cartOpen = false">
+        <button type="button" :aria-label="t('cart.close')" class="inline-grid h-8 w-8 place-items-center rounded-[7px] text-lyktan-mute hover:bg-black/5 hover:text-lyktan-ink" @click="cartOpen = false">
           ×
         </button>
       </div>
@@ -47,7 +47,7 @@ const {
           :key="line.id"
           class="grid grid-cols-[64px_1fr_auto] items-center gap-4"
         >
-          <div class="h-16 w-16 overflow-hidden rounded-lg bg-lyktan-surface">
+          <div class="h-16 w-16 overflow-hidden rounded-[7px] bg-lyktan-surface">
             <img
               v-if="line.merchandise?.product?.featuredImage?.url"
               :src="line.merchandise.product.featuredImage.url"
@@ -62,22 +62,22 @@ const {
           <div class="grid gap-0.5">
             <strong class="text-[0.9rem] font-medium leading-tight text-lyktan-ink">{{ line.merchandise?.product?.title }}</strong>
             <span class="text-[0.82rem] text-lyktan-mute">{{ line.merchandise?.title }}</span>
-            <span class="text-[0.82rem] text-lyktan-mute">{{ formatMoney(line.merchandise?.price?.amount, line.merchandise?.price?.currencyCode) }}</span>
+            <span class="font-mono tabular-nums text-[0.8rem] text-lyktan-mute">{{ formatMoney(line.merchandise?.price?.amount, line.merchandise?.price?.currencyCode) }}</span>
           </div>
 
           <div class="inline-flex items-center gap-3">
             <button
               type="button"
-              class="grid h-7 w-7 place-items-center rounded-full text-sm text-lyktan-ink transition hover:bg-black/5 disabled:opacity-40"
+              class="grid h-7 w-7 place-items-center rounded-[7px] text-sm text-lyktan-ink transition hover:bg-black/5 disabled:opacity-40"
               :disabled="cartBusy"
               @click="updateLineQuantity(line.id, line.quantity - 1)"
             >
               −
             </button>
-            <span class="min-w-3 text-center text-sm">{{ line.quantity }}</span>
+            <span class="min-w-3 text-center font-mono tabular-nums text-sm">{{ line.quantity }}</span>
             <button
               type="button"
-              class="grid h-7 w-7 place-items-center rounded-full text-sm text-lyktan-ink transition hover:bg-black/5 disabled:opacity-40"
+              class="grid h-7 w-7 place-items-center rounded-[7px] text-sm text-lyktan-ink transition hover:bg-black/5 disabled:opacity-40"
               :disabled="cartBusy"
               @click="updateLineQuantity(line.id, line.quantity + 1)"
             >
@@ -91,13 +91,13 @@ const {
         <p class="text-sm text-lyktan-mute">{{ t('cart.empty') }}</p>
       </div>
 
-      <div class="grid shrink-0 gap-3 border-t border-black/8 pt-4">
+      <div class="grid shrink-0 gap-3 border-t border-lyktan-line pt-4">
         <div class="flex items-start justify-between gap-3">
           <span class="text-sm text-lyktan-mute">{{ t('cart.subtotal') }}</span>
-          <strong v-if="cart?.cost?.subtotalAmount" class="text-[1.05rem] font-semibold text-lyktan-ink">
+          <strong v-if="cart?.cost?.subtotalAmount" class="font-mono tabular-nums text-[1.05rem] font-medium text-lyktan-ink">
             {{ formatMoney(cart.cost.subtotalAmount.amount, cart.cost.subtotalAmount.currencyCode) }}
           </strong>
-          <strong v-else class="text-[1.05rem] font-semibold text-lyktan-ink">{{ formatMoney('0', 'SEK') }}</strong>
+          <strong v-else class="font-mono tabular-nums text-[1.05rem] font-medium text-lyktan-ink">{{ formatMoney('0', 'SEK') }}</strong>
         </div>
 
         <a v-if="checkoutUrl" :href="checkoutUrl" class="primary-cta w-full">

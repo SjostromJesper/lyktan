@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import '~/assets/css/singelkort.css'
+
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const route = useRoute()
@@ -126,9 +128,9 @@ useSeoMeta({
 </script>
 
 <template>
-  <main class="organic min-h-screen px-4 pb-24 pt-8 sm:px-6">
+  <main class="lykta min-h-screen px-4 pb-24 pt-8 sm:px-6">
     <section class="page-shell grid gap-6">
-      <nav class="flex flex-wrap items-center gap-2 text-sm" style="color: var(--color-neutral-600)">
+      <nav class="label flex flex-wrap items-center gap-2 !text-[11.5px]">
         <NuxtLink :to="localePath('/singelkort')" class="transition hover:underline">{{ t('singles.title') }}</NuxtLink>
         <span class="opacity-40">/</span>
         <span style="color: var(--color-text)">{{ product?.title }}</span>
@@ -174,9 +176,9 @@ useSeoMeta({
         </div>
 
         <div>
-          <p v-if="product.cardGame?.value || product.cardSet?.value" class="text-[12px] uppercase tracking-wide" style="color: var(--color-neutral-600)">
+          <p v-if="product.cardGame?.value || product.cardSet?.value" class="label">
             {{ [product.cardGame?.value, product.cardSet?.value, product.rarity?.value].filter(Boolean).join(' · ') }}
-            <span v-if="product.collectorNumber?.value"> · #{{ product.collectorNumber.value }}</span>
+            <span v-if="product.collectorNumber?.value"> · <span class="num">{{ product.collectorNumber.value }}</span></span>
           </p>
           <h1 class="mt-2 text-[clamp(1.8rem,3vw,2.5rem)] leading-[1.05]">
             {{ product.title }}
@@ -188,7 +190,7 @@ useSeoMeta({
 
           <div class="mt-6 border-t pt-5" style="border-color: var(--color-divider)">
             <div class="flex items-end justify-between gap-4 pb-5">
-              <strong class="text-[1.8rem] font-bold" style="color: var(--color-accent-700)">
+              <strong class="num text-[1.8rem] font-medium" style="color: var(--color-text)">
                 {{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}
               </strong>
               <span class="text-[0.78rem] font-semibold" :style="{ color: isSoldOut ? 'var(--color-neutral-600)' : 'var(--color-accent-2-700)' }">
@@ -197,7 +199,7 @@ useSeoMeta({
             </div>
 
             <div v-if="conditions.length > 1" class="grid gap-2">
-              <span class="text-[0.72rem] uppercase tracking-wide" style="color: var(--color-neutral-600)">{{ t('singles.condition') }}</span>
+              <span class="label">{{ t('singles.condition') }}</span>
               <div class="flex flex-wrap gap-2">
                 <button
                   v-for="condition in conditions"
@@ -213,7 +215,7 @@ useSeoMeta({
             </div>
 
             <div v-if="hasFoilOption" class="mt-4 grid gap-2">
-              <span class="text-[0.72rem] uppercase tracking-wide" style="color: var(--color-neutral-600)">{{ t('singles.foil') }}</span>
+              <span class="label">{{ t('singles.foil') }}</span>
               <div class="flex flex-wrap gap-2">
                 <button
                   type="button"

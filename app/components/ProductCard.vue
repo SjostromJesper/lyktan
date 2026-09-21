@@ -37,7 +37,7 @@ const addToCart = async () => {
 
 <template>
   <article class="group flex w-full flex-col">
-    <NuxtLink :to="productPath" class="relative aspect-square overflow-hidden bg-lyktan-surface">
+    <NuxtLink :to="productPath" class="relative aspect-square overflow-hidden rounded-[10px] border border-lyktan-line bg-lyktan-surface">
       <img
         v-if="product.featuredImage?.url"
         :src="product.featuredImage.url"
@@ -66,7 +66,7 @@ const addToCart = async () => {
       <NuxtLink :to="productPath" class="text-[0.9rem] leading-tight text-lyktan-ink line-clamp-2">
         {{ product.title }}
       </NuxtLink>
-      <p class="flex items-baseline gap-2 text-[0.9rem] font-medium text-lyktan-ink">
+      <p class="flex items-baseline gap-2 font-mono tabular-nums text-[0.88rem] font-medium text-lyktan-ink">
         <span>{{ formatMoney(firstVariant?.price?.amount, firstVariant?.price?.currencyCode) }}</span>
         <span v-if="hasDiscount" class="text-[0.8rem] font-normal text-lyktan-mute line-through">
           {{ formatMoney(firstVariant?.compareAtPrice?.amount, firstVariant?.compareAtPrice?.currencyCode) }}
