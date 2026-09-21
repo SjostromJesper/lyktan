@@ -21,8 +21,11 @@ export default defineNuxtConfig({
     // that loader's dev-mode `?import` transform 404s for this project's
     // Vite setup, leaving t() silently falling back to raw keys client-side.
     locales: [
-      { code: 'sv', language: 'sv-SE', name: 'Svenska' },
-      { code: 'en', language: 'en-US', name: 'English' }
+      { code: 'sv', language: 'sv-SE', name: 'Svenska' }
+      // English is switched off for now — the site is Swedish only. To turn it
+      // back on: restore the line below and remove the '/en' redirects in
+      // routeRules. en.json and all translations are kept as they are.
+      // { code: 'en', language: 'en-US', name: 'English' }
     ],
     defaultLocale: 'sv',
     strategy: 'prefix_except_default'
@@ -83,6 +86,9 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
+    // English is off for now (see i18n.locales) — send old /en links to the Swedish page
+    '/en': { redirect: { to: '/', statusCode: 302 } },
+    '/en/**': { redirect: { to: '/**', statusCode: 302 } },
     '/riftbound-unleashed-prerelease': {
       headers: {
         'cache-control': 'no-store, max-age=0'

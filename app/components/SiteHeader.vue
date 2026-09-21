@@ -43,6 +43,7 @@ const otherLocaleCode = computed(() => (typeof otherLocale.value === 'string' ? 
 
       <div class="flex items-center gap-1">
         <NuxtLink
+          v-if="otherLocale"
           :to="switchLocalePath(otherLocaleCode)"
           class="hidden h-8 items-center rounded-full border border-lyktan-line px-3 text-[0.72rem] font-semibold tracking-[0.06em] text-lyktan-mute transition hover:border-lyktan-ink hover:text-lyktan-ink sm:inline-flex"
         >
@@ -115,6 +116,7 @@ const otherLocaleCode = computed(() => (typeof otherLocale.value === 'string' ? 
           {{ link.label }}
         </NuxtLink>
         <NuxtLink
+          v-if="otherLocale"
           :to="switchLocalePath(otherLocaleCode)"
           class="block min-h-11 rounded-[10px] px-3 py-2.5 text-[1rem] font-medium text-lyktan-ink transition hover:bg-lyktan-well"
         >
