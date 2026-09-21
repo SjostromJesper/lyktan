@@ -8,9 +8,14 @@ type SearchProduct = {
   variants: { nodes: { id: string, price: { amount: string, currencyCode: string }, compareAtPrice: { amount: string, currencyCode: string } | null }[] }
 }
 
-const { data: collectionsData, pending: loadingCollections } = await useAsyncData('butik-collections', () =>
-  $fetch<{ collections: Collection[] }>('/api/shopify/collections')
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
+
+const { data: collectionsData, pending: loadingCollections, refresh: refreshCollections } = await useAsyncData('butik-collections', () =>
+  $fetch<{ collections: Collection[] }>('/api/shopify/collections', { query: { lang: locale.value } })
 )
+
+watch(locale, () => refreshCollections())
 
 const collections = computed(() => collectionsData.value?.collections ?? [])
 
@@ -29,7 +34,7 @@ const runSearch = async (term: string) => {
   searching.value = true
 
   try {
-    const res = await $fetch<{ products: SearchProduct[] }>('/api/shopify/search', { query: { q: term } })
+    const res = await $fetch<{ products: SearchProduct[] }>('/api/shopify/search', { query: { q: term, lang: locale.value } })
     searchResults.value = res.products
   } catch {
     searchResults.value = []
@@ -47,7 +52,7 @@ const isSearching = computed(() => searchTerm.value.trim().length > 0)
 
 useSeoMeta({
   title: 'Butik | Butik Lyktan',
-  description: 'Bläddra bland kortspel, miniatyrspel, brädspel och rollspel hos Butik Lyktan.'
+  description: () => t('shop.seoDescription')
 })
 </script>
 
@@ -55,42 +60,42 @@ useSeoMeta({
   <main class="px-4 pb-24 pt-10 sm:px-6">
     <div class="page-shell grid gap-8">
       <div>
-        <p class="eyebrow">Butik</p>
+        <p class="eyebrow">{{ t('home.shopEyebrow') }}</p>
         <h1 class="mt-2 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-          Bläddra bland produkterna
+          {{ t('home.browseProducts') }}
         </h1>
         <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
-          Produkter kan köpas direkt och hämtas ut i butik medan vi bygger vidare resten av upplevelsen.
+          {{ t('shop.intro') }}
         </p>
       </div>
 
       <label class="block max-w-md">
-        <span class="sr-only">Sök produkter</span>
+        <span class="sr-only">{{ t('shop.searchLabel') }}</span>
         <input
           v-model="searchTerm"
           type="search"
-          placeholder="Sök efter produkter…"
+          :placeholder="t('shop.searchPlaceholder')"
           class="min-h-12 w-full rounded-full border border-black/12 bg-white px-5 text-sm text-lyktan-ink"
         >
       </label>
 
       <template v-if="isSearching">
-        <p v-if="searching" class="text-sm text-lyktan-mute">Söker…</p>
-        <p v-else-if="!searchResults.length" class="text-sm text-lyktan-mute">Inga produkter matchade "{{ searchTerm }}".</p>
+        <p v-if="searching" class="text-sm text-lyktan-mute">{{ t('shop.searching') }}</p>
+        <p v-else-if="!searchResults.length" class="text-sm text-lyktan-mute">{{ t('shop.noResults', { term: searchTerm }) }}</p>
         <div v-else class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
           <ProductCard v-for="product in searchResults" :key="product.id" :product="product" />
         </div>
       </template>
 
       <template v-else>
-        <p v-if="loadingCollections" class="text-sm text-lyktan-mute">Hämtar kategorier…</p>
-        <p v-else-if="!collections.length" class="text-sm text-lyktan-mute">Inga kategorier ännu.</p>
+        <p v-if="loadingCollections" class="text-sm text-lyktan-mute">{{ t('shop.loadingCategories') }}</p>
+        <p v-else-if="!collections.length" class="text-sm text-lyktan-mute">{{ t('shop.noCategories') }}</p>
 
         <div v-else class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           <NuxtLink
             v-for="collection in collections"
             :key="collection.id"
-            :to="`/butik/${collection.handle}`"
+            :to="localePath(`/butik/${collection.handle}`)"
             class="group flex flex-col overflow-hidden rounded-2xl bg-lyktan-surface transition hover:bg-black/[0.06]"
           >
             <div class="relative aspect-[4/3] overflow-hidden bg-black/[0.04]">

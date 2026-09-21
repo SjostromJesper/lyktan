@@ -21,8 +21,11 @@ const getStockholmParts = (date: Date) => {
 }
 
 export const useStoreHours = () => {
+  const { t } = useI18n()
   const now = useState('store-hours-now', () => new Date())
   let interval: ReturnType<typeof window.setInterval> | undefined
+
+  const weekdayLabel = (key: number) => t(`hours.weekday.${key}`)
 
   const todaySchedule = computed(() => {
     const stockholmDate = new Date(now.value.toLocaleString('en-US', { timeZone: 'Europe/Stockholm' }))
@@ -43,8 +46,8 @@ export const useStoreHours = () => {
 
     return {
       isOpen,
-      label: isOpen ? 'Öppet' : 'Stängt',
-      message: isOpen ? `${schedule.label} ${schedule.display}` : `${schedule.label} stängt just nu`
+      label: isOpen ? t('hours.open') : t('hours.closed'),
+      message: isOpen ? `${weekdayLabel(schedule.key)} ${schedule.display}` : t('hours.closedNow', { day: weekdayLabel(schedule.key) })
     }
   })
 
@@ -56,9 +59,9 @@ export const useStoreHours = () => {
 
       if (last && last.display === entry.display) {
         last.keys.push(entry.key)
-        last.labels.push(entry.label)
+        last.labels.push(weekdayLabel(entry.key))
       } else {
-        groups.push({ keys: [entry.key], labels: [entry.label], display: entry.display })
+        groups.push({ keys: [entry.key], labels: [weekdayLabel(entry.key)], display: entry.display })
       }
     }
 

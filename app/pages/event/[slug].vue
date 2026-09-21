@@ -1,7 +1,9 @@
 <script setup lang="ts">
+const { t } = useI18n()
+
 useSeoMeta({
   title: 'Event | Butik Lyktan',
-  description: 'Eventsidorna ar tillfalligt under konstruktion.'
+  description: () => t('events.slugSeoDescription')
 })
 </script>
 
@@ -9,8 +11,8 @@ useSeoMeta({
   <main class="locked-page">
     <section class="locked-shell">
       <UnderConstructionPanel
-        title="Den här eventsidan öppnar snart."
-        text="Vi finslipar eventsidorna just nu. Just nu är det bara Magic: The Gathering - Marvel-prereleasen som är öppen på sajten."
+        :title="t('events.slugTitle')"
+        :text="t('events.slugText')"
       />
     </section>
   </main>

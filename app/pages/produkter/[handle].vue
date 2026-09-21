@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { formatReleaseDate, isRecentRelease, isUpcomingRelease } from '#shared/utils/productRelease'
 
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
 const route = useRoute()
 const router = useRouter()
 const handle = computed(() => String(route.params.handle || ''))
@@ -36,7 +38,8 @@ const loadProduct = async (force = false) => {
   }
 
   try {
-    const query = force ? { t: Date.now() } : undefined
+    const query: Record<string, unknown> = { lang: locale.value }
+    if (force) query.t = Date.now()
 
     productResponse.value = await $fetch(`/api/shopify/product/${handle.value}`, {
       query,
@@ -55,7 +58,7 @@ if (import.meta.server) {
   await loadProduct()
 }
 
-watch(handle, () => {
+watch([handle, locale], () => {
   selectedVariantId.value = ''
   loadProduct()
 })
@@ -109,6 +112,7 @@ const hasDiscount = computed(() => {
 })
 
 const breadcrumbCollection = computed(() => product.value?.collections?.nodes?.[0] ?? null)
+const isSingleCard = computed(() => (product.value?.collections?.nodes ?? []).some((c: any) => c.handle === 'singelkort'))
 
 const releaseDate = computed(() => product.value?.releaseDate?.value ?? null)
 const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
@@ -139,7 +143,7 @@ const submitInterest = async () => {
     })
     interestSubmitted.value = true
   } catch (err: any) {
-    interestError.value = err?.data?.statusMessage || 'Något gick fel, försök igen.'
+    interestError.value = err?.data?.statusMessage || t('product.genericError')
   } finally {
     interestSubmitting.value = false
   }
@@ -209,23 +213,24 @@ const variantAvailability = (variant: any) => {
   }
 
   if (variant.availableForSale === false || variant.quantityAvailable === 0) {
-    return 'Slutsåld'
+    return t('product.soldOut')
   }
 
   if (typeof variant.quantityAvailable === 'number') {
     if (variant.quantityAvailable > 99) {
-      return '99+ kvar'
+      return t('product.stock99Plus')
     }
 
-    return `${variant.quantityAvailable} kvar`
+    return t('product.stockLeft', { count: variant.quantityAvailable })
   }
 
-  return 'Finns i lager'
+  return t('product.inStock')
 }
 
 useSeoMeta({
-  title: () => product.value?.title ? `${product.value.title} | Butik Lyktan` : 'Produkt | Butik Lyktan',
-  description: () => product.value?.description || 'Produktsida hos Butik Lyktan.'
+  title: () => product.value?.title ? `${product.value.title} | Butik Lyktan` : `${t('product.eyebrow')} | Butik Lyktan`,
+  description: () => product.value?.description || t('product.seoDescription'),
+  robots: () => isSingleCard.value ? 'noindex, nofollow' : undefined
 })
 </script>
 
@@ -233,17 +238,19 @@ useSeoMeta({
   <main class="px-4 pb-24 pt-8 sm:px-6">
     <section class="page-shell grid gap-6">
       <nav class="flex flex-wrap items-center gap-2 text-sm text-lyktan-mute">
-        <NuxtLink to="/butik" class="transition hover:text-lyktan-ink">Butik</NuxtLink>
-        <template v-if="breadcrumbCollection">
+        <NuxtLink :to="isSingleCard ? localePath('/singelkort') : localePath('/butik')" class="transition hover:text-lyktan-ink">
+          {{ isSingleCard ? t('singles.title') : t('home.shopEyebrow') }}
+        </NuxtLink>
+        <template v-if="breadcrumbCollection && !isSingleCard">
           <span class="text-black/20">/</span>
-          <NuxtLink :to="`/butik/${breadcrumbCollection.handle}`" class="transition hover:text-lyktan-ink">{{ breadcrumbCollection.title }}</NuxtLink>
+          <NuxtLink :to="localePath(`/butik/${breadcrumbCollection.handle}`)" class="transition hover:text-lyktan-ink">{{ breadcrumbCollection.title }}</NuxtLink>
         </template>
         <span class="text-black/20">/</span>
         <span class="text-lyktan-ink">{{ product?.title }}</span>
       </nav>
 
       <button type="button" class="secondary-cta w-fit !min-h-9 !px-4 !text-[0.84rem]" @click="goBack">
-        ← Tillbaka
+        ← {{ t('product.back') }}
       </button>
 
       <div v-if="loadingProduct" class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.84fr)]" aria-hidden="true">
@@ -269,8 +276,8 @@ useSeoMeta({
       </div>
 
       <div v-else-if="error" class="bg-lyktan-surface p-8">
-        <p class="eyebrow">API-fel</p>
-        <h1 class="mt-3 text-[clamp(1.6rem,2.8vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">Produkten kunde inte laddas.</h1>
+        <p class="eyebrow">{{ t('product.apiError') }}</p>
+        <h1 class="mt-3 text-[clamp(1.6rem,2.8vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">{{ t('product.loadFailed') }}</h1>
         <p class="mt-4 text-sm leading-7 text-lyktan-mute">{{ error.message }}</p>
       </div>
 
@@ -304,7 +311,7 @@ useSeoMeta({
 
         <div>
           <p class="eyebrow">
-            Produkt<span v-if="isNew"> · Nyhet</span>
+            {{ t('product.eyebrow') }}<span v-if="isNew"> · {{ t('product.new') }}</span>
           </p>
           <h1 class="mt-3 text-[clamp(1.7rem,2.8vw,2.3rem)] font-semibold leading-[1.15] tracking-[-0.01em] text-lyktan-ink">
             {{ product.title }}
@@ -315,31 +322,31 @@ useSeoMeta({
             v-html="productDescriptionHtml"
           />
           <p v-else class="mt-4 text-sm leading-7 text-lyktan-mute">
-            Lägg till en produktbeskrivning i Shopify så visas den här automatiskt.
+            {{ t('product.noDescription') }}
           </p>
 
           <div v-if="isUpcoming" class="mt-6 border-t border-black/8 pt-5">
-            <p class="text-[0.84rem] font-medium text-lyktan-accent">Kommer snart</p>
+            <p class="text-[0.84rem] font-medium text-lyktan-accent">{{ t('product.comingSoon') }}</p>
             <p class="mt-1 text-sm text-lyktan-mute">
-              Beräknad release: {{ formatReleaseDate(releaseDate) }}. Lämna din e-post så mailar vi dig när den går att förboka eller köpa.
+              {{ t('product.estimatedRelease', { date: formatReleaseDate(releaseDate, locale === 'en' ? 'en-GB' : 'sv-SE') }) }}
             </p>
 
             <template v-if="interestSubmitted">
-              <p class="mt-4 text-sm font-medium text-emerald-600">Tack! Vi mailar dig när den blir tillgänglig.</p>
+              <p class="mt-4 text-sm font-medium text-emerald-600">{{ t('product.interestThanks') }}</p>
             </template>
             <form v-else class="mt-4 flex flex-col gap-3 sm:flex-row" @submit.prevent="submitInterest">
               <label class="flex-1">
-                <span class="sr-only">E-post</span>
+                <span class="sr-only">{{ t('product.emailLabel') }}</span>
                 <input
                   v-model="interestEmail"
                   type="email"
                   required
-                  placeholder="din@epost.se"
+                  :placeholder="t('product.emailPlaceholder')"
                   class="min-h-12 w-full rounded-lg border border-black/12 bg-white px-4 text-sm text-lyktan-ink"
                 >
               </label>
               <button type="submit" class="primary-cta shrink-0" :disabled="interestSubmitting">
-                {{ interestSubmitting ? 'Skickar...' : 'Få en påminnelse' }}
+                {{ interestSubmitting ? t('product.sending') : t('product.getReminder') }}
               </button>
             </form>
             <p v-if="interestError" class="mt-2 text-sm text-red-600">{{ interestError }}</p>
@@ -351,9 +358,9 @@ useSeoMeta({
                 {{ formatMoney(selectedVariant?.price?.amount, selectedVariant?.price?.currencyCode) }}
               </strong>
             </span>
-            <p class="mt-3 text-[0.84rem] font-medium text-lyktan-ink">Endast i butik</p>
+            <p class="mt-3 text-[0.84rem] font-medium text-lyktan-ink">{{ t('product.inStoreOnly') }}</p>
             <p class="mt-1 text-sm text-lyktan-mute">
-              Den här produkten går inte att köpa online — kom förbi butiken i Järfälla för att handla den.
+              {{ t('product.inStoreOnlyText') }}
             </p>
           </div>
 
@@ -374,7 +381,7 @@ useSeoMeta({
 
             <div class="grid gap-4">
               <div v-if="variants.length > 1" class="grid gap-2">
-                <label for="variant" class="eyebrow">Välj variant</label>
+                <label for="variant" class="eyebrow">{{ t('product.chooseVariant') }}</label>
                 <select
                   id="variant"
                   v-model="selectedVariantId"
@@ -394,10 +401,10 @@ useSeoMeta({
               >
                 {{
                   isSoldOut
-                    ? 'Ej tillgänglig'
+                    ? t('product.unavailable')
                     : loadingVariantId === selectedVariant?.id
-                      ? 'Lägger till...'
-                      : 'Lägg i kundvagn'
+                      ? t('product.adding')
+                      : t('product.addToCart')
                 }}
               </button>
             </div>
@@ -406,9 +413,9 @@ useSeoMeta({
       </div>
 
       <div v-else class="bg-lyktan-surface p-8">
-        <p class="eyebrow">Ingen produkt</p>
-        <h1 class="mt-3 text-[clamp(1.6rem,2.8vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">Den här produkten finns inte.</h1>
-        <p class="mt-4 text-sm leading-7 text-lyktan-mute">Kontrollera handlet i Shopify eller länken du försökte öppna.</p>
+        <p class="eyebrow">{{ t('product.noProduct') }}</p>
+        <h1 class="mt-3 text-[clamp(1.6rem,2.8vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">{{ t('product.noProductTitle') }}</h1>
+        <p class="mt-4 text-sm leading-7 text-lyktan-mute">{{ t('product.noProductText') }}</p>
       </div>
     </section>
   </main>

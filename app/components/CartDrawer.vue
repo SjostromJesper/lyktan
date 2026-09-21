@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const {
   cart,
   cartBusy,
@@ -20,7 +21,7 @@ const {
         v-if="cartOpen"
         type="button"
         class="fixed inset-0 z-[89] border-0 bg-black/30"
-        aria-label="Stäng kundvagnen"
+        :aria-label="t('cart.close')"
         @click="cartOpen = false"
       />
     </transition>
@@ -28,11 +29,11 @@ const {
     <aside
       class="fixed right-0 top-0 z-[90] flex h-screen w-full max-w-[400px] flex-col gap-4 bg-white p-6 shadow-[-8px_0_32px_rgba(0,0,0,0.08)] transition-transform duration-200 ease-out"
       :class="cartOpen ? 'translate-x-0' : 'translate-x-full'"
-      aria-label="Kundvagn"
+      :aria-label="t('cart.title')"
     >
       <div class="flex shrink-0 items-start justify-between gap-3">
-        <h2 class="text-[1.15rem] font-semibold tracking-[-0.01em] text-lyktan-ink">Kundvagn</h2>
-        <button type="button" aria-label="Stäng" class="inline-grid h-8 w-8 place-items-center rounded-full text-lyktan-mute hover:bg-black/5 hover:text-lyktan-ink" @click="cartOpen = false">
+        <h2 class="text-[1.15rem] font-semibold tracking-[-0.01em] text-lyktan-ink">{{ t('cart.title') }}</h2>
+        <button type="button" :aria-label="t('cart.close')" class="inline-grid h-8 w-8 place-items-center rounded-full text-lyktan-mute hover:bg-black/5 hover:text-lyktan-ink" @click="cartOpen = false">
           ×
         </button>
       </div>
@@ -87,12 +88,12 @@ const {
       </div>
 
       <div v-else class="grid flex-1 place-items-center py-10 text-center">
-        <p class="text-sm text-lyktan-mute">Kundvagnen är tom.</p>
+        <p class="text-sm text-lyktan-mute">{{ t('cart.empty') }}</p>
       </div>
 
       <div class="grid shrink-0 gap-3 border-t border-black/8 pt-4">
         <div class="flex items-start justify-between gap-3">
-          <span class="text-sm text-lyktan-mute">Subtotal</span>
+          <span class="text-sm text-lyktan-mute">{{ t('cart.subtotal') }}</span>
           <strong v-if="cart?.cost?.subtotalAmount" class="text-[1.05rem] font-semibold text-lyktan-ink">
             {{ formatMoney(cart.cost.subtotalAmount.amount, cart.cost.subtotalAmount.currencyCode) }}
           </strong>
@@ -100,7 +101,7 @@ const {
         </div>
 
         <a v-if="checkoutUrl" :href="checkoutUrl" class="primary-cta w-full">
-          Gå till betalning
+          {{ t('cart.checkout') }}
         </a>
       </div>
     </aside>

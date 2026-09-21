@@ -20,5 +20,5 @@ export const isRecentRelease = (releaseDate: string | null | undefined): boolean
 }
 
 /** Formats an ISO date (YYYY-MM-DD) as e.g. "12 september 2026" for display. */
-export const formatReleaseDate = (releaseDate: string): string =>
-  new Intl.DateTimeFormat('sv-SE', { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${releaseDate}T00:00:00`))
+export const formatReleaseDate = (releaseDate: string, locale: string = 'sv-SE'): string =>
+  new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(`${releaseDate}T00:00:00`))

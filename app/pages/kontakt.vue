@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const { openStatus, groupedHours } = useStoreHours()
 
 const address = 'Veddestabron 8B, 177 48 Järfälla'
@@ -6,7 +7,7 @@ const mapQuery = encodeURIComponent(address)
 
 useSeoMeta({
   title: 'Kontakt | Butik Lyktan',
-  description: 'Besök Butik Lyktan på Veddestabron 8B i Järfälla, eller kontakta oss via e-post.'
+  description: () => t('contact.seoDescription')
 })
 </script>
 
@@ -14,20 +15,19 @@ useSeoMeta({
   <main class="px-4 pb-24 pt-10 sm:px-6">
     <div class="page-shell grid gap-10">
       <div>
-        <p class="eyebrow">Kontakt</p>
+        <p class="eyebrow">{{ t('nav.contact') }}</p>
         <h1 class="mt-2 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-          Besök oss i butiken
+          {{ t('contact.title') }}
         </h1>
         <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
-          Vi finns i Järfälla och hjälper gärna till med kortspel, miniatyrspel, brädspel och rollspel —
-          både i butiken och via mejl.
+          {{ t('contact.intro') }}
         </p>
       </div>
 
       <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <div class="space-y-8">
           <div>
-            <span class="eyebrow">Adress</span>
+            <span class="eyebrow">{{ t('contact.address') }}</span>
             <p class="mt-2 text-lyktan-ink">Veddestabron 8B</p>
             <p class="text-lyktan-mute">177 48 Järfälla</p>
             <a
@@ -36,12 +36,12 @@ useSeoMeta({
               rel="noopener"
               class="secondary-cta mt-4 !inline-flex !min-h-10 !w-fit !px-4 !text-[0.82rem]"
             >
-              Vägbeskrivning
+              {{ t('contact.directions') }}
             </a>
           </div>
 
           <div>
-            <span class="eyebrow">E-post</span>
+            <span class="eyebrow">{{ t('contact.email') }}</span>
             <p class="mt-2">
               <a href="mailto:hej@butiklyktan.se" class="text-lyktan-ink transition hover:text-lyktan-accent">
                 hej@butiklyktan.se
@@ -50,14 +50,14 @@ useSeoMeta({
           </div>
 
           <div>
-            <span class="eyebrow">Sociala medier</span>
+            <span class="eyebrow">{{ t('contact.socialMedia') }}</span>
             <div class="mt-2 -ml-2">
               <SocialLinks />
             </div>
           </div>
 
           <div>
-            <span class="eyebrow">Öppettider</span>
+            <span class="eyebrow">{{ t('contact.openingHours') }}</span>
             <div class="mt-2 space-y-1">
               <p
                 v-for="group in groupedHours"
@@ -79,7 +79,7 @@ useSeoMeta({
 
         <div class="aspect-[4/3] overflow-hidden rounded-2xl bg-lyktan-surface lg:aspect-auto lg:min-h-[420px]">
           <iframe
-            title="Karta till Butik Lyktan"
+            :title="t('contact.mapTitle')"
             :src="`https://maps.google.com/maps?q=${mapQuery}&z=15&output=embed`"
             class="h-full w-full border-0"
             loading="lazy"

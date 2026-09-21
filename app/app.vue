@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const { t } = useI18n()
 const { loadExistingCart } = useShopifyCart()
 
 const shippingBannerDismissed = useState('shipping-banner-dismissed', () => false)
@@ -30,10 +31,10 @@ onBeforeUnmount(() => {
       v-if="!shippingBannerDismissed"
       class="relative flex min-h-8 items-center justify-center border-b border-black/6 px-4 pr-12 text-center text-[0.76rem] text-lyktan-mute"
     >
-      <span>Frakt är inte tillgängligt just nu. Det går enbart att hämta ut produkter i butiken.</span>
+      <span>{{ t('layout.shippingNotice') }}</span>
       <button
         type="button"
-        aria-label="Stäng fraktmeddelande"
+        :aria-label="t('layout.dismissShippingNotice')"
         class="absolute right-2 top-1/2 inline-grid h-7 w-7 -translate-y-1/2 place-items-center rounded-full text-base text-lyktan-mute hover:bg-black/5"
         @click="shippingBannerDismissed = true"
       >

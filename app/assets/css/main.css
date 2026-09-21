@@ -51,6 +51,278 @@
     @apply mx-auto w-full max-w-[1180px];
   }
 
+  /* --- Organic: the singles corner's design system, per the
+     design_handoff_singelkort spec. Scoped under .organic so it never
+     leaks into the lyktan-* tokens the rest of the site uses — component
+     classes below mirror the handoff's organic/styles.css class names
+     (.btn/.tag/.input/.card/.nav) so the wireframe markup maps over
+     directly instead of inventing parallel class names. --- */
+  .organic {
+    /* Recolored to the site's real lyktan-* palette (main.css @theme above)
+       instead of Organic's own cream/terracotta/sage — same component
+       shapes and layout, but brand orange/maroon/ink/surface throughout so
+       this page reads as Butik Lyktan, not a separate skin. */
+    --color-bg: #ffffff;
+    --color-surface: #eaeaea;
+    --color-text: #191919;
+    --color-accent: #fe4d01;
+    --color-accent-2: #10b981;
+    --color-divider: color-mix(in srgb, #191919 12%, transparent);
+
+    --color-neutral-100: #f7f7f7;
+    --color-neutral-200: #eaeaea;
+    --color-neutral-300: #d8d8d8;
+    --color-neutral-400: #b8b8b8;
+    --color-neutral-500: #98938d;
+    --color-neutral-600: #6e6e73;
+    --color-neutral-700: #4a4a4d;
+    --color-neutral-800: #2c2c2e;
+    --color-neutral-900: #191919;
+
+    /* Orange tints for badges/chips, deep maroon (the site's existing
+       text-safe accent step) for anything read as body/price text. */
+    --color-accent-100: #fdeee6;
+    --color-accent-200: #ffd9c2;
+    --color-accent-300: #ffb98c;
+    --color-accent-400: #ff8a4d;
+    --color-accent-500: #fe4d01;
+    --color-accent-600: #d84400;
+    --color-accent-700: #720000;
+    --color-accent-800: #5c0000;
+    --color-accent-900: #400000;
+
+    --color-accent-2-100: #d1fae5;
+    --color-accent-2-200: #a7f3d0;
+    --color-accent-2-300: #6ee7b7;
+    --color-accent-2-400: #34d399;
+    --color-accent-2-500: #10b981;
+    --color-accent-2-600: #059669;
+    --color-accent-2-700: #047857;
+    --color-accent-2-800: #065f46;
+    --color-accent-2-900: #064e3b;
+
+    /* Organic's own display font (Caprasimo) read as too thick/hard to
+       read at these sizes — use the same system sans the rest of the site
+       is set in, just heavier weight for headings, instead of a separate
+       display face. */
+    --font-heading: var(--font-sans);
+    --font-body: var(--font-sans);
+
+    --space-1: 4.4px;
+    --space-2: 8.8px;
+    --space-3: 13.2px;
+    --space-4: 17.6px;
+    --space-6: 26.4px;
+    --space-8: 35.2px;
+
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 28px;
+
+    --shadow-sm: 0 1px 2px color-mix(in srgb, #191919 14%, transparent);
+    --shadow-md: 0 3px 10px color-mix(in srgb, #191919 16%, transparent);
+    --shadow-lg: 0 12px 32px color-mix(in srgb, #191919 22%, transparent);
+
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-body);
+  }
+
+  .organic h1, .organic h2, .organic h3, .organic h4, .organic h5, .organic h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  .organic h6 {
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .organic .text-muted {
+    color: color-mix(in srgb, var(--color-text) 55%, transparent);
+  }
+
+  .organic :focus {
+    outline: none;
+  }
+
+  .organic :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .organic .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.2;
+    color: var(--color-text);
+    background: transparent;
+    border: 1px solid transparent;
+    padding: var(--space-2) calc(var(--space-3) * 1.2);
+    border-radius: 999px;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .organic .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* Orange is reserved for real purchase actions (add to cart, checkout) —
+     same rule the rest of the site follows. Vivid orange also fails WCAG AA
+     for white text at this size, so it always pairs with dark ink text. */
+  .organic .btn-primary {
+    font-weight: 600;
+    background: var(--color-accent);
+    color: var(--color-text);
+  }
+
+  .organic .btn-primary:hover {
+    background: var(--color-accent-700);
+    color: var(--color-bg);
+  }
+
+  .organic .btn-primary:active {
+    background: var(--color-accent-800);
+    color: var(--color-bg);
+  }
+
+  /* Selected/active state for filters, toggles and pills that aren't a
+     purchase action — the site-wide convention is ink, not orange, for
+     these (see the "I lager"/sort toggles on /butik). */
+  .organic .btn-selected {
+    font-weight: 600;
+    background: var(--color-text);
+    border-color: var(--color-text);
+    color: var(--color-bg);
+  }
+
+  .organic .btn-selected:hover {
+    background: color-mix(in srgb, var(--color-text) 85%, transparent);
+  }
+
+  .organic .btn-secondary {
+    border-color: var(--color-divider);
+  }
+
+  .organic .btn-secondary:hover {
+    background: color-mix(in srgb, var(--color-text) 7%, transparent);
+  }
+
+  .organic .btn-secondary:active {
+    background: color-mix(in srgb, var(--color-text) 14%, transparent);
+  }
+
+  .organic .btn-ghost {
+    color: var(--color-accent);
+    padding-inline: var(--space-1);
+  }
+
+  .organic .btn-ghost:hover {
+    background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  }
+
+  .organic .btn-icon {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+  }
+
+  .organic .btn-block {
+    width: 100%;
+  }
+
+  .organic .input {
+    width: 100%;
+    min-height: 36px;
+    padding: 6px 14px;
+    font: inherit;
+    font-size: 14px;
+    color: var(--color-text);
+    caret-color: var(--color-accent);
+    background: var(--color-surface);
+    border: 1px solid var(--color-divider);
+    border-radius: 999px;
+  }
+
+  .organic .input::placeholder {
+    color: var(--color-neutral-600);
+  }
+
+  .organic .input:hover {
+    border-color: color-mix(in srgb, var(--color-text) 45%, transparent);
+  }
+
+  .organic .input:focus-visible {
+    border-color: var(--color-accent);
+    outline-offset: 0;
+  }
+
+  .organic .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    border-radius: calc(var(--radius-lg) * 1.15);
+    background: var(--color-surface);
+  }
+
+  .organic .card-kicker {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent-700);
+  }
+
+  .organic .card-title {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+
+  .organic .elev-sm { box-shadow: var(--shadow-sm); }
+  .organic .elev-md { box-shadow: var(--shadow-md); }
+  .organic .elev-lg { box-shadow: var(--shadow-lg); }
+
+  .organic .tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .organic .tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+  .organic .tag-accent-2 { background: var(--color-accent-2-100); color: var(--color-accent-2-800); }
+  .organic .tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+  .organic .tag-outline { border: 1px solid var(--color-accent); color: var(--color-accent-700); }
+
+  .organic .nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .organic .nav-brand {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    font-size: 18px;
+    margin-right: auto;
+  }
+
   .eyebrow {
     @apply text-[0.72rem] font-medium text-lyktan-mute;
   }

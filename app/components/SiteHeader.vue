@@ -1,5 +1,8 @@
 <script setup lang="ts">
 const { cartOpen, cartQuantity } = useShopifyCart()
+const { t, locale, locales } = useI18n()
+const switchLocalePath = useSwitchLocalePath()
+const localePath = useLocalePath()
 
 const mobileMenuOpen = ref(false)
 const route = useRoute()
@@ -8,22 +11,25 @@ watch(() => route.fullPath, () => {
   mobileMenuOpen.value = false
 })
 
-const navLinks = [
-  { to: '/butik', label: 'Butik' },
-  { to: '/events', label: 'Event' },
-  { to: '/bordsbokning', label: 'Boka bord' },
-  { to: '/kontakt', label: 'Kontakt' }
-]
+const navLinks = computed(() => [
+  { to: localePath('/butik'), label: t('nav.shop') },
+  { to: localePath('/events'), label: t('nav.events') },
+  { to: localePath('/bordsbokning'), label: t('nav.booking') },
+  { to: localePath('/kontakt'), label: t('nav.contact') }
+])
+
+const otherLocale = computed(() => locales.value.find((l) => (typeof l === 'string' ? l : l.code) !== locale.value))
+const otherLocaleCode = computed(() => (typeof otherLocale.value === 'string' ? otherLocale.value : otherLocale.value?.code) ?? 'en')
 </script>
 
 <template>
   <header class="sticky top-0 z-40 border-b border-black/8 bg-white/90 backdrop-blur">
     <div class="page-shell flex min-h-[64px] items-center justify-between gap-6 px-4 sm:px-6">
-      <NuxtLink to="/" aria-label="Butik Lyktan – till startsidan" class="shrink-0">
+      <NuxtLink :to="localePath('/')" :aria-label="t('nav.home')" class="shrink-0">
         <img src="/images/logo/ink-wide.svg" alt="Butik Lyktan" class="h-8 w-auto sm:h-9">
       </NuxtLink>
 
-      <nav aria-label="Huvudnavigation" class="hidden items-center gap-6 sm:flex">
+      <nav :aria-label="t('nav.mainNav')" class="hidden items-center gap-6 sm:flex">
         <NuxtLink
           v-for="link in navLinks"
           :key="link.to"
@@ -36,7 +42,14 @@ const navLinks = [
       </nav>
 
       <div class="flex items-center gap-1">
-        <button type="button" aria-label="Sök" class="hidden h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-brand/10 sm:inline-grid">
+        <NuxtLink
+          :to="switchLocalePath(otherLocaleCode)"
+          class="hidden h-9 items-center px-2.5 text-[0.8rem] font-medium text-lyktan-mute transition hover:text-lyktan-ink sm:inline-flex"
+        >
+          {{ otherLocaleCode === 'en' ? 'EN' : 'SV' }}
+        </NuxtLink>
+
+        <button type="button" :aria-label="t('nav.search')" class="hidden h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-brand/10 sm:inline-grid">
           <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.6">
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-3.5-3.5" stroke-linecap="round" />
@@ -45,7 +58,7 @@ const navLinks = [
 
         <button
           type="button"
-          aria-label="Öppna kundvagnen"
+          :aria-label="t('nav.openCart')"
           class="relative inline-grid h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-brand/10"
           @click="cartOpen = true"
         >
@@ -65,7 +78,7 @@ const navLinks = [
 
         <button
           type="button"
-          aria-label="Öppna meny"
+          :aria-label="t('nav.openMenu')"
           :aria-expanded="mobileMenuOpen"
           class="inline-grid h-9 w-9 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-brand/10 sm:hidden"
           @click="mobileMenuOpen = !mobileMenuOpen"
@@ -90,7 +103,7 @@ const navLinks = [
     >
       <nav
         v-if="mobileMenuOpen"
-        aria-label="Mobilnavigation"
+        :aria-label="t('nav.mobileNav')"
         class="border-t border-black/8 bg-white px-4 py-3 sm:hidden"
       >
         <NuxtLink
@@ -100,6 +113,12 @@ const navLinks = [
           class="block min-h-11 rounded-lg px-3 py-2.5 text-[0.95rem] text-lyktan-ink transition hover:bg-lyktan-brand/10"
         >
           {{ link.label }}
+        </NuxtLink>
+        <NuxtLink
+          :to="switchLocalePath(otherLocaleCode)"
+          class="block min-h-11 rounded-lg px-3 py-2.5 text-[0.95rem] text-lyktan-ink transition hover:bg-lyktan-brand/10"
+        >
+          {{ otherLocaleCode === 'en' ? 'English' : 'Svenska' }}
         </NuxtLink>
       </nav>
     </Transition>

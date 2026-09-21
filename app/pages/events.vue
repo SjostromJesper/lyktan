@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { getUpcomingSpecialEvents, getWeeklyPattern } from '~/utils/events'
 
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
+
 const now = new Date()
 
-const weeklyPattern = getWeeklyPattern()
+const weeklyPattern = computed(() => getWeeklyPattern((weekday) => t(`hours.weekday.${weekday}`)))
 const { data: specialEvents } = await useSpecialEvents()
 const otherUpcomingEvents = computed(() => getUpcomingSpecialEvents(specialEvents.value ?? [], 20, now))
 
 const formatEventDate = (iso: string) => {
   const date = new Date(`${iso}T00:00:00`)
-  const formatted = new Intl.DateTimeFormat('sv-SE', {
+  const formatted = new Intl.DateTimeFormat(locale.value === 'en' ? 'en-GB' : 'sv-SE', {
     weekday: 'short',
     day: 'numeric',
     month: 'short'
@@ -20,7 +23,7 @@ const formatEventDate = (iso: string) => {
 
 useSeoMeta({
   title: 'Event | Butik Lyktan',
-  description: 'Spelkvällar nästan varje vardag och specialevent som prereleases hos Butik Lyktan i Järfälla.'
+  description: () => t('events.seoDescription')
 })
 </script>
 
@@ -28,15 +31,15 @@ useSeoMeta({
   <main class="px-4 pb-24 pt-10 sm:px-6">
     <div class="page-shell grid gap-14">
       <div>
-        <p class="eyebrow">Event</p>
+        <p class="eyebrow">{{ t('nav.events') }}</p>
         <h1 class="mt-2 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-          Spelkvällar och event i butiken
+          {{ t('events.title') }}
         </h1>
       </div>
 
       <section>
         <h2 class="mt-2 text-[clamp(1.3rem,2.4vw,1.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-          Veckoschema
+          {{ t('events.weeklySchedule') }}
         </h2>
 
         <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -49,15 +52,15 @@ useSeoMeta({
                 <p class="mt-0.5 text-[0.8rem] text-lyktan-mute">{{ event.tid }} · {{ event.kostnad }}</p>
               </li>
             </ul>
-            <p v-else class="mt-3 text-sm text-lyktan-mute">Inga bokade event</p>
+            <p v-else class="mt-3 text-sm text-lyktan-mute">{{ t('events.noBookedEvents') }}</p>
           </div>
         </div>
       </section>
 
       <section>
-        <p class="eyebrow">Andra event</p>
+        <p class="eyebrow">{{ t('events.otherEvents') }}</p>
         <h2 class="mt-2 text-[clamp(1.3rem,2.4vw,1.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-          Andra event som händer snart
+          {{ t('events.otherEventsTitle') }}
         </h2>
 
         <ul v-if="otherUpcomingEvents.length" class="mt-6 w-full divide-y divide-black/8 rounded-2xl border border-black/8">
@@ -74,18 +77,18 @@ useSeoMeta({
             </div>
             <NuxtLink
               v-if="event.produktHandle"
-              :to="`/produkter/${event.produktHandle}`"
+              :to="localePath(`/produkter/${event.produktHandle}`)"
               class="secondary-cta shrink-0 !min-h-9 !text-[0.8rem]"
             >
-              Boka din plats
+              {{ t('home.bookSpot') }}
             </NuxtLink>
           </li>
         </ul>
 
         <div v-else class="mt-6 w-full rounded-2xl bg-lyktan-surface p-8 text-center">
-          <p class="eyebrow">Inga bokade specialevent just nu</p>
+          <p class="eyebrow">{{ t('events.noSpecialEvents') }}</p>
           <h3 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
-            Kalendern uppdateras löpande — kika förbi igen snart.
+            {{ t('events.calendarUpdates') }}
           </h3>
         </div>
       </section>

@@ -1,4 +1,5 @@
 export const useShopifyCart = () => {
+  const { t } = useI18n()
   const storefront = useStorefront()
   const cartId = useCookie<string | null>('shopify-cart-id', {
     sameSite: 'lax',
@@ -197,7 +198,7 @@ export const useShopifyCart = () => {
 
   const addVariantToCart = async (variantId: string, productTitle: string) => {
     if (!variantId) {
-      cartError.value = 'Produkten verkar inte ha en kopbar variant just nu.'
+      cartError.value = t('cart.noVariant')
       cartNotice.value = ''
       return
     }
@@ -218,7 +219,7 @@ export const useShopifyCart = () => {
           }
         })
 
-        applyCartResult(response.data?.cartCreate, `${productTitle} lades i kundvagnen.`)
+        applyCartResult(response.data?.cartCreate, t('cart.itemAdded', { title: productTitle }))
         cartOpen.value = true
         return
       }
@@ -235,13 +236,47 @@ export const useShopifyCart = () => {
         }
       })
 
-      applyCartResult(response.data?.cartLinesAdd, `${productTitle} lades i kundvagnen.`)
+      applyCartResult(response.data?.cartLinesAdd, t('cart.itemAdded', { title: productTitle }))
       cartOpen.value = true
     } catch (caughtError: any) {
-      cartError.value = caughtError?.message ?? 'Det gick inte att lagga till produkten i kundvagnen.'
+      cartError.value = caughtError?.message ?? t('cart.addFailed')
       cartNotice.value = ''
     } finally {
       loadingVariantId.value = ''
+      cartBusy.value = false
+    }
+  }
+
+  // Batch add — used by the singles list view's "Lägg allt i varukorgen",
+  // where several picked variants (each with its own quantity) go into the
+  // cart as one action instead of one addVariantToCart call per line.
+  const addVariantsToCart = async (lines: { variantId: string, quantity: number }[], noticeText: string) => {
+    const cartLines = lines
+      .filter((line) => line.variantId && line.quantity > 0)
+      .map((line) => ({ quantity: line.quantity, merchandiseId: line.variantId }))
+
+    if (!cartLines.length) return
+
+    try {
+      cartBusy.value = true
+
+      if (!cart.value?.id) {
+        const response = await storefront.request(createCartMutation, { variables: { lines: cartLines } })
+        applyCartResult(response.data?.cartCreate, noticeText)
+        cartOpen.value = true
+        return
+      }
+
+      const response = await storefront.request(addCartLinesMutation, {
+        variables: { cartId: cart.value.id, lines: cartLines }
+      })
+
+      applyCartResult(response.data?.cartLinesAdd, noticeText)
+      cartOpen.value = true
+    } catch (caughtError: any) {
+      cartError.value = caughtError?.message ?? t('cart.addManyFailed')
+      cartNotice.value = ''
+    } finally {
       cartBusy.value = false
     }
   }
@@ -262,7 +297,7 @@ export const useShopifyCart = () => {
           }
         })
 
-        applyCartResult(response.data?.cartLinesRemove, 'Produkten togs bort fran kundvagnen.')
+        applyCartResult(response.data?.cartLinesRemove, t('cart.itemRemoved'))
         return
       }
 
@@ -278,9 +313,9 @@ export const useShopifyCart = () => {
         }
       })
 
-      applyCartResult(response.data?.cartLinesUpdate, 'Kundvagnen uppdaterades.')
+      applyCartResult(response.data?.cartLinesUpdate, t('cart.updated'))
     } catch (caughtError: any) {
-      cartError.value = caughtError?.message ?? 'Det gick inte att uppdatera kundvagnen.'
+      cartError.value = caughtError?.message ?? t('cart.updateFailed')
       cartNotice.value = ''
     } finally {
       cartBusy.value = false
@@ -323,7 +358,7 @@ export const useShopifyCart = () => {
     const url = payload?.cart?.checkoutUrl
 
     if (!url) {
-      throw new Error('Kunde inte skapa betalningen.')
+      throw new Error(t('cart.checkoutFailed'))
     }
 
     return url as string
@@ -373,7 +408,7 @@ export const useShopifyCart = () => {
     const url = payload?.cart?.checkoutUrl
 
     if (!url) {
-      throw new Error('Kunde inte skapa betalningen.')
+      throw new Error(t('cart.checkoutFailed'))
     }
 
     return url as string
@@ -392,6 +427,7 @@ export const useShopifyCart = () => {
     formatMoney,
     loadExistingCart,
     addVariantToCart,
+    addVariantsToCart,
     updateLineQuantity,
     startMembershipCheckout,
     startBookingDepositCheckout

@@ -5,7 +5,10 @@ const props = defineProps<{
   product: any
 }>()
 
+const { t } = useI18n()
+const localePath = useLocalePath()
 const { addVariantToCart, loadingVariantId, formatMoney } = useShopifyCart()
+const productPath = computed(() => localePath(`/produkter/${props.product.handle}`))
 
 const firstVariant = computed(() => props.product?.variants?.nodes?.[0] ?? null)
 const primaryTag = computed(() => props.product?.tags?.[0] ?? null)
@@ -34,7 +37,7 @@ const addToCart = async () => {
 
 <template>
   <article class="group flex w-full flex-col">
-    <NuxtLink :to="`/produkter/${product.handle}`" class="relative aspect-square overflow-hidden bg-lyktan-surface">
+    <NuxtLink :to="productPath" class="relative aspect-square overflow-hidden bg-lyktan-surface">
       <img
         v-if="product.featuredImage?.url"
         :src="product.featuredImage.url"
@@ -45,22 +48,22 @@ const addToCart = async () => {
         {{ product.title.slice(0, 2).toUpperCase() }}
       </div>
       <span v-if="isUpcoming" class="absolute left-2 top-2 rounded-full bg-lyktan-brand px-2.5 py-1 text-[0.68rem] font-semibold text-lyktan-ink">
-        Kommer snart
+        {{ t('product.comingSoon') }}
       </span>
       <span v-else-if="isInStoreOnly" class="absolute left-2 top-2 rounded-full bg-lyktan-mute px-2.5 py-1 text-[0.68rem] font-medium text-white">
-        Endast i butik
+        {{ t('product.inStoreOnly') }}
       </span>
       <span v-else-if="isSoldOut" class="absolute left-2 top-2 rounded-full bg-lyktan-ink px-2.5 py-1 text-[0.68rem] font-medium text-white">
-        Slutsåld
+        {{ t('product.soldOut') }}
       </span>
       <span v-else-if="isNew" class="absolute left-2 top-2 rounded-full bg-emerald-600 px-2.5 py-1 text-[0.68rem] font-medium text-white">
-        Nyhet
+        {{ t('product.new') }}
       </span>
     </NuxtLink>
 
     <div class="mt-3 flex flex-1 flex-col gap-1">
       <span v-if="primaryTag" class="text-[0.72rem] text-lyktan-mute">{{ primaryTag }}</span>
-      <NuxtLink :to="`/produkter/${product.handle}`" class="text-[0.9rem] leading-tight text-lyktan-ink line-clamp-2">
+      <NuxtLink :to="productPath" class="text-[0.9rem] leading-tight text-lyktan-ink line-clamp-2">
         {{ product.title }}
       </NuxtLink>
       <p class="flex items-baseline gap-2 text-[0.9rem] font-medium text-lyktan-ink">
@@ -70,11 +73,11 @@ const addToCart = async () => {
         </span>
       </p>
 
-      <NuxtLink v-if="isUpcoming" :to="`/produkter/${product.handle}`" class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]">
-        Få en påminnelse
+      <NuxtLink v-if="isUpcoming" :to="productPath" class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]">
+        {{ t('product.getReminder') }}
       </NuxtLink>
-      <NuxtLink v-else-if="isInStoreOnly" :to="`/produkter/${product.handle}`" class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]">
-        Endast i butik
+      <NuxtLink v-else-if="isInStoreOnly" :to="productPath" class="secondary-cta mt-2 !min-h-9 !text-[0.8rem]">
+        {{ t('product.inStoreOnly') }}
       </NuxtLink>
       <button
         v-else
@@ -83,7 +86,7 @@ const addToCart = async () => {
         :disabled="loadingVariantId === firstVariant?.id || isSoldOut"
         @click="addToCart"
       >
-        {{ isSoldOut ? 'Slutsåld' : loadingVariantId === firstVariant?.id ? 'Lägger till...' : 'Lägg i kundvagn' }}
+        {{ isSoldOut ? t('product.soldOut') : loadingVariantId === firstVariant?.id ? t('product.adding') : t('product.addToCart') }}
       </button>
     </div>
   </article>

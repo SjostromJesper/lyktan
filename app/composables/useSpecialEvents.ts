@@ -1,7 +1,7 @@
 import type { EventEntry } from '~/utils/events'
 
 const specialEventsQuery = `#graphql
-  query SpecialEvents {
+  query SpecialEvents($language: LanguageCode!) @inContext(language: $language) {
     products(first: 20, sortKey: TITLE, query: "tag:event") {
       nodes {
         title
@@ -60,8 +60,12 @@ const splitDateAndTime = (value?: string | null) => {
  * local data file to maintain. Products without a date_and_time are
  * dropped since there's no way to place them on the schedule.
  */
-export const useSpecialEvents = () =>
-  useStorefrontData('special-events', specialEventsQuery, {
+export const useSpecialEvents = () => {
+  const { t, locale } = useI18n()
+
+  return useStorefrontData('special-events', specialEventsQuery, {
+    variables: { language: locale.value === 'en' ? 'EN' : 'SV' },
+    watch: [locale],
     transform: (result): EventEntry[] =>
       (result.products?.nodes ?? [])
         .map((product: any): EventEntry | null => {
@@ -76,7 +80,7 @@ export const useSpecialEvents = () =>
             datum: parsed.datum,
             tid: parsed.tid,
             beskrivning: product.description ?? '',
-            kostnad: 'Se produkt',
+            kostnad: t('events.seeProduct'),
             produktHandle: product.handle,
             visaIKarusell: product.showInCarousel?.value === 'true',
             featuredImage: product.featuredImage ?? null
@@ -84,3 +88,4 @@ export const useSpecialEvents = () =>
         })
         .filter((event: EventEntry | null): event is EventEntry => event !== null)
   })
+}

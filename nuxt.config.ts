@@ -14,7 +14,19 @@ const useMockStorefront = !normalizedShopName || (!storefrontPublicToken && !sto
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   css: ['./app/assets/css/main.css'],
-  modules: ['@nuxtjs/shopify'],
+  modules: ['@nuxtjs/shopify', '@nuxtjs/i18n'],
+  i18n: {
+    // Messages are bundled directly via i18n.config.ts (plain static
+    // imports) instead of the module's lazy per-locale `file:` loader —
+    // that loader's dev-mode `?import` transform 404s for this project's
+    // Vite setup, leaving t() silently falling back to raw keys client-side.
+    locales: [
+      { code: 'sv', language: 'sv-SE', name: 'Svenska' },
+      { code: 'en', language: 'en-US', name: 'English' }
+    ],
+    defaultLocale: 'sv',
+    strategy: 'prefix_except_default'
+  },
   runtimeConfig: {
     public: {
       shopifyStoreDomain: rawShopDomain,

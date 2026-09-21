@@ -2,6 +2,7 @@ export default defineEventHandler(async (event) => {
   setHeader(event, 'cache-control', 'no-store, max-age=0')
 
   const handle = String(event.context.params?.handle || '').trim()
+  const language = toShopifyLanguage(getQuery(event).lang)
   const shopDomain = String(process.env.SHOPIFY_STORE_DOMAIN || '')
     .replace(/^https?:\/\//, '')
     .replace(/\/.*$/, '')
@@ -30,7 +31,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const query = `#graphql
-    query ProductPage($handle: String!) {
+    query ProductPage($handle: String!, $language: LanguageCode!) @inContext(language: $language) {
       product(handle: $handle) {
         id
         title
@@ -59,12 +60,28 @@ export default defineEventHandler(async (event) => {
         inStoreOnly: metafield(namespace: "custom", key: "in_store_only") {
           value
         }
+        cardGame: metafield(namespace: "custom", key: "card_game") {
+          value
+        }
+        cardSet: metafield(namespace: "custom", key: "card_set") {
+          value
+        }
+        rarity: metafield(namespace: "custom", key: "rarity") {
+          value
+        }
+        collectorNumber: metafield(namespace: "custom", key: "collector_number") {
+          value
+        }
         variants(first: 25) {
           nodes {
             id
             title
             availableForSale
             quantityAvailable
+            selectedOptions {
+              name
+              value
+            }
             price {
               amount
               currencyCode
@@ -88,7 +105,7 @@ export default defineEventHandler(async (event) => {
     },
     body: JSON.stringify({
       query,
-      variables: { handle }
+      variables: { handle, language }
     })
   })
 
@@ -108,7 +125,11 @@ export default defineEventHandler(async (event) => {
   }
 
   if (product && privateToken) {
-    const adminQuery = `#graphql
+    // Not tagged #graphql: this hits the Admin API, not Storefront — the
+    // dev-time schema validator only knows the Storefront schema (from
+    // nuxt.config's shopify.clients.storefront) and would misflag Admin-only
+    // fields like inventoryQuantity as invalid.
+    const adminQuery = `
       query ProductInventory($query: String!) {
         products(first: 1, query: $query) {
           nodes {

@@ -12,18 +12,21 @@ type CollectionResponse = {
   products: Product[]
 }
 
-const SORT_OPTIONS = [
-  { value: 'TITLE:false', label: 'Namn A–Ö', sort: 'TITLE', reverse: false },
-  { value: 'PRICE:false', label: 'Pris: lägst först', sort: 'PRICE', reverse: false },
-  { value: 'PRICE:true', label: 'Pris: högst först', sort: 'PRICE', reverse: true },
-  { value: 'CREATED:true', label: 'Nyast först', sort: 'CREATED', reverse: true }
-]
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
+
+const SORT_OPTIONS = computed(() => [
+  { value: 'TITLE:false', label: t('sort.nameAsc'), sort: 'TITLE', reverse: false },
+  { value: 'PRICE:false', label: t('sort.priceAsc'), sort: 'PRICE', reverse: false },
+  { value: 'PRICE:true', label: t('sort.priceDesc'), sort: 'PRICE', reverse: true },
+  { value: 'CREATED:true', label: t('sort.newest'), sort: 'CREATED', reverse: true }
+])
 
 const route = useRoute()
 const handle = computed(() => String(route.params.collection || ''))
 
-const sortValue = ref(SORT_OPTIONS[0].value)
-const activeSort = computed(() => SORT_OPTIONS.find((option) => option.value === sortValue.value) ?? SORT_OPTIONS[0])
+const sortValue = ref(SORT_OPTIONS.value[0].value)
+const activeSort = computed(() => SORT_OPTIONS.value.find((option) => option.value === sortValue.value) ?? SORT_OPTIONS.value[0])
 
 const collectionTitle = ref('')
 const products = ref<Product[]>([])
@@ -55,19 +58,19 @@ const loadProducts = async () => {
 
   try {
     const res = await $fetch<CollectionResponse>(`/api/shopify/collection/${handle.value}`, {
-      query: { sort: activeSort.value.sort, reverse: String(activeSort.value.reverse) }
+      query: { sort: activeSort.value.sort, reverse: String(activeSort.value.reverse), lang: locale.value }
     })
     collectionTitle.value = res.collection.title
     products.value = res.products
   } catch (err: any) {
-    loadError.value = err?.data?.statusMessage || 'Kunde inte hämta produkter'
+    loadError.value = err?.data?.statusMessage || t('shop.collectionLoadFailed')
     products.value = []
   } finally {
     loading.value = false
   }
 }
 
-watch([handle, sortValue], loadProducts, { immediate: true })
+watch([handle, sortValue, locale], loadProducts, { immediate: true })
 
 const priceBounds = computed(() => {
   if (!products.value.length) return { min: 0, max: 0 }
@@ -99,7 +102,7 @@ const filteredProducts = computed(() => {
 
 useSeoMeta({
   title: () => collectionTitle.value ? `${collectionTitle.value} | Butik Lyktan` : 'Butik | Butik Lyktan',
-  description: () => `Bläddra bland ${collectionTitle.value || 'produkter'} hos Butik Lyktan.`
+  description: () => t('shop.collectionSeoDescription', { name: collectionTitle.value || t('shop.products') })
 })
 </script>
 
@@ -107,19 +110,19 @@ useSeoMeta({
   <main class="px-4 pb-24 pt-10 sm:px-6">
     <div class="page-shell grid gap-8">
       <nav class="flex items-center gap-2 text-sm text-lyktan-mute">
-        <NuxtLink to="/butik" class="transition hover:text-lyktan-ink">Butik</NuxtLink>
+        <NuxtLink :to="localePath('/butik')" class="transition hover:text-lyktan-ink">{{ t('home.shopEyebrow') }}</NuxtLink>
         <span class="text-black/20">/</span>
         <span class="text-lyktan-ink">{{ collectionTitle || '…' }}</span>
       </nav>
 
       <div class="flex flex-wrap items-center justify-between gap-4">
         <h1 class="text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-          {{ collectionTitle || 'Kategori' }}
+          {{ collectionTitle || t('shop.category') }}
         </h1>
 
         <div v-if="!loading && !loadError" class="flex items-center gap-3">
           <label class="block">
-            <span class="sr-only">Sortera</span>
+            <span class="sr-only">{{ t('shop.sort') }}</span>
             <select
               v-model="sortValue"
               class="min-h-10 rounded-full border border-black/12 bg-white px-3 text-sm text-lyktan-ink"
@@ -134,7 +137,7 @@ useSeoMeta({
             :class="hasActiveFilters ? 'border-lyktan-ink bg-lyktan-ink text-white' : 'border-black/15 text-lyktan-ink hover:bg-black/[0.04]'"
             @click="filtersOpen = !filtersOpen"
           >
-            Filter
+            {{ t('shop.filter') }}
             <span v-if="hasActiveFilters" class="inline-grid h-4 w-4 place-items-center rounded-full bg-white text-[0.62rem] font-semibold text-lyktan-ink">
               {{ (priceMin !== null ? 1 : 0) + (priceMax !== null ? 1 : 0) + (inStockOnly ? 1 : 0) }}
             </span>
@@ -144,7 +147,7 @@ useSeoMeta({
 
       <div v-if="filtersOpen" class="flex flex-wrap items-center gap-x-6 gap-y-3 border-y border-black/8 py-4">
         <div class="flex items-center gap-2">
-          <span class="text-sm text-lyktan-mute">Pris</span>
+          <span class="text-sm text-lyktan-mute">{{ t('shop.price') }}</span>
           <input
             v-model.number="priceMin"
             type="number"
@@ -160,12 +163,12 @@ useSeoMeta({
             :placeholder="String(priceBounds.max)"
             class="min-h-9 w-20 rounded-lg border border-black/12 bg-white px-2.5 text-sm text-lyktan-ink"
           >
-          <span class="text-sm text-lyktan-mute">kr</span>
+          <span class="text-sm text-lyktan-mute">{{ t('shop.currency') }}</span>
         </div>
 
         <label class="flex items-center gap-2 text-sm text-lyktan-ink">
           <input v-model="inStockOnly" type="checkbox" class="h-4 w-4 rounded border-black/25">
-          Bara i lager
+          {{ t('shop.inStockOnly') }}
         </label>
 
         <button
@@ -174,7 +177,7 @@ useSeoMeta({
           class="text-sm font-medium text-lyktan-accent hover:underline"
           @click="resetFilters"
         >
-          Rensa
+          {{ t('shop.clearFilters') }}
         </button>
       </div>
 
@@ -190,7 +193,7 @@ useSeoMeta({
 
       <template v-else>
         <p v-if="hasActiveFilters" class="text-sm text-lyktan-mute">
-          {{ filteredProducts.length }} av {{ products.length }} produkter
+          {{ t('shop.filteredCount', { shown: filteredProducts.length, total: products.length }) }}
         </p>
 
         <div v-if="filteredProducts.length" class="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
@@ -198,11 +201,11 @@ useSeoMeta({
         </div>
 
         <div v-else class="rounded-2xl bg-lyktan-surface p-8 text-center">
-          <p class="eyebrow">Inga produkter</p>
+          <p class="eyebrow">{{ t('shop.noProducts') }}</p>
           <h3 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
-            Inga produkter matchar filtren.
+            {{ t('shop.noProductsMatch') }}
           </h3>
-          <button type="button" class="secondary-cta mt-4" @click="resetFilters">Rensa filter</button>
+          <button type="button" class="secondary-cta mt-4" @click="resetFilters">{{ t('shop.clearFilters') }}</button>
         </div>
       </template>
     </div>

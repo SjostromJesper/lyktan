@@ -99,11 +99,12 @@ export const expandRecurringEvents = (fromDate = new Date(), days = 60): EventEn
   return occurrences
 }
 
-/** The regular week at a glance, Monday through Sunday. */
-export const getWeeklyPattern = () =>
+/** The regular week at a glance, Monday through Sunday. Callers supply the
+ * weekday label (translated) since this util has no i18n context of its own. */
+export const getWeeklyPattern = (weekdayLabel: (weekday: number) => string = (w) => weekdayLabels[w]) =>
   [1, 2, 3, 4, 5, 6, 0].map((weekday) => ({
     weekday,
-    label: weekdayLabels[weekday],
+    label: weekdayLabel(weekday),
     events: recurringEvents
       .filter((rule) => rule.weekday === weekday)
       .sort((left, right) => left.tid.localeCompare(right.tid, 'sv-SE'))

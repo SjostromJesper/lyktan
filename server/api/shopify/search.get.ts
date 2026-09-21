@@ -14,9 +14,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const safeTerm = term.replace(/["\\]/g, '')
+  const language = toShopifyLanguage(query.lang)
 
   const data = await shopifyStorefrontGraphql<{ products: { nodes: any[] } }>(`#graphql
-    query SearchProducts($query: String!) {
+    query SearchProducts($query: String!, $language: LanguageCode!) @inContext(language: $language) {
       products(first: 20, query: $query) {
         nodes {
           id
@@ -50,7 +51,7 @@ export default defineEventHandler(async (event) => {
         }
       }
     }
-  `, { query: `(title:*${safeTerm}* OR tag:*${safeTerm}*) AND -tag:event` })
+  `, { query: `(title:*${safeTerm}* OR tag:*${safeTerm}*) AND -tag:event`, language })
 
   const products = (data.products?.nodes ?? []).filter((product) => !EXCLUDED_HANDLES.has(product.handle))
 

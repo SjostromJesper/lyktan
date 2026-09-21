@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
   const sortKeyParam = String(query.sort || 'TITLE').toUpperCase()
   const sortKey: SortKey = (ALLOWED_SORT_KEYS as readonly string[]).includes(sortKeyParam) ? (sortKeyParam as SortKey) : 'TITLE'
   const reverse = query.reverse === 'true'
+  const language = toShopifyLanguage(query.lang)
 
   const data = await shopifyStorefrontGraphql<{
     collection: {
@@ -25,7 +26,7 @@ export default defineEventHandler(async (event) => {
       }
     } | null
   }>(`#graphql
-    query CollectionProducts($handle: String!, $first: Int!, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean!) {
+    query CollectionProducts($handle: String!, $first: Int!, $sortKey: ProductCollectionSortKeys!, $reverse: Boolean!, $language: LanguageCode!) @inContext(language: $language) {
       collection(handle: $handle) {
         id
         title
@@ -67,7 +68,7 @@ export default defineEventHandler(async (event) => {
     # 250 is the Storefront API's max page size — comfortably covers this
     # store's whole catalog (biggest collection is under 30 today), so the
     # page can filter/sort everything client-side with no pagination.
-  `, { handle, first: 250, sortKey, reverse })
+  `, { handle, first: 250, sortKey, reverse, language })
 
   if (!data.collection) {
     throw createError({ statusCode: 404, statusMessage: 'Kollektionen hittades inte' })

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { getCarouselEvents } from '~/utils/events'
 
+const { t, locale } = useI18n()
+const localePath = useLocalePath()
+
 // The hero carousel shows Shopify products tagged "event" that are flagged
 // event_show_in_carousel via metafield and have an upcoming event_date.
 const { data: specialEvents } = await useSpecialEvents()
@@ -8,8 +11,8 @@ const { data: specialEvents } = await useSpecialEvents()
 const heroItems = computed(() =>
   getCarouselEvents(specialEvents.value ?? []).map((event) => ({
     handle: event.produktHandle as string,
-    link: `/produkter/${event.produktHandle}`,
-    eyebrow: 'Kommande event',
+    link: localePath(`/produkter/${event.produktHandle}`),
+    eyebrow: t('home.upcomingEvent'),
     title: event.titel,
     text: event.beskrivning,
     product: {
@@ -24,7 +27,7 @@ const heroItems = computed(() =>
 const EXCLUDED_SHOWCASE_HANDLES = new Set(['medlemskap', 'bordsbokning-forskott'])
 
 const homepageQuery = `#graphql
-  query HomepageProducts {
+  query HomepageProducts($language: LanguageCode!) @inContext(language: $language) {
     showcaseProducts: products(first: 10, sortKey: CREATED_AT, reverse: true, query: "-tag:event") {
       nodes {
         id
@@ -60,7 +63,8 @@ const homepageQuery = `#graphql
   }
 `
 
-const { data } = await useStorefrontData('homepage-products', homepageQuery, {
+const { data } = await useStorefrontData(`homepage-products-${locale.value}`, homepageQuery, {
+  variables: { language: locale.value === 'en' ? 'EN' : 'SV' },
   transform: (result) => ({
     showcaseProducts: (result.showcaseProducts?.nodes ?? [])
       .filter((product: any) => !EXCLUDED_SHOWCASE_HANDLES.has(product.handle))
@@ -93,7 +97,7 @@ onBeforeUnmount(() => {
 
 useSeoMeta({
   title: 'Butik Lyktan',
-  description: 'Spelbutik med event, miniatyrspel, kortspel, brädspel och rollspel.'
+  description: () => t('home.seoDescription')
 })
 </script>
 
@@ -112,10 +116,10 @@ useSeoMeta({
             </p>
 
             <div class="mt-8 flex flex-wrap items-center gap-5">
-              <NuxtLink :to="activeHero?.link || '/'" class="primary-cta">
-                Boka din plats
+              <NuxtLink :to="activeHero?.link || localePath('/')" class="primary-cta">
+                {{ t('home.bookSpot') }}
               </NuxtLink>
-              <span class="text-sm text-lyktan-mute">Hämtning i butik i Järfälla</span>
+              <span class="text-sm text-lyktan-mute">{{ t('home.pickupInStore') }}</span>
             </div>
           </div>
 
@@ -140,7 +144,7 @@ useSeoMeta({
           type="button"
           class="h-1.5 w-1.5 rounded-full bg-black/15 transition"
           :class="{ '!w-5 !bg-lyktan-ink': index === activeHeroIndex }"
-          :aria-label="`Visa ${slide.title}`"
+          :aria-label="t('home.showSlide', { title: slide.title })"
           @click="goToHeroSlide(index)"
         />
       </div>
@@ -148,23 +152,23 @@ useSeoMeta({
 
     <div class="page-shell grid grid-cols-1 gap-16 px-4 pt-16 sm:px-6">
       <UnderConstructionPanel
-        title="Vi öppnar steg för steg."
-        text="Webbshoppen byggs ut löpande. Just nu är event, utvalda produkter och butikshämtning prioriterat."
+        :title="t('home.underConstructionTitle')"
+        :text="t('home.underConstructionText')"
       />
 
       <section v-if="data?.showcaseProducts?.length">
         <div class="flex flex-col gap-4 pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p class="eyebrow">Butik</p>
+            <p class="eyebrow">{{ t('home.shopEyebrow') }}</p>
             <h2 class="mt-2 text-[clamp(1.4rem,2.6vw,1.8rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
-              Bläddra bland produkterna
+              {{ t('home.browseProducts') }}
             </h2>
             <p class="mt-2 max-w-md text-sm leading-6 text-lyktan-mute">
-              Kortspel, miniatyrspel, brädspel och rollspel — köp direkt och hämta i butik.
+              {{ t('home.browseProductsText') }}
             </p>
           </div>
-          <NuxtLink to="/butik" class="shrink-0 text-sm text-lyktan-mute transition hover:text-lyktan-ink">
-            Visa alla i butiken →
+          <NuxtLink :to="localePath('/butik')" class="shrink-0 text-sm text-lyktan-mute transition hover:text-lyktan-ink">
+            {{ t('home.viewAllInShop') }} →
           </NuxtLink>
         </div>
 
