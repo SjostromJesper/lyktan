@@ -56,7 +56,20 @@
     "browseProducts": "Browse the products",
     "browseProductsText": "Card games, miniature games, board games and roleplaying games — buy directly and pick up in store.",
     "viewAllInShop": "View everything in the shop",
-    "seoDescription": "Game store with events, miniature games, card games, board games and roleplaying games."
+    "seoDescription": "Game store with events, miniature games, card games, board games and roleplaying games.",
+    "heroEyebrow": "Game store in Järfälla",
+    "heroTitle": "Cards, miniatures and board games – and tables to play at.",
+    "heroText": "Shop online and pick up in store at Veddestabron, or drop by and play for an evening.",
+    "heroCta": "Go to the shop",
+    "heroSecondary": "Book a table",
+    "allEvents": "All events",
+    "categoriesEyebrow": "Categories",
+    "categoriesTitle": "Find your game",
+    "visitEyebrow": "In store",
+    "visitTitle": "More than a shop",
+    "visitBookingText": "Book a table for the evening and play in the store.",
+    "visitEventsText": "Tournaments, prereleases and game nights every week.",
+    "visitContactText": "Veddestabron 8B in Järfälla. Opening hours and directions."
   },
   "product": {
     "comingSoon": "Coming soon",

@@ -1,6 +1,6 @@
 /* --- Lykta: the singles corner's design system ---------------------------
-   Same "Spelbord" palette as main.css: warm paper, felt-green ink,
-   the logo's orange as the one accent, Familjen Grotesk + IBM
+   Same palette as main.css: white, near-black ink, the logo's orange
+   as the one accent, Familjen Grotesk + IBM
    Plex Mono, flat bordered panels instead of shadows and pills.
 
    Scoped under .lykta so nothing leaks into the lyktan-* tokens the rest of
@@ -11,24 +11,24 @@
    Accent is the site's brand orange (lyktan-brand), with maroon
    (lyktan-accent) as the text-safe step — same as the rest of the site. */
 .lykta {
-  --color-bg: #FAF6EE;          /* page ground (paper) */
-  --color-surface: #FFFDF8;     /* panels, tiles */
-  --color-text: #14261F;        /* ink */
+  --color-bg: #FFFFFF;          /* page ground (paper) */
+  --color-surface: #FFFFFF;     /* panels, tiles */
+  --color-text: #15171C;        /* ink */
   --color-accent: #FE4D01;      /* brand orange — purchase actions only, always ink text */
   --color-accent-hover: #720000;
-  --color-accent-2: #1F7A55;
-  --color-divider: #E6DCCA;
+  --color-accent-2: #12915F;
+  --color-divider: #E9E7E2;
   --color-focus: #2F6FDB;
 
-  --color-neutral-100: #F2EBDD;  /* image wells */
-  --color-neutral-200: #EAE1CF;
-  --color-neutral-300: #E6DCCA;
-  --color-neutral-400: #C9BDA6;
-  --color-neutral-500: #978F7E;
-  --color-neutral-600: #6A6558;
-  --color-neutral-700: #4B4739;
-  --color-neutral-800: #1C5140;  /* felt-2 */
-  --color-neutral-900: #14261F;
+  --color-neutral-100: #F5F4F1;  /* image wells */
+  --color-neutral-200: #EEEDE9;
+  --color-neutral-300: #E9E7E2;
+  --color-neutral-400: #C6C4BE;
+  --color-neutral-500: #93928D;
+  --color-neutral-600: #6B6B70;
+  --color-neutral-700: #45464B;
+  --color-neutral-800: #24272E;
+  --color-neutral-900: #15171C;
 
   --color-accent-100: #FDEEE6;
   --color-accent-200: #FFD9C2;
@@ -36,21 +36,21 @@
   --color-accent-700: #720000;  /* maroon — text-safe on white */
   --color-accent-800: #5C0000;
 
-  --color-accent-2-100: #E3EEE6;
-  --color-accent-2-700: #1F7A55;
-  --color-accent-2-800: #123B30;
+  --color-accent-2-100: #E9F7F0;
+  --color-accent-2-700: #12915F;
+  --color-accent-2-800: #0B6B45;
 
   --font-heading: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: var(--font-heading);
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --radius-sm: 5px;
-  --radius-md: 8px;
-  --radius-lg: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
 
   --shadow-sm: none;
-  --shadow-md: 0 1px 3px rgb(20 38 31 / 0.08), 0 8px 24px rgb(20 38 31 / 0.08);
-  --shadow-lg: 0 1px 3px rgb(20 38 31 / 0.10), 0 12px 32px rgb(20 38 31 / 0.12);
+  --shadow-md: 0 1px 3px rgb(21 23 28 / 0.08), 0 8px 24px rgb(21 23 28 / 0.08);
+  --shadow-lg: 0 1px 3px rgb(21 23 28 / 0.10), 0 12px 32px rgb(21 23 28 / 0.12);
 
   background: var(--color-bg);
   color: var(--color-text);
@@ -103,7 +103,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-divider);
   padding: 7px 12px;
-  border-radius: 7px;
+  border-radius: 999px;
   white-space: nowrap;
   transition: background-color .15s ease, border-color .15s ease, color .15s ease;
 }

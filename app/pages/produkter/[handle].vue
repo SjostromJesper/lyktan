@@ -283,7 +283,7 @@ useSeoMeta({
 
       <div v-else-if="product" class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.84fr)]">
         <div class="grid gap-3">
-          <div class="flex items-center justify-center rounded-[10px] bg-lyktan-well p-6">
+          <div class="flex items-center justify-center rounded-[18px] bg-lyktan-well p-6">
             <img
               v-if="selectedImage?.url"
               :src="selectedImage.url"
@@ -300,7 +300,7 @@ useSeoMeta({
               v-for="(image, index) in productImages"
               :key="image.url"
               type="button"
-              class="h-16 w-16 shrink-0 overflow-hidden rounded-[7px] bg-lyktan-well transition"
+              class="h-16 w-16 shrink-0 overflow-hidden rounded-[10px] bg-lyktan-well transition"
               :class="index === selectedImageIndex ? 'ring-2 ring-lyktan-ink' : 'opacity-70 hover:opacity-100'"
               @click="selectedImageIndex = index"
             >
@@ -342,7 +342,7 @@ useSeoMeta({
                   type="email"
                   required
                   :placeholder="t('product.emailPlaceholder')"
-                  class="min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+                  class="min-h-12 w-full rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
                 >
               </label>
               <button type="submit" class="primary-cta shrink-0" :disabled="interestSubmitting">
@@ -385,7 +385,7 @@ useSeoMeta({
                 <select
                   id="variant"
                   v-model="selectedVariantId"
-                  class="min-h-12 rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+                  class="min-h-12 rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
                 >
                   <option v-for="variant in variants" :key="variant.id" :value="variant.id">
                     {{ variant.title }} · {{ formatMoney(variant.price?.amount, variant.price?.currencyCode) }}

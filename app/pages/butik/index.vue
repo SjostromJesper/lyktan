@@ -17,7 +17,7 @@ const { data: collectionsData, pending: loadingCollections, refresh: refreshColl
 
 watch(locale, () => refreshCollections())
 
-const collections = computed(() => collectionsData.value?.collections ?? [])
+const collections = computed(() => (collectionsData.value?.collections ?? []).map((c, i) => ({ ...c, accent: categoryAccentAt(c.title, i) })))
 
 const searchTerm = ref('')
 const searchResults = ref<SearchProduct[]>([])
@@ -58,10 +58,10 @@ useSeoMeta({
 
 <template>
   <main class="px-4 pb-24 pt-10 sm:px-6">
-    <div class="page-shell grid gap-8">
+    <div class="page-shell grid gap-10">
       <div>
         <p class="eyebrow">{{ t('home.shopEyebrow') }}</p>
-        <h1 class="mt-2 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
+        <h1 class="mt-2 page-title">
           {{ t('home.browseProducts') }}
         </h1>
         <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
@@ -75,7 +75,7 @@ useSeoMeta({
           v-model="searchTerm"
           type="search"
           :placeholder="t('shop.searchPlaceholder')"
-          class="min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-5 text-sm text-lyktan-ink"
+          class="min-h-12 w-full rounded-full border border-lyktan-line bg-white px-5 text-sm text-lyktan-ink transition focus:border-lyktan-ink focus:outline-none"
         >
       </label>
 
@@ -96,21 +96,25 @@ useSeoMeta({
             v-for="collection in collections"
             :key="collection.id"
             :to="localePath(`/butik/${collection.handle}`)"
-            class="group flex flex-col overflow-hidden rounded-[10px] border border-lyktan-line bg-lyktan-surface transition hover:-translate-y-0.5 hover:border-lyktan-brand"
+            class="group flex flex-col overflow-hidden rounded-[18px] border border-lyktan-line bg-white transition hover:-translate-y-0.5 hover:border-[var(--dot)]"
+            :style="{ '--dot': collection.accent.color }"
           >
-            <div class="relative aspect-[4/3] overflow-hidden bg-lyktan-well">
+            <div class="relative aspect-[4/3] overflow-hidden" :style="{ background: collection.accent.tint }">
               <img
                 v-if="collection.image?.url"
                 :src="collection.image.url"
                 :alt="collection.image.altText || collection.title"
                 class="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.04]"
               >
-              <div v-else class="grid h-full w-full place-items-center text-2xl font-medium text-lyktan-mute">
+              <div v-else class="grid h-full w-full place-items-center text-3xl font-bold" :style="{ color: collection.accent.color }">
                 {{ collection.title.slice(0, 2).toUpperCase() }}
               </div>
             </div>
-            <div class="p-4">
-              <span class="text-[0.95rem] font-medium text-lyktan-ink">{{ collection.title }}</span>
+            <div class="flex items-center justify-between gap-2 p-4">
+              <span class="inline-flex items-center gap-2 text-[0.98rem] font-semibold text-lyktan-ink">
+                <span class="h-2 w-2 rounded-full" :style="{ background: collection.accent.color }" />{{ collection.title }}
+              </span>
+              <span class="text-lyktan-mute transition group-hover:translate-x-0.5 group-hover:text-lyktan-ink" aria-hidden="true">→</span>
             </div>
           </NuxtLink>
         </div>

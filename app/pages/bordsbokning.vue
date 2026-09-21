@@ -320,7 +320,7 @@ useSeoMeta({
     <div class="page-shell grid gap-10">
       <div>
         <p class="eyebrow">{{ t('nav.booking') }}</p>
-        <h1 class="mt-2 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
+        <h1 class="mt-2 page-title">
           {{ t('booking.title') }}
         </h1>
         <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
@@ -335,7 +335,7 @@ useSeoMeta({
             <div class="mt-2 flex gap-2">
               <button
                 type="button"
-                class="inline-flex min-h-10 items-center justify-center rounded-[7px] px-4 text-sm font-medium transition"
+                class="inline-flex min-h-10 items-center justify-center rounded-[10px] px-4 text-sm font-medium transition"
                 :class="forMiniatures ? 'bg-lyktan-ink text-white' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink hover:border-lyktan-mute'"
                 @click="forMiniatures = true"
               >
@@ -343,7 +343,7 @@ useSeoMeta({
               </button>
               <button
                 type="button"
-                class="inline-flex min-h-10 items-center justify-center rounded-[7px] px-4 text-sm font-medium transition"
+                class="inline-flex min-h-10 items-center justify-center rounded-[10px] px-4 text-sm font-medium transition"
                 :class="!forMiniatures ? 'bg-lyktan-ink text-white' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink hover:border-lyktan-mute'"
                 @click="forMiniatures = false"
               >
@@ -363,7 +363,7 @@ useSeoMeta({
                   v-for="size in partySizeOptions"
                   :key="size"
                   type="button"
-                  class="inline-flex h-10 w-10 items-center justify-center rounded-[7px] text-sm font-medium transition"
+                  class="inline-flex h-10 w-10 items-center justify-center rounded-[10px] text-sm font-medium transition"
                   :class="size === partySize ? 'bg-lyktan-ink text-white' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink hover:border-lyktan-mute'"
                   @click="partySize = size"
                 >
@@ -379,7 +379,7 @@ useSeoMeta({
                 v-model="selectedDate"
                 type="date"
                 :min="today"
-                class="mt-2 min-h-12 w-full max-w-xs rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+                class="mt-2 min-h-12 w-full max-w-xs rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
               >
             </div>
           </div>
@@ -450,7 +450,7 @@ useSeoMeta({
           </div>
         </div>
 
-        <div class="min-w-0 rounded-[10px] border border-lyktan-line bg-lyktan-surface p-6 sm:p-8">
+        <div class="min-w-0 rounded-[18px] border border-lyktan-line bg-lyktan-surface p-6 sm:p-8">
           <div v-if="selectedTableId && selectedTime">
             <p class="eyebrow">{{ t('booking.yourDetails') }}</p>
             <h2 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
@@ -471,7 +471,7 @@ useSeoMeta({
                   v-model="name"
                   type="text"
                   required
-                  class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+                  class="mt-2 min-h-12 w-full rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
                 >
               </div>
 
@@ -481,7 +481,7 @@ useSeoMeta({
                   id="booking-phone"
                   v-model="phone"
                   type="tel"
-                  class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+                  class="mt-2 min-h-12 w-full rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
                 >
               </div>
 
@@ -491,7 +491,7 @@ useSeoMeta({
                   id="booking-email"
                   v-model="email"
                   type="email"
-                  class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+                  class="mt-2 min-h-12 w-full rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
                 >
               </div>
 
@@ -506,7 +506,7 @@ useSeoMeta({
                   v-model="notes"
                   rows="2"
                   :placeholder="t('booking.notesPlaceholder')"
-                  class="mt-2 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 py-3 text-sm text-lyktan-ink"
+                  class="mt-2 w-full rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 py-3 text-sm text-lyktan-ink"
                 />
               </div>
 
@@ -534,7 +534,7 @@ useSeoMeta({
     </div>
 
     <div v-if="showReviewModal" class="fixed inset-0 z-50 flex items-center justify-center bg-lyktan-felt/60 p-4" @click.self="showReviewModal = false">
-      <div class="w-full max-w-sm rounded-[10px] bg-lyktan-paper p-6 shadow-xl sm:p-8">
+      <div class="w-full max-w-sm rounded-[18px] bg-lyktan-paper p-6 shadow-xl sm:p-8">
         <template v-if="confirmedBooking">
           <p class="eyebrow">{{ t('booking.bookedExclaim') }}</p>
           <h2 class="mt-1 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
@@ -587,7 +587,7 @@ useSeoMeta({
             </div>
           </dl>
 
-          <div class="mt-5 space-y-2 rounded-[10px] border border-lyktan-line bg-lyktan-surface p-4 text-sm leading-6 text-lyktan-mute">
+          <div class="mt-5 space-y-2 rounded-[18px] border border-lyktan-line bg-lyktan-surface p-4 text-sm leading-6 text-lyktan-mute">
             <p v-if="checkingMembership">{{ t('booking.checkingMembership') }}</p>
             <template v-else-if="isMemberBooking">
               <p>

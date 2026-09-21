@@ -111,12 +111,13 @@ useSeoMeta({
     <div class="page-shell grid gap-8">
       <nav class="flex items-center gap-2 text-sm text-lyktan-mute">
         <NuxtLink :to="localePath('/butik')" class="transition hover:text-lyktan-ink">{{ t('home.shopEyebrow') }}</NuxtLink>
-        <span class="text-black/20">/</span>
+        <span class="text-lyktan-line">/</span>
         <span class="text-lyktan-ink">{{ collectionTitle || '…' }}</span>
       </nav>
 
       <div class="flex flex-wrap items-center justify-between gap-4">
-        <h1 class="text-[clamp(1.5rem,2.6vw,2rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
+        <h1 class="page-title inline-flex items-center gap-3">
+          <span class="h-3 w-3 shrink-0 rounded-full" :style="{ background: categoryAccent(collectionTitle).color }" />
           {{ collectionTitle || t('shop.category') }}
         </h1>
 
@@ -125,7 +126,7 @@ useSeoMeta({
             <span class="sr-only">{{ t('shop.sort') }}</span>
             <select
               v-model="sortValue"
-              class="min-h-10 rounded-[7px] border border-lyktan-line bg-lyktan-field px-3 text-sm text-lyktan-ink"
+              class="min-h-10 rounded-[10px] border border-lyktan-line bg-lyktan-field px-3 text-sm text-lyktan-ink"
             >
               <option v-for="option in SORT_OPTIONS" :key="option.value" :value="option.value">{{ option.label }}</option>
             </select>
@@ -133,8 +134,8 @@ useSeoMeta({
 
           <button
             type="button"
-            class="inline-flex min-h-10 items-center gap-1.5 rounded-[7px] border px-4 text-sm font-medium transition"
-            :class="hasActiveFilters ? 'border-lyktan-ink bg-lyktan-ink text-white' : 'border-lyktan-line text-lyktan-ink hover:bg-black/[0.04]'"
+            class="inline-flex min-h-10 items-center gap-1.5 rounded-[10px] border px-4 text-sm font-medium transition"
+            :class="hasActiveFilters ? 'border-lyktan-ink bg-lyktan-ink text-white' : 'border-lyktan-line text-lyktan-ink hover:border-lyktan-ink'"
             @click="filtersOpen = !filtersOpen"
           >
             {{ t('shop.filter') }}
@@ -153,7 +154,7 @@ useSeoMeta({
             type="number"
             min="0"
             :placeholder="String(priceBounds.min)"
-            class="min-h-9 w-20 rounded-[7px] border border-lyktan-line bg-lyktan-field px-2.5 text-sm text-lyktan-ink"
+            class="min-h-9 w-20 rounded-[10px] border border-lyktan-line bg-lyktan-field px-2.5 text-sm text-lyktan-ink"
           >
           <span class="text-lyktan-mute">–</span>
           <input
@@ -161,7 +162,7 @@ useSeoMeta({
             type="number"
             min="0"
             :placeholder="String(priceBounds.max)"
-            class="min-h-9 w-20 rounded-[7px] border border-lyktan-line bg-lyktan-field px-2.5 text-sm text-lyktan-ink"
+            class="min-h-9 w-20 rounded-[10px] border border-lyktan-line bg-lyktan-field px-2.5 text-sm text-lyktan-ink"
           >
           <span class="text-sm text-lyktan-mute">{{ t('shop.currency') }}</span>
         </div>
@@ -200,7 +201,7 @@ useSeoMeta({
           <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
         </div>
 
-        <div v-else class="rounded-[10px] border border-lyktan-line bg-lyktan-surface p-8 text-center">
+        <div v-else class="rounded-[18px] border border-lyktan-line bg-lyktan-surface p-8 text-center">
           <p class="eyebrow">{{ t('shop.noProducts') }}</p>
           <h3 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
             {{ t('shop.noProductsMatch') }}

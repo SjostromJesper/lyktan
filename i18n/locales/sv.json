@@ -56,7 +56,20 @@
     "browseProducts": "Bläddra bland produkterna",
     "browseProductsText": "Kortspel, miniatyrspel, brädspel och rollspel — köp direkt och hämta i butik.",
     "viewAllInShop": "Visa alla i butiken",
-    "seoDescription": "Spelbutik med event, miniatyrspel, kortspel, brädspel och rollspel."
+    "seoDescription": "Spelbutik med event, miniatyrspel, kortspel, brädspel och rollspel.",
+    "heroEyebrow": "Spelbutik i Järfälla",
+    "heroTitle": "Kort, miniatyrer och brädspel – och bord att spela vid.",
+    "heroText": "Handla på nätet och hämta i butiken vid Veddestabron, eller kom förbi och spela en kväll.",
+    "heroCta": "Till butiken",
+    "heroSecondary": "Boka bord",
+    "allEvents": "Alla event",
+    "categoriesEyebrow": "Kategorier",
+    "categoriesTitle": "Hitta ditt spel",
+    "visitEyebrow": "I butiken",
+    "visitTitle": "Mer än en butik",
+    "visitBookingText": "Boka ett bord för kvällen och spela i butiken.",
+    "visitEventsText": "Turneringar, prereleases och spelkvällar varje vecka.",
+    "visitContactText": "Veddestabron 8B i Järfälla. Se öppettider och hitta hit."
   },
   "product": {
     "comingSoon": "Kommer snart",

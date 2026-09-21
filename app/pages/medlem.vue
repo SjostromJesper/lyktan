@@ -116,7 +116,7 @@ useSeoMeta({
     <div class="page-shell grid gap-14">
       <div>
         <p class="eyebrow">Medlemskap</p>
-        <h1 class="mt-2 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
+        <h1 class="mt-2 page-title">
           Bli medlem i Butik Lyktan
         </h1>
         <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
@@ -130,7 +130,7 @@ useSeoMeta({
         <div
           v-for="t in tiers"
           :key="t.tier"
-          class="rounded-[10px] p-6 sm:p-8"
+          class="rounded-[18px] p-6 sm:p-8"
           :class="t.highlight ? 'bg-lyktan-felt text-lyktan-cream' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink'"
         >
           <p class="eyebrow" :class="t.highlight ? '!text-lyktan-brand' : ''">
@@ -152,8 +152,8 @@ useSeoMeta({
               v-for="plan in plansForTier(t.tier)"
               :key="plan.variantId"
               type="button"
-              class="flex min-h-11 items-center justify-between rounded-[7px] px-4 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40"
-              :class="t.highlight ? 'bg-lyktan-felt-2 text-lyktan-cream ring-1 ring-lyktan-felt-line hover:bg-[#23604C]' : 'border border-lyktan-line bg-lyktan-field text-lyktan-ink hover:border-lyktan-mute'"
+              class="flex min-h-11 items-center justify-between rounded-[10px] px-4 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40"
+              :class="t.highlight ? 'bg-lyktan-felt-2 text-lyktan-cream ring-1 ring-lyktan-felt-line hover:bg-[#2E323A]' : 'border border-lyktan-line bg-lyktan-field text-lyktan-ink hover:border-lyktan-mute'"
               :disabled="!plan.availableForSale"
               @click="openPlan(plan)"
             >
@@ -190,7 +190,7 @@ useSeoMeta({
     </div>
 
     <div v-if="selectedPlan" class="fixed inset-0 z-[95] flex items-center justify-center bg-lyktan-felt/60 p-4" @click.self="closeForm">
-      <div class="w-full max-w-sm rounded-[10px] bg-lyktan-paper p-6 shadow-xl sm:p-8">
+      <div class="w-full max-w-sm rounded-[18px] bg-lyktan-paper p-6 shadow-xl sm:p-8">
         <div class="mb-5 flex items-start justify-between gap-3">
           <div>
             <p class="eyebrow">{{ selectedPlan.tier === 'stort' ? 'Stort medlemskap' : 'Litet medlemskap' }}</p>
@@ -209,7 +209,7 @@ useSeoMeta({
               v-model="name"
               type="text"
               required
-              class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+              class="mt-2 min-h-12 w-full rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
             >
           </div>
 
@@ -220,7 +220,7 @@ useSeoMeta({
               v-model="email"
               type="email"
               required
-              class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+              class="mt-2 min-h-12 w-full rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
             >
           </div>
 
@@ -230,7 +230,7 @@ useSeoMeta({
               id="member-phone"
               v-model="phone"
               type="tel"
-              class="mt-2 min-h-12 w-full rounded-[7px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
+              class="mt-2 min-h-12 w-full rounded-[10px] border border-lyktan-line bg-lyktan-field px-4 text-sm text-lyktan-ink"
             >
           </div>
 

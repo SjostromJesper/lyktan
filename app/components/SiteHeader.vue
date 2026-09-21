@@ -23,19 +23,19 @@ const otherLocaleCode = computed(() => (typeof otherLocale.value === 'string' ? 
 </script>
 
 <template>
-  <header class="sticky top-0 z-40 border-b border-lyktan-line bg-lyktan-paper/90 backdrop-blur">
-    <div class="page-shell flex min-h-[64px] items-center justify-between gap-6 px-4 sm:px-6">
+  <header class="sticky top-0 z-40 border-b border-lyktan-line bg-white/85 backdrop-blur-md">
+    <div class="page-shell flex min-h-[72px] items-center justify-between gap-6 px-4 sm:px-6">
       <NuxtLink :to="localePath('/')" :aria-label="t('nav.home')" class="shrink-0">
         <img src="/images/logo/ink-wide.svg" alt="Butik Lyktan" class="h-8 w-auto sm:h-9">
       </NuxtLink>
 
-      <nav :aria-label="t('nav.mainNav')" class="hidden items-center gap-6 sm:flex">
+      <nav :aria-label="t('nav.mainNav')" class="hidden items-center gap-1 sm:flex">
         <NuxtLink
           v-for="link in navLinks"
           :key="link.to"
           :to="link.to"
-          class="text-[0.86rem] text-lyktan-mute transition hover:text-lyktan-ink"
-          active-class="!text-lyktan-ink font-medium"
+          class="nav-link"
+          active-class="nav-link-active"
         >
           {{ link.label }}
         </NuxtLink>
@@ -44,22 +44,22 @@ const otherLocaleCode = computed(() => (typeof otherLocale.value === 'string' ? 
       <div class="flex items-center gap-1">
         <NuxtLink
           :to="switchLocalePath(otherLocaleCode)"
-          class="hidden h-9 items-center px-2.5 text-[0.8rem] font-medium text-lyktan-mute transition hover:text-lyktan-ink sm:inline-flex"
+          class="hidden h-8 items-center rounded-full border border-lyktan-line px-3 text-[0.72rem] font-semibold tracking-[0.06em] text-lyktan-mute transition hover:border-lyktan-ink hover:text-lyktan-ink sm:inline-flex"
         >
           {{ otherLocaleCode === 'en' ? 'EN' : 'SV' }}
         </NuxtLink>
 
-        <button type="button" :aria-label="t('nav.search')" class="hidden h-9 w-9 place-items-center rounded-[7px] text-lyktan-ink transition hover:bg-lyktan-ink/5 sm:inline-grid">
+        <NuxtLink :to="localePath('/butik')" :aria-label="t('nav.search')" class="hidden h-10 w-10 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-well sm:inline-grid">
           <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.6">
             <circle cx="11" cy="11" r="7" />
             <path d="m20 20-3.5-3.5" stroke-linecap="round" />
           </svg>
-        </button>
+        </NuxtLink>
 
         <button
           type="button"
           :aria-label="t('nav.openCart')"
-          class="relative inline-grid h-9 w-9 place-items-center rounded-[7px] text-lyktan-ink transition hover:bg-lyktan-ink/5"
+          class="relative inline-grid h-10 w-10 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-well"
           @click="cartOpen = true"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true" class="h-[18px] w-[18px]">
@@ -70,7 +70,7 @@ const otherLocaleCode = computed(() => (typeof otherLocale.value === 'string' ? 
           </svg>
           <span
             v-if="cartQuantity"
-            class="absolute -right-0.5 -top-0.5 inline-grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-lyktan-brand px-1 text-[0.6rem] font-semibold text-lyktan-ink"
+            class="absolute right-0 top-0 inline-grid min-h-[18px] min-w-[18px] place-items-center rounded-full bg-lyktan-brand px-1 font-mono text-[0.6rem] font-semibold text-lyktan-ink ring-2 ring-white"
           >
             {{ cartQuantity }}
           </span>
@@ -80,7 +80,7 @@ const otherLocaleCode = computed(() => (typeof otherLocale.value === 'string' ? 
           type="button"
           :aria-label="t('nav.openMenu')"
           :aria-expanded="mobileMenuOpen"
-          class="inline-grid h-9 w-9 place-items-center rounded-[7px] text-lyktan-ink transition hover:bg-lyktan-ink/5 sm:hidden"
+          class="inline-grid h-10 w-10 place-items-center rounded-full text-lyktan-ink transition hover:bg-lyktan-well sm:hidden"
           @click="mobileMenuOpen = !mobileMenuOpen"
         >
           <svg v-if="!mobileMenuOpen" viewBox="0 0 24 24" aria-hidden="true" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -104,19 +104,19 @@ const otherLocaleCode = computed(() => (typeof otherLocale.value === 'string' ? 
       <nav
         v-if="mobileMenuOpen"
         :aria-label="t('nav.mobileNav')"
-        class="border-t border-lyktan-line bg-lyktan-paper px-4 py-3 sm:hidden"
+        class="border-t border-lyktan-line bg-white px-4 py-3 sm:hidden"
       >
         <NuxtLink
           v-for="link in navLinks"
           :key="link.to"
           :to="link.to"
-          class="block min-h-11 rounded-[7px] px-3 py-2.5 text-[0.95rem] text-lyktan-ink transition hover:bg-lyktan-ink/5"
+          class="block min-h-11 rounded-[10px] px-3 py-2.5 text-[1rem] font-medium text-lyktan-ink transition hover:bg-lyktan-well"
         >
           {{ link.label }}
         </NuxtLink>
         <NuxtLink
           :to="switchLocalePath(otherLocaleCode)"
-          class="block min-h-11 rounded-[7px] px-3 py-2.5 text-[0.95rem] text-lyktan-ink transition hover:bg-lyktan-ink/5"
+          class="block min-h-11 rounded-[10px] px-3 py-2.5 text-[1rem] font-medium text-lyktan-ink transition hover:bg-lyktan-well"
         >
           {{ otherLocaleCode === 'en' ? 'English' : 'Svenska' }}
         </NuxtLink>

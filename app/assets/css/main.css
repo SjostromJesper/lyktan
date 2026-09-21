@@ -1,27 +1,34 @@
 @import "tailwindcss";
 
 @theme {
-  /* "Spelbord" palette: deep game-table felt green for the big colour
-     blocks (status bar, hero, highlighted panels, footer), warm light paper
-     everywhere else, and the logo's orange as the one hot accent — the
-     lantern. Familjen Grotesk for text, IBM Plex Mono for prices/numbers. */
+  /* White and clean, colour in the details: brand orange for the one
+     primary action and small highlights, and one colour per category
+     (app/utils/categoryAccent.ts) for dots, tiles and underlines.
+     Familjen Grotesk for text, IBM Plex Mono for prices/numbers. */
   --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --color-lyktan-ink: #14261F;     /* text — green-black */
-  --color-lyktan-paper: #FAF6EE;   /* page ground — warm light paper */
-  --color-lyktan-surface: #FFFDF8; /* panels on paper, paired with lyktan-line */
-  --color-lyktan-well: #F2EBDD;    /* image wells behind product photos */
-  --color-lyktan-field: #FFFDF8;   /* form fields */
-  --color-lyktan-line: #E6DCCA;    /* borders, dividers */
-  --color-lyktan-mute: #6A6558;    /* secondary text */
-  /* Felt — the big colour. Light text on it uses lyktan-cream. */
-  --color-lyktan-felt: #123B30;
-  --color-lyktan-felt-2: #1C5140;  /* raised surfaces on felt */
-  --color-lyktan-felt-line: #2A5E4D;
-  --color-lyktan-cream: #F6EFE1;   /* text on felt */
-  --color-lyktan-sage: #A9C2B5;    /* muted text on felt */
-  --color-lyktan-mint: #E3EEE6;    /* soft green panels on paper */
-  --color-lyktan-go: #1F7A55;      /* in stock / success text */
+  --color-lyktan-ink: #15171C;
+  --color-lyktan-paper: #FFFFFF;   /* page ground */
+  --color-lyktan-surface: #FFFFFF; /* panels, paired with lyktan-line */
+  --color-lyktan-well: #F5F4F1;    /* image wells behind product photos */
+  --color-lyktan-soft: #FAF9F7;    /* subtle bands (status bar, footer) */
+  --color-lyktan-field: #FFFFFF;   /* form fields */
+  --color-lyktan-line: #E9E7E2;    /* borders, dividers */
+  --color-lyktan-mute: #6B6B70;    /* secondary text */
+  /* Dark card (highlighted membership etc.) — text on it uses lyktan-cream. */
+  --color-lyktan-felt: #15171C;
+  --color-lyktan-felt-2: #24272E;
+  --color-lyktan-felt-line: #33363E;
+  --color-lyktan-cream: #FFFFFF;
+  --color-lyktan-sage: #A5A8AF;
+  --color-lyktan-mint: #E9F7F0;    /* soft green detail (free slots, success) */
+  --color-lyktan-go: #12915F;      /* in stock / success text */
+  /* Category detail colours — keep in sync with app/utils/categoryAccent.ts */
+  --color-cat-kort: #FE4D01;
+  --color-cat-mini: #2F6FEB;
+  --color-cat-brad: #12915F;
+  --color-cat-roll: #8A4FE0;
+  --color-cat-event: #E09A00;
   /* Maroon — used for accent TEXT (links, hover, small UI) since it holds contrast
      on white; the vivid orange below fails WCAG AA at text sizes on white. */
   --color-lyktan-accent: #720000;
@@ -343,16 +350,42 @@
     margin-right: auto;
   }
 
+  /* Header navigation: quiet text, active page gets ink + an orange dot */
+  .nav-link {
+    @apply relative inline-flex h-10 items-center rounded-full px-3.5 text-[0.9rem] font-medium text-lyktan-mute transition hover:bg-lyktan-well hover:text-lyktan-ink;
+  }
+  .nav-link-active {
+    @apply text-lyktan-ink;
+  }
+  .nav-link-active::after {
+    content: "";
+    @apply absolute bottom-0.5 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-lyktan-brand;
+  }
+
+  .page-title {
+    @apply text-[clamp(2.2rem,4.6vw,3.4rem)] font-bold leading-[1] tracking-[-0.035em] text-lyktan-ink;
+  }
+
+  /* Section heading pattern: small coloured label + big title */
+  .section-title {
+    @apply text-[clamp(1.6rem,3vw,2.3rem)] font-bold leading-[1.05] tracking-[-0.025em] text-lyktan-ink;
+  }
+
+  /* Compact button under product cards: outline, fills orange on hover */
+  .card-cta {
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-lyktan-line bg-white px-4 text-[0.82rem] font-semibold !text-lyktan-ink transition hover:border-lyktan-brand hover:bg-lyktan-brand disabled:cursor-not-allowed disabled:border-lyktan-line disabled:bg-lyktan-well disabled:!text-lyktan-mute;
+  }
+
   .eyebrow {
     @apply text-[0.72rem] font-semibold uppercase tracking-[0.07em] text-lyktan-mute;
   }
 
   .primary-cta {
-    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[7px] bg-lyktan-brand px-5 text-[0.92rem] font-semibold !text-lyktan-ink transition hover:bg-lyktan-accent hover:!text-white disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[10px] bg-lyktan-brand px-5 text-[0.92rem] font-semibold !text-lyktan-ink transition hover:bg-lyktan-ink hover:!text-white disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .secondary-cta {
-    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[7px] border border-lyktan-line bg-lyktan-surface px-5 text-[0.92rem] font-medium !text-lyktan-ink transition hover:border-lyktan-mute hover:bg-lyktan-field disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[10px] border border-lyktan-line bg-lyktan-surface px-5 text-[0.92rem] font-medium !text-lyktan-ink transition hover:border-lyktan-ink disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .tag-chip {

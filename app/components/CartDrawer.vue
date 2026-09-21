@@ -33,7 +33,7 @@ const {
     >
       <div class="flex shrink-0 items-start justify-between gap-3">
         <h2 class="text-[1.15rem] font-semibold tracking-[-0.01em] text-lyktan-ink">{{ t('cart.title') }}</h2>
-        <button type="button" :aria-label="t('cart.close')" class="inline-grid h-8 w-8 place-items-center rounded-[7px] text-lyktan-mute hover:bg-black/5 hover:text-lyktan-ink" @click="cartOpen = false">
+        <button type="button" :aria-label="t('cart.close')" class="inline-grid h-8 w-8 place-items-center rounded-[10px] text-lyktan-mute hover:bg-black/5 hover:text-lyktan-ink" @click="cartOpen = false">
           ×
         </button>
       </div>
@@ -47,7 +47,7 @@ const {
           :key="line.id"
           class="grid grid-cols-[64px_1fr_auto] items-center gap-4"
         >
-          <div class="h-16 w-16 overflow-hidden rounded-[7px] bg-lyktan-well">
+          <div class="h-16 w-16 overflow-hidden rounded-[10px] bg-lyktan-well">
             <img
               v-if="line.merchandise?.product?.featuredImage?.url"
               :src="line.merchandise.product.featuredImage.url"
@@ -68,7 +68,7 @@ const {
           <div class="inline-flex items-center gap-3">
             <button
               type="button"
-              class="grid h-7 w-7 place-items-center rounded-[7px] text-sm text-lyktan-ink transition hover:bg-black/5 disabled:opacity-40"
+              class="grid h-7 w-7 place-items-center rounded-[10px] text-sm text-lyktan-ink transition hover:bg-black/5 disabled:opacity-40"
               :disabled="cartBusy"
               @click="updateLineQuantity(line.id, line.quantity - 1)"
             >
@@ -77,7 +77,7 @@ const {
             <span class="min-w-3 text-center font-mono tabular-nums text-sm">{{ line.quantity }}</span>
             <button
               type="button"
-              class="grid h-7 w-7 place-items-center rounded-[7px] text-sm text-lyktan-ink transition hover:bg-black/5 disabled:opacity-40"
+              class="grid h-7 w-7 place-items-center rounded-[10px] text-sm text-lyktan-ink transition hover:bg-black/5 disabled:opacity-40"
               :disabled="cartBusy"
               @click="updateLineQuantity(line.id, line.quantity + 1)"
             >

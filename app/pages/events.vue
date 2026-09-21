@@ -32,7 +32,7 @@ useSeoMeta({
     <div class="page-shell grid gap-14">
       <div>
         <p class="eyebrow">{{ t('nav.events') }}</p>
-        <h1 class="mt-2 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
+        <h1 class="mt-2 page-title">
           {{ t('events.title') }}
         </h1>
       </div>
@@ -43,7 +43,7 @@ useSeoMeta({
         </h2>
 
         <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <div v-for="day in weeklyPattern" :key="day.weekday" class="min-w-0 rounded-[10px] border border-lyktan-line p-5">
+          <div v-for="day in weeklyPattern" :key="day.weekday" class="min-w-0 rounded-[18px] border border-lyktan-line p-5">
             <p class="font-semibold text-lyktan-ink">{{ day.label }}</p>
 
             <ul v-if="day.events.length" class="mt-3 divide-y divide-lyktan-line">
@@ -63,7 +63,7 @@ useSeoMeta({
           {{ t('events.otherEventsTitle') }}
         </h2>
 
-        <ul v-if="otherUpcomingEvents.length" class="mt-6 w-full divide-y divide-lyktan-line rounded-[10px] border border-lyktan-line">
+        <ul v-if="otherUpcomingEvents.length" class="mt-6 w-full divide-y divide-lyktan-line rounded-[18px] border border-lyktan-line">
           <li
             v-for="(event, index) in otherUpcomingEvents"
             :key="`${event.datum}-${event.titel}-${index}`"
@@ -85,7 +85,7 @@ useSeoMeta({
           </li>
         </ul>
 
-        <div v-else class="mt-6 w-full rounded-[10px] border border-lyktan-line bg-lyktan-surface p-8 text-center">
+        <div v-else class="mt-6 w-full rounded-[18px] border border-lyktan-line bg-lyktan-surface p-8 text-center">
           <p class="eyebrow">{{ t('events.noSpecialEvents') }}</p>
           <h3 class="mt-2 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">
             {{ t('events.calendarUpdates') }}

@@ -16,7 +16,7 @@ useSeoMeta({
     <div class="page-shell grid gap-10">
       <div>
         <p class="eyebrow">{{ t('nav.contact') }}</p>
-        <h1 class="mt-2 text-[clamp(1.8rem,3.4vw,2.6rem)] font-semibold tracking-[-0.01em] text-lyktan-ink">
+        <h1 class="mt-2 page-title">
           {{ t('contact.title') }}
         </h1>
         <p class="mt-3 max-w-xl text-sm leading-7 text-lyktan-mute">
@@ -77,7 +77,7 @@ useSeoMeta({
           </div>
         </div>
 
-        <div class="aspect-[4/3] overflow-hidden rounded-[10px] border border-lyktan-line bg-lyktan-surface lg:aspect-auto lg:min-h-[420px]">
+        <div class="aspect-[4/3] overflow-hidden rounded-[18px] border border-lyktan-line bg-lyktan-surface lg:aspect-auto lg:min-h-[420px]">
           <iframe
             :title="t('contact.mapTitle')"
             :src="`https://maps.google.com/maps?q=${mapQuery}&z=15&output=embed`"

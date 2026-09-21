@@ -11,6 +11,7 @@ useSeoMeta({
   <main class="locked-page">
     <section class="locked-shell">
       <UnderConstructionPanel
+        heading-tag="h1"
         :title="t('events.slugTitle')"
         :text="t('events.slugText')"
       />
