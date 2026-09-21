@@ -70,7 +70,7 @@ useSeoMeta({
             </div>
 
             <p class="mt-3 flex items-center gap-2 text-sm">
-              <span class="inline-block h-1.5 w-1.5 rounded-full" :class="openStatus.isOpen ? 'bg-emerald-500' : 'bg-black/25'" />
+              <span class="inline-block h-1.5 w-1.5 rounded-full" :class="openStatus.isOpen ? 'bg-lyktan-go' : 'bg-black/25'" />
               <span class="font-medium text-lyktan-ink">{{ openStatus.label }}</span>
               <span class="text-lyktan-mute">· {{ openStatus.message }}</span>
             </p>

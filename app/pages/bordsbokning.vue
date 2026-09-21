@@ -306,7 +306,7 @@ const overviewCellClass = (tableId: string, time: string) => {
     return 'cursor-not-allowed bg-red-50 text-red-400'
   }
 
-  return 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+  return 'bg-lyktan-mint text-lyktan-go hover:bg-[#D3E6D9]'
 }
 
 useSeoMeta({
@@ -336,7 +336,7 @@ useSeoMeta({
               <button
                 type="button"
                 class="inline-flex min-h-10 items-center justify-center rounded-[7px] px-4 text-sm font-medium transition"
-                :class="forMiniatures ? 'bg-lyktan-ink text-white' : 'bg-lyktan-surface text-lyktan-ink hover:bg-black/[0.08]'"
+                :class="forMiniatures ? 'bg-lyktan-ink text-white' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink hover:border-lyktan-mute'"
                 @click="forMiniatures = true"
               >
                 {{ t('booking.yes') }}
@@ -344,7 +344,7 @@ useSeoMeta({
               <button
                 type="button"
                 class="inline-flex min-h-10 items-center justify-center rounded-[7px] px-4 text-sm font-medium transition"
-                :class="!forMiniatures ? 'bg-lyktan-ink text-white' : 'bg-lyktan-surface text-lyktan-ink hover:bg-black/[0.08]'"
+                :class="!forMiniatures ? 'bg-lyktan-ink text-white' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink hover:border-lyktan-mute'"
                 @click="forMiniatures = false"
               >
                 {{ t('booking.no') }}
@@ -364,7 +364,7 @@ useSeoMeta({
                   :key="size"
                   type="button"
                   class="inline-flex h-10 w-10 items-center justify-center rounded-[7px] text-sm font-medium transition"
-                  :class="size === partySize ? 'bg-lyktan-ink text-white' : 'bg-lyktan-surface text-lyktan-ink hover:bg-black/[0.08]'"
+                  :class="size === partySize ? 'bg-lyktan-ink text-white' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink hover:border-lyktan-mute'"
                   @click="partySize = size"
                 >
                   {{ size }}
@@ -435,7 +435,7 @@ useSeoMeta({
             </div>
 
             <div class="mt-3 flex flex-wrap items-center gap-3 text-[0.72rem] text-lyktan-mute">
-              <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-sm border border-emerald-200 bg-emerald-50" /> {{ t('booking.free') }}</span>
+              <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-sm border border-[#C5DCCB] bg-lyktan-mint" /> {{ t('booking.free') }}</span>
               <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-sm bg-lyktan-ink" /> {{ t('booking.selected') }}</span>
               <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-sm border border-red-200 bg-red-50" /> {{ t('booking.booked') }}</span>
               <span class="inline-flex items-center gap-1.5"><span class="inline-block h-2.5 w-2.5 rounded-sm border border-amber-200 bg-amber-50" /> {{ t('booking.standingEvent') }}</span>
@@ -533,8 +533,8 @@ useSeoMeta({
       </div>
     </div>
 
-    <div v-if="showReviewModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4" @click.self="showReviewModal = false">
-      <div class="w-full max-w-sm rounded-[10px] bg-white p-6 shadow-xl sm:p-8">
+    <div v-if="showReviewModal" class="fixed inset-0 z-50 flex items-center justify-center bg-lyktan-felt/60 p-4" @click.self="showReviewModal = false">
+      <div class="w-full max-w-sm rounded-[10px] bg-lyktan-paper p-6 shadow-xl sm:p-8">
         <template v-if="confirmedBooking">
           <p class="eyebrow">{{ t('booking.bookedExclaim') }}</p>
           <h2 class="mt-1 text-xl font-semibold tracking-[-0.01em] text-lyktan-ink">

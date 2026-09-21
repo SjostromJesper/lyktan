@@ -96,9 +96,9 @@ useSeoMeta({
             v-for="collection in collections"
             :key="collection.id"
             :to="localePath(`/butik/${collection.handle}`)"
-            class="group flex flex-col overflow-hidden rounded-[10px] border border-lyktan-line bg-lyktan-surface transition hover:border-lyktan-mute"
+            class="group flex flex-col overflow-hidden rounded-[10px] border border-lyktan-line bg-lyktan-surface transition hover:-translate-y-0.5 hover:border-lyktan-brand"
           >
-            <div class="relative aspect-[4/3] overflow-hidden bg-black/[0.04]">
+            <div class="relative aspect-[4/3] overflow-hidden bg-lyktan-well">
               <img
                 v-if="collection.image?.url"
                 :src="collection.image.url"

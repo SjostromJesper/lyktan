@@ -37,7 +37,7 @@ const addToCart = async () => {
 
 <template>
   <article class="group flex w-full flex-col">
-    <NuxtLink :to="productPath" class="relative aspect-square overflow-hidden rounded-[10px] border border-lyktan-line bg-lyktan-surface">
+    <NuxtLink :to="productPath" class="relative aspect-square overflow-hidden rounded-[10px] bg-lyktan-well transition group-hover:bg-[#EDE3D0]">
       <img
         v-if="product.featuredImage?.url"
         :src="product.featuredImage.url"
@@ -50,13 +50,13 @@ const addToCart = async () => {
       <span v-if="isUpcoming" class="absolute left-2 top-2 rounded-full bg-lyktan-brand px-2.5 py-1 text-[0.68rem] font-semibold text-lyktan-ink">
         {{ t('product.comingSoon') }}
       </span>
-      <span v-else-if="isInStoreOnly" class="absolute left-2 top-2 rounded-full bg-lyktan-mute px-2.5 py-1 text-[0.68rem] font-medium text-white">
+      <span v-else-if="isInStoreOnly" class="absolute left-2 top-2 rounded-full bg-lyktan-surface px-2.5 py-1 text-[0.68rem] font-medium text-lyktan-ink ring-1 ring-lyktan-line">
         {{ t('product.inStoreOnly') }}
       </span>
       <span v-else-if="isSoldOut" class="absolute left-2 top-2 rounded-full bg-lyktan-ink px-2.5 py-1 text-[0.68rem] font-medium text-white">
         {{ t('product.soldOut') }}
       </span>
-      <span v-else-if="isNew" class="absolute left-2 top-2 rounded-full bg-emerald-600 px-2.5 py-1 text-[0.68rem] font-medium text-white">
+      <span v-else-if="isNew" class="absolute left-2 top-2 rounded-full bg-lyktan-felt px-2.5 py-1 text-[0.68rem] font-medium text-lyktan-cream">
         {{ t('product.new') }}
       </span>
     </NuxtLink>

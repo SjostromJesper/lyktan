@@ -1,19 +1,27 @@
 @import "tailwindcss";
 
 @theme {
-  /* Typography + neutrals follow docs/kortinkop/DESIGN.md (the kortinköp tool):
-     Familjen Grotesk for text, IBM Plex Mono for prices/numbers, grey-green
-     paper with white panels. Brand orange/maroon stay as the accent. */
+  /* "Spelbord" palette: deep game-table felt green for the big colour
+     blocks (status bar, hero, highlighted panels, footer), warm light paper
+     everywhere else, and the logo's orange as the one hot accent — the
+     lantern. Familjen Grotesk for text, IBM Plex Mono for prices/numbers. */
   --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  /* Brand palette (LyktanExport/Preview.jpg): ink/surface are near-identical to the
-     old neutrals so most of the site is unaffected — accent/brand are the real change. */
-  --color-lyktan-ink: #1D2230;
-  --color-lyktan-paper: #EEF0EC;   /* page ground */
-  --color-lyktan-surface: #FFFFFF; /* panels, image wells — paired with lyktan-line borders */
-  --color-lyktan-field: #F6F7F4;   /* form fields */
-  --color-lyktan-line: #D9DBD4;    /* borders, dividers */
-  --color-lyktan-mute: #666B76;
+  --color-lyktan-ink: #14261F;     /* text — green-black */
+  --color-lyktan-paper: #FAF6EE;   /* page ground — warm light paper */
+  --color-lyktan-surface: #FFFDF8; /* panels on paper, paired with lyktan-line */
+  --color-lyktan-well: #F2EBDD;    /* image wells behind product photos */
+  --color-lyktan-field: #FFFDF8;   /* form fields */
+  --color-lyktan-line: #E6DCCA;    /* borders, dividers */
+  --color-lyktan-mute: #6A6558;    /* secondary text */
+  /* Felt — the big colour. Light text on it uses lyktan-cream. */
+  --color-lyktan-felt: #123B30;
+  --color-lyktan-felt-2: #1C5140;  /* raised surfaces on felt */
+  --color-lyktan-felt-line: #2A5E4D;
+  --color-lyktan-cream: #F6EFE1;   /* text on felt */
+  --color-lyktan-sage: #A9C2B5;    /* muted text on felt */
+  --color-lyktan-mint: #E3EEE6;    /* soft green panels on paper */
+  --color-lyktan-go: #1F7A55;      /* in stock / success text */
   /* Maroon — used for accent TEXT (links, hover, small UI) since it holds contrast
      on white; the vivid orange below fails WCAG AA at text sizes on white. */
   --color-lyktan-accent: #720000;
@@ -344,7 +352,7 @@
   }
 
   .secondary-cta {
-    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[7px] border border-lyktan-line bg-white px-5 text-[0.92rem] font-medium !text-lyktan-ink transition hover:border-lyktan-mute hover:bg-lyktan-field disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[7px] border border-lyktan-line bg-lyktan-surface px-5 text-[0.92rem] font-medium !text-lyktan-ink transition hover:border-lyktan-mute hover:bg-lyktan-field disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .tag-chip {

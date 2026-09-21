@@ -283,7 +283,7 @@ useSeoMeta({
 
       <div v-else-if="product" class="grid gap-10 lg:grid-cols-[minmax(0,1.02fr)_minmax(360px,0.84fr)]">
         <div class="grid gap-3">
-          <div class="flex items-center justify-center rounded-[10px] border border-lyktan-line bg-lyktan-surface p-6">
+          <div class="flex items-center justify-center rounded-[10px] bg-lyktan-well p-6">
             <img
               v-if="selectedImage?.url"
               :src="selectedImage.url"
@@ -300,7 +300,7 @@ useSeoMeta({
               v-for="(image, index) in productImages"
               :key="image.url"
               type="button"
-              class="h-16 w-16 shrink-0 overflow-hidden rounded-[7px] border border-lyktan-line bg-lyktan-surface transition"
+              class="h-16 w-16 shrink-0 overflow-hidden rounded-[7px] bg-lyktan-well transition"
               :class="index === selectedImageIndex ? 'ring-2 ring-lyktan-ink' : 'opacity-70 hover:opacity-100'"
               @click="selectedImageIndex = index"
             >
@@ -332,7 +332,7 @@ useSeoMeta({
             </p>
 
             <template v-if="interestSubmitted">
-              <p class="mt-4 text-sm font-medium text-emerald-600">{{ t('product.interestThanks') }}</p>
+              <p class="mt-4 text-sm font-medium text-lyktan-go">{{ t('product.interestThanks') }}</p>
             </template>
             <form v-else class="mt-4 flex flex-col gap-3 sm:flex-row" @submit.prevent="submitInterest">
               <label class="flex-1">
@@ -374,7 +374,7 @@ useSeoMeta({
                   {{ formatMoney(selectedVariant?.compareAtPrice?.amount, selectedVariant?.compareAtPrice?.currencyCode) }}
                 </span>
               </span>
-              <span class="text-[0.84rem]" :class="isSoldOut ? 'text-lyktan-mute' : 'text-emerald-600'">
+              <span class="text-[0.84rem]" :class="isSoldOut ? 'text-lyktan-mute' : 'text-lyktan-go'">
                 {{ variantAvailability(selectedVariant) }}
               </span>
             </div>

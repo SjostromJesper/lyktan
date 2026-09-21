@@ -131,9 +131,9 @@ useSeoMeta({
           v-for="t in tiers"
           :key="t.tier"
           class="rounded-[10px] p-6 sm:p-8"
-          :class="t.highlight ? 'bg-lyktan-ink text-white' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink'"
+          :class="t.highlight ? 'bg-lyktan-felt text-lyktan-cream' : 'border border-lyktan-line bg-lyktan-surface text-lyktan-ink'"
         >
-          <p class="eyebrow" :class="t.highlight ? '!text-white/60' : ''">
+          <p class="eyebrow" :class="t.highlight ? '!text-lyktan-brand' : ''">
             {{ t.highlight ? 'Störst tillgång' : 'Grundnivå' }}
           </p>
           <h2 class="mt-2 text-[1.4rem] font-semibold tracking-[-0.01em]">
@@ -142,8 +142,8 @@ useSeoMeta({
 
           <ul class="mt-4 grid gap-3 text-sm leading-6">
             <li v-for="benefit in t.benefits" :key="benefit" class="flex gap-2">
-              <span :class="t.highlight ? 'text-white/60' : 'text-lyktan-accent'">·</span>
-              <span :class="t.highlight ? 'text-white/85' : 'text-lyktan-mute'">{{ benefit }}</span>
+              <span :class="t.highlight ? 'text-lyktan-brand' : 'text-lyktan-brand'">·</span>
+              <span :class="t.highlight ? 'text-lyktan-cream/85' : 'text-lyktan-mute'">{{ benefit }}</span>
             </li>
           </ul>
 
@@ -153,7 +153,7 @@ useSeoMeta({
               :key="plan.variantId"
               type="button"
               class="flex min-h-11 items-center justify-between rounded-[7px] px-4 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40"
-              :class="t.highlight ? 'bg-white/10 text-white hover:bg-white/15' : 'border border-lyktan-line bg-lyktan-field text-lyktan-ink hover:border-lyktan-mute'"
+              :class="t.highlight ? 'bg-lyktan-felt-2 text-lyktan-cream ring-1 ring-lyktan-felt-line hover:bg-[#23604C]' : 'border border-lyktan-line bg-lyktan-field text-lyktan-ink hover:border-lyktan-mute'"
               :disabled="!plan.availableForSale"
               @click="openPlan(plan)"
             >
@@ -161,7 +161,7 @@ useSeoMeta({
               <span class="font-mono tabular-nums">{{ plan.priceKr }} kr</span>
             </button>
 
-            <p v-if="!plansForTier(t.tier).length" class="text-sm" :class="t.highlight ? 'text-white/60' : 'text-lyktan-mute'">
+            <p v-if="!plansForTier(t.tier).length" class="text-sm" :class="t.highlight ? 'text-lyktan-sage' : 'text-lyktan-mute'">
               Inga alternativ tillgängliga just nu.
             </p>
           </div>
@@ -189,8 +189,8 @@ useSeoMeta({
       </section>
     </div>
 
-    <div v-if="selectedPlan" class="fixed inset-0 z-[95] flex items-center justify-center bg-black/30 p-4" @click.self="closeForm">
-      <div class="w-full max-w-sm rounded-[10px] bg-white p-6 shadow-xl sm:p-8">
+    <div v-if="selectedPlan" class="fixed inset-0 z-[95] flex items-center justify-center bg-lyktan-felt/60 p-4" @click.self="closeForm">
+      <div class="w-full max-w-sm rounded-[10px] bg-lyktan-paper p-6 shadow-xl sm:p-8">
         <div class="mb-5 flex items-start justify-between gap-3">
           <div>
             <p class="eyebrow">{{ selectedPlan.tier === 'stort' ? 'Stort medlemskap' : 'Litet medlemskap' }}</p>

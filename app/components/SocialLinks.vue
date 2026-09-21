@@ -33,7 +33,7 @@ const links = [
       class="inline-grid h-9 w-9 place-items-center rounded-full transition"
       :class="
         variant === 'dark'
-          ? 'text-white/70 hover:bg-white/10 hover:text-white'
+          ? 'text-lyktan-sage hover:bg-lyktan-felt-2 hover:text-lyktan-brand'
           : 'text-lyktan-mute hover:bg-black/5 hover:text-lyktan-ink'
       "
     >

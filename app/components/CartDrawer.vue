@@ -20,14 +20,14 @@ const {
       <button
         v-if="cartOpen"
         type="button"
-        class="fixed inset-0 z-[89] border-0 bg-black/30"
+        class="fixed inset-0 z-[89] border-0 bg-lyktan-felt/50"
         :aria-label="t('cart.close')"
         @click="cartOpen = false"
       />
     </transition>
 
     <aside
-      class="fixed right-0 top-0 z-[90] flex h-screen w-full max-w-[400px] flex-col gap-4 border-l border-lyktan-line bg-white p-6 shadow-[-8px_0_32px_rgba(29,34,48,0.08)] transition-transform duration-200 ease-out"
+      class="fixed right-0 top-0 z-[90] flex h-screen w-full max-w-[400px] flex-col gap-4 border-l border-lyktan-line bg-lyktan-paper p-6 shadow-[-8px_0_32px_rgba(29,34,48,0.08)] transition-transform duration-200 ease-out"
       :class="cartOpen ? 'translate-x-0' : 'translate-x-full'"
       :aria-label="t('cart.title')"
     >
@@ -47,7 +47,7 @@ const {
           :key="line.id"
           class="grid grid-cols-[64px_1fr_auto] items-center gap-4"
         >
-          <div class="h-16 w-16 overflow-hidden rounded-[7px] bg-lyktan-surface">
+          <div class="h-16 w-16 overflow-hidden rounded-[7px] bg-lyktan-well">
             <img
               v-if="line.merchandise?.product?.featuredImage?.url"
               :src="line.merchandise.product.featuredImage.url"
