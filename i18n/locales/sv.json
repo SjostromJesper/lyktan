@@ -9,11 +9,14 @@
     "openCart": "Öppna kundvagnen",
     "openMenu": "Öppna meny",
     "mainNav": "Huvudnavigation",
-    "mobileNav": "Mobilnavigation"
+    "mobileNav": "Mobilnavigation",
+    "terms": "Köpvillkor",
+    "customerService": "Kundservice",
+    "companyInfo": "Lyktan Spel AB · Org.nr 559541-9564"
   },
   "layout": {
-    "shippingNotice": "Frakt är inte tillgängligt just nu. Det går enbart att hämta ut produkter i butiken.",
-    "dismissShippingNotice": "Stäng fraktmeddelande"
+    "shippingNotice": "Just nu: hämta i butik. Frakt öppnar inom kort.",
+    "dismissShippingNotice": "Stäng meddelande"
   },
   "hours": {
     "weekday": {
@@ -266,5 +269,69 @@
     "slugSeoDescription": "Eventsidorna ar tillfalligt under konstruktion.",
     "slugTitle": "Den här eventsidan öppnar snart.",
     "slugText": "Vi finslipar eventsidorna just nu. Just nu är det bara Magic: The Gathering - Marvel-prereleasen som är öppen på sajten."
+  },
+  "terms": {
+    "seoDescription": "Köpvillkor för Butik Lyktan – företagsuppgifter, betalning, leverans, ångerrätt och reklamation.",
+    "title": "Köpvillkor",
+    "intro": "Villkoren gäller för köp i vår webbshop. Handlar du i butiken på Veddestabron 8B gäller vanlig konsumenträtt.",
+    "updated": "Senast uppdaterad: september 2026",
+    "sections": [
+      {
+        "heading": "Företagsuppgifter",
+        "body": [
+          "Lyktan Spel AB, organisationsnummer 559541-9564.",
+          "Veddestabron 8B, 177 48 Järfälla.",
+          "E-post: hej@butiklyktan.se"
+        ]
+      },
+      {
+        "heading": "Priser och moms",
+        "body": [
+          "Alla priser anges i svenska kronor och inkluderar moms. Eventuell fraktkostnad tillkommer och visas innan du slutför köpet.",
+          "Vi reserverar oss för slutförsäljning och för uppenbara felaktigheter i pris eller lagersaldo. Skulle något bli fel kontaktar vi dig innan ordern behandlas."
+        ]
+      },
+      {
+        "heading": "Betalning",
+        "body": [
+          "Betalning sker i kassan med de metoder som visas där. Beställningen är bindande när betalningen är genomförd och du fått en orderbekräftelse via e-post."
+        ]
+      },
+      {
+        "heading": "Leverans och hämtning",
+        "body": [
+          "Just nu hämtar du din beställning i butiken på Veddestabron 8B. Vi hör av oss när den ligger färdig att hämta, och sparar den i minst fjorton dagar.",
+          "Frakt med PostNord öppnar inom kort. Fraktkostnad och leveranssätt visas alltid innan du slutför köpet."
+        ]
+      },
+      {
+        "heading": "Ångerrätt",
+        "body": [
+          "Du har fjorton dagars ångerrätt från det att du tagit emot varan, enligt distansavtalslagen. Meddela oss på hej@butiklyktan.se att du vill ångra köpet, så återbetalar vi dig inom fjorton dagar från att vi tagit emot varan.",
+          "Du får undersöka varan som du hade kunnat göra i en butik. Har varan använts eller hanterats mer än så kan vi göra avdrag för värdeminskningen. Förseglade boosterpaket och kortprodukter som öppnats kan därför sällan återlämnas med fullt belopp.",
+          "Ångerrätten gäller inte biljetter till event, eftersom det rör en fritidsaktivitet på en bestämd dag. Kan du inte komma – hör av dig, så löser vi det om vi kan."
+        ]
+      },
+      {
+        "heading": "Reklamation",
+        "body": [
+          "Är något fel på varan har du rätt att reklamera i upp till tre år enligt konsumentköplagen. Hör av dig till hej@butiklyktan.se så snart du upptäcker felet, så löser vi det.",
+          "Vi står för returfrakten vid en godkänd reklamation."
+        ]
+      },
+      {
+        "heading": "Om vi inte kommer överens",
+        "body": [
+          "Skulle vi inte hitta en lösning kan du vända dig till Allmänna reklamationsnämnden, ARN, box 174, 101 23 Stockholm. Vi följer deras rekommendationer."
+        ]
+      },
+      {
+        "heading": "Personuppgifter",
+        "body": [
+          "Vi behandlar dina uppgifter för att kunna hantera din beställning, ditt eventdeltagande och vår bokföring. Vi säljer dem aldrig vidare.",
+          "Vill du veta vilka uppgifter vi har om dig, eller vill du att vi raderar dem, mejla hej@butiklyktan.se."
+        ]
+      }
+    ]
   }
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const localePath = useLocalePath()
 const { loadExistingCart } = useShopifyCart()
 
 const shippingBannerDismissed = useState('shipping-banner-dismissed', () => false)
@@ -56,7 +57,7 @@ onBeforeUnmount(() => {
         <span class="bg-cat-kort" /><span class="bg-cat-mini" /><span class="bg-cat-brad" /><span class="bg-cat-roll" />
       </div>
 
-      <div class="page-shell grid gap-10 px-4 py-14 sm:grid-cols-[1.4fr_1fr_1fr] sm:px-6">
+      <div class="page-shell grid gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr] sm:px-6">
         <div class="space-y-4">
           <img src="/images/logo/ink-wide.svg" alt="Butik Lyktan" class="h-10 w-auto">
           <p class="max-w-xs text-sm leading-6 text-lyktan-mute">{{ t('home.seoDescription') }}</p>
@@ -66,6 +67,22 @@ onBeforeUnmount(() => {
           <p class="eyebrow">{{ t('contact.address') }}</p>
           <p class="text-sm text-lyktan-ink">Veddestabron 8B<br>177 48 Järfälla</p>
           <a href="mailto:hej@butiklyktan.se" class="inline-block text-sm text-lyktan-ink underline decoration-lyktan-brand decoration-2 underline-offset-4 transition hover:text-lyktan-brand">hej@butiklyktan.se</a>
+        </div>
+
+        <div class="space-y-2">
+          <p class="eyebrow">{{ t('nav.customerService') }}</p>
+          <NuxtLink
+            :to="localePath('/villkor')"
+            class="block text-sm text-lyktan-ink underline decoration-lyktan-brand decoration-2 underline-offset-4 transition hover:text-lyktan-brand"
+          >
+            {{ t('nav.terms') }}
+          </NuxtLink>
+          <NuxtLink
+            :to="localePath('/kontakt')"
+            class="block text-sm text-lyktan-mute transition hover:text-lyktan-ink"
+          >
+            {{ t('nav.contact') }}
+          </NuxtLink>
         </div>
 
         <div class="space-y-2">
@@ -84,7 +101,7 @@ onBeforeUnmount(() => {
 
       <div class="border-t border-lyktan-line">
         <div class="page-shell flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-          <p class="text-xs text-lyktan-mute">© Butik Lyktan</p>
+          <p class="text-xs text-lyktan-mute">© Butik Lyktan · {{ t('nav.companyInfo') }}</p>
           <SocialLinks />
         </div>
       </div>

@@ -194,11 +194,6 @@ useSeoMeta({
     </section>
 
     <div class="page-shell grid grid-cols-1 gap-20 px-4 pt-16 sm:px-6 lg:pt-20">
-      <UnderConstructionPanel
-        :title="t('home.underConstructionTitle')"
-        :text="t('home.underConstructionText')"
-      />
-
       <!-- Categories -->
       <section v-if="categories.length">
         <p class="eyebrow">{{ t('home.categoriesEyebrow') }}</p>

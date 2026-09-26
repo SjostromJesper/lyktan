@@ -9,11 +9,14 @@
     "openCart": "Open cart",
     "openMenu": "Open menu",
     "mainNav": "Main navigation",
-    "mobileNav": "Mobile navigation"
+    "mobileNav": "Mobile navigation",
+    "terms": "Terms",
+    "customerService": "Customer service",
+    "companyInfo": "Lyktan Spel AB · Reg. no. 559541-9564"
   },
   "layout": {
-    "shippingNotice": "Shipping isn't available right now. Products can only be picked up in store.",
-    "dismissShippingNotice": "Dismiss shipping notice"
+    "shippingNotice": "Right now: in-store pickup only. Shipping opens shortly.",
+    "dismissShippingNotice": "Dismiss notice"
   },
   "hours": {
     "weekday": {
@@ -266,5 +269,69 @@
     "slugSeoDescription": "The event pages are temporarily under construction.",
     "slugTitle": "This event page is opening soon.",
     "slugText": "We're polishing the event pages right now. Right now only the Magic: The Gathering – Marvel prerelease is open on the site."
+  },
+  "terms": {
+    "seoDescription": "Terms of purchase for Butik Lyktan – company details, payment, delivery, right of withdrawal and complaints.",
+    "title": "Terms of purchase",
+    "intro": "These terms apply to purchases in our web shop. Buying in the shop at Veddestabron 8B is covered by ordinary Swedish consumer law.",
+    "updated": "Last updated: September 2026",
+    "sections": [
+      {
+        "heading": "Company details",
+        "body": [
+          "Lyktan Spel AB, company registration number 559541-9564.",
+          "Veddestabron 8B, 177 48 Järfälla, Sweden.",
+          "Email: hej@butiklyktan.se"
+        ]
+      },
+      {
+        "heading": "Prices and VAT",
+        "body": [
+          "All prices are in Swedish kronor and include VAT. Any shipping cost is added and shown before you complete your purchase.",
+          "We reserve the right for sold-out items and for obvious errors in price or stock. If something is wrong we contact you before processing the order."
+        ]
+      },
+      {
+        "heading": "Payment",
+        "body": [
+          "Payment is made at checkout using the methods shown there. Your order is binding once payment has gone through and you have received an order confirmation by email."
+        ]
+      },
+      {
+        "heading": "Delivery and pickup",
+        "body": [
+          "For now you collect your order in the shop at Veddestabron 8B. We let you know when it is ready and hold it for at least fourteen days.",
+          "Shipping with PostNord opens shortly. Shipping cost and delivery method are always shown before you complete your purchase."
+        ]
+      },
+      {
+        "heading": "Right of withdrawal",
+        "body": [
+          "You have fourteen days to withdraw from your purchase from the day you receive the goods, under Swedish distance selling law. Email hej@butiklyktan.se and we refund you within fourteen days of receiving the item back.",
+          "You may examine the item as you would have in a shop. If it has been used or handled beyond that, we may deduct for the reduction in value. Sealed booster packs and card products that have been opened can therefore rarely be returned for a full refund.",
+          "The right of withdrawal does not apply to event tickets, as these concern a leisure activity on a set date. If you cannot make it, get in touch and we will sort it out if we can."
+        ]
+      },
+      {
+        "heading": "Complaints",
+        "body": [
+          "If an item is faulty you may file a complaint for up to three years under the Swedish Consumer Sales Act. Email hej@butiklyktan.se as soon as you discover the fault and we will put it right.",
+          "We cover return shipping for an approved complaint."
+        ]
+      },
+      {
+        "heading": "If we cannot agree",
+        "body": [
+          "If we cannot find a solution you can turn to the Swedish National Board for Consumer Disputes (ARN), Box 174, 101 23 Stockholm. We follow their recommendations."
+        ]
+      },
+      {
+        "heading": "Personal data",
+        "body": [
+          "We process your data to handle your order, your event participation and our bookkeeping. We never sell it on.",
+          "To find out what data we hold about you, or to have it deleted, email hej@butiklyktan.se."
+        ]
+      }
+    ]
   }
 }
