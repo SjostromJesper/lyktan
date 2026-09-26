@@ -150,6 +150,26 @@ export const useShopifyCart = () => {
     }).format(value)
   }
 
+  // Fire-and-forget log for the admin dashboard's live "added to cart"
+  // feed (see admin-panel/app/pages/index.vue) — never allowed to affect
+  // the customer's own cart flow, so failures are swallowed silently.
+  const logCartAdd = (variantId: string, quantity: number) => {
+    const line = cart.value?.lines?.nodes?.find((l: any) => l.merchandise?.id === variantId)
+    if (!line) return
+
+    const variantTitle = line.merchandise.title && line.merchandise.title !== 'Default Title' ? line.merchandise.title : undefined
+
+    $fetch('/api/activity/cart-add', {
+      method: 'POST',
+      body: {
+        productTitle: line.merchandise.product?.title,
+        variantTitle,
+        quantity,
+        priceKr: line.merchandise.price?.amount ? Number(line.merchandise.price.amount) : undefined
+      }
+    }).catch(() => {})
+  }
+
   const applyCartResult = (payload: any, action: string) => {
     const userErrors = payload?.userErrors ?? []
 
@@ -219,7 +239,9 @@ export const useShopifyCart = () => {
           }
         })
 
-        applyCartResult(response.data?.cartCreate, t('cart.itemAdded', { title: productTitle }))
+        if (applyCartResult(response.data?.cartCreate, t('cart.itemAdded', { title: productTitle }))) {
+          logCartAdd(variantId, 1)
+        }
         cartOpen.value = true
         return
       }
@@ -236,7 +258,9 @@ export const useShopifyCart = () => {
         }
       })
 
-      applyCartResult(response.data?.cartLinesAdd, t('cart.itemAdded', { title: productTitle }))
+      if (applyCartResult(response.data?.cartLinesAdd, t('cart.itemAdded', { title: productTitle }))) {
+        logCartAdd(variantId, 1)
+      }
       cartOpen.value = true
     } catch (caughtError: any) {
       cartError.value = caughtError?.message ?? t('cart.addFailed')
@@ -262,7 +286,9 @@ export const useShopifyCart = () => {
 
       if (!cart.value?.id) {
         const response = await storefront.request(createCartMutation, { variables: { lines: cartLines } })
-        applyCartResult(response.data?.cartCreate, noticeText)
+        if (applyCartResult(response.data?.cartCreate, noticeText)) {
+          cartLines.forEach((line) => logCartAdd(line.merchandiseId, line.quantity))
+        }
         cartOpen.value = true
         return
       }
@@ -271,7 +297,9 @@ export const useShopifyCart = () => {
         variables: { cartId: cart.value.id, lines: cartLines }
       })
 
-      applyCartResult(response.data?.cartLinesAdd, noticeText)
+      if (applyCartResult(response.data?.cartLinesAdd, noticeText)) {
+        cartLines.forEach((line) => logCartAdd(line.merchandiseId, line.quantity))
+      }
       cartOpen.value = true
     } catch (caughtError: any) {
       cartError.value = caughtError?.message ?? t('cart.addManyFailed')
