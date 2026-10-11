@@ -16,6 +16,11 @@ export default defineEventHandler(async (event) => {
   const reverse = query.reverse === 'true'
   const language = toShopifyLanguage(query.lang)
 
+  // Singles live in their own section (/singelkort), never in the regular shop.
+  if (handle === 'singelkort') {
+    throw createError({ statusCode: 404, statusMessage: 'Kollektionen hittades inte' })
+  }
+
   const data = await shopifyStorefrontGraphql<{
     collection: {
       id: string
@@ -76,6 +81,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     collection: { id: data.collection.id, title: data.collection.title, handle: data.collection.handle },
-    products: data.collection.products.nodes
+    // Singles only ever show up under /singelkort.
+    products: data.collection.products.nodes.filter((product: any) => !(product.tags ?? []).includes('single'))
   }
 })

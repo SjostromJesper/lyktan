@@ -114,6 +114,11 @@ const hasDiscount = computed(() => {
 const breadcrumbCollection = computed(() => product.value?.collections?.nodes?.[0] ?? null)
 const isSingleCard = computed(() => (product.value?.collections?.nodes ?? []).some((c: any) => c.handle === 'singelkort'))
 
+// Singles belong to the singles section, with its own layout and variant picker.
+watch(isSingleCard, (single) => {
+  if (single) navigateTo(localePath(`/singelkort/${handle.value}`), { replace: true })
+}, { immediate: true })
+
 const releaseDate = computed(() => product.value?.releaseDate?.value ?? null)
 const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
 const isNew = computed(() => isRecentRelease(releaseDate.value))

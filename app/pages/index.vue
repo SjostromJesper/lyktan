@@ -28,7 +28,7 @@ const EXCLUDED_SHOWCASE_HANDLES = new Set(['medlemskap', 'bordsbokning-forskott'
 
 const homepageQuery = `#graphql
   query HomepageProducts($language: LanguageCode!) @inContext(language: $language) {
-    showcaseProducts: products(first: 10, sortKey: CREATED_AT, reverse: true, query: "-tag:event") {
+    showcaseProducts: products(first: 10, sortKey: CREATED_AT, reverse: true, query: "-tag:event AND -tag:single") {
       nodes {
         id
         title
@@ -67,7 +67,7 @@ const { data } = await useStorefrontData(`homepage-products-${locale.value}`, ho
   variables: { language: locale.value === 'en' ? 'EN' : 'SV' },
   transform: (result) => ({
     showcaseProducts: (result.showcaseProducts?.nodes ?? [])
-      .filter((product: any) => !EXCLUDED_SHOWCASE_HANDLES.has(product.handle))
+      .filter((product: any) => !EXCLUDED_SHOWCASE_HANDLES.has(product.handle) && !(product.tags ?? []).includes('single'))
       .slice(0, 8)
   })
 })

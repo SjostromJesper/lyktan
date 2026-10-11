@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
         }
       }
     }
-  `, { query: `(title:*${safeTerm}* OR tag:*${safeTerm}*) AND -tag:event`, language })
+  `, { query: `(title:*${safeTerm}* OR tag:*${safeTerm}*) AND -tag:event AND -tag:single`, language })
 
   const products = (data.products?.nodes ?? []).filter((product) => !EXCLUDED_HANDLES.has(product.handle))
 
