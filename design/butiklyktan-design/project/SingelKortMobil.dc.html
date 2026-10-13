@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Sheoldred – singelkort mobil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D1015;color:#E8EAED;font-family:'Figtree',system-ui,sans-serif}
+a{color:#E8EAED;text-decoration:none}a:hover{color:#F2A93B}
+</style>
+</helmet>
+<div style="width: 390px; height: 2150px; box-sizing: border-box; background: #0D1015; display: flex; flex-direction: column; font-family: 'Figtree', system-ui, sans-serif; color: #E8EAED">
+<header style="height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 0 8px; display: grid; grid-template-columns: 96px minmax(0, 1fr) 96px; align-items: center; border-bottom: 1px solid #1E242D; background: #0D1015">
+<a href="MobilMeny.dc.html" aria-label="Meny" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></a>
+<a href="SinglarMobil.dc.html" style="justify-self: center; display: flex; align-items: center; gap: 8px">
+<span style="width: 30px; height: 30px; border-radius: 15px; background: {{accent}}; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D1015" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M12 2.5v2.5"></path><path d="M6.5 8l1.5-3h8l1.5 3"></path><path d="M7 8h10l-1 12H8L7 8z"></path><path d="M12 11.5v4"></path></svg></span>
+<span style="display: flex; flex-direction: column; line-height: 1"><span style="font-size: 16px; font-weight: 800">Butik Lyktan</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: {{accent}}; margin-top: 3px">SINGELKORT</span></span>
+</a>
+<a href="KundkorgMobil.dc.html" aria-label="Kundkorg, 3 kort" style="justify-self: end; width: 44px; height: 44px; margin-right: 4px; display: flex; align-items: center; justify-content: center; position: relative"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg><span style="position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; border-radius: 9px; background: {{accent}}; color: #0D1015; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center">3</span></a>
+</header>
+<div style="padding: 12px 16px 0; font-size: 12px; color: #9AA3AE; display: flex; gap: 6px; white-space: nowrap; overflow: hidden">
+<a href="SinglarMobil.dc.html" style="color: #9AA3AE">← Magic: The Gathering</a><span>/</span><span>Dominaria United</span>
+</div>
+
+<section style="padding: 14px 16px 0; display: flex; flex-direction: column; gap: 12px">
+<div style="margin: 0 32px; aspect-ratio: 63 / 88; border-radius: 16px; background: {{artBg}}; border: 1px solid {{artBorder}}; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6F7883; position: relative">Kortbild
+<sc-if value="{{isFoil}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; top: 10px; left: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: #0D1015; color: #C7B8FF; border: 1px solid #4B3F7A">FOIL</span></sc-if>
+</div>
+<div role="group" aria-label="Utförande" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 14px; background: #161B22; border: 1px solid #2A313C">
+<button type="button" onClick="{{setNormal}}" style="{{normalBtn}}">Normal</button>
+<button type="button" onClick="{{setFoil}}" style="{{foilBtn}}">Foil</button>
+</div>
+</section>
+
+<section style="padding: 20px 16px 0; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: #1D232C; color: #C9CFD6">DMU · #107</span>
+<span style="display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #E8743B"><span style="width: 8px; height: 8px; border-radius: 4px; background: #E8743B"></span>Mythic</span>
+</div>
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px">
+<h1 style="margin: 0; font-size: 28px; font-weight: 800; line-height: 1.1; letter-spacing: -0.02em">Sheoldred, the Apocalypse</h1>
+<div aria-label="Manakostnad 2BB" style="display: flex; gap: 3px; flex-shrink: 0; padding-top: 4px">
+<span style="width: 22px; height: 22px; border-radius: 11px; background: #C9C3B6; color: #0D1015; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center">2</span>
+<span style="width: 22px; height: 22px; border-radius: 11px; background: #1A1714; border: 2px solid #4A525E; box-sizing: border-box"></span>
+<span style="width: 22px; height: 22px; border-radius: 11px; background: #1A1714; border: 2px solid #4A525E; box-sizing: border-box"></span>
+</div>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 14px; color: #C9CFD6"><span>Legendary Creature — Phyrexian Praetor</span><span style="font-family: 'IBM Plex Mono', monospace; font-weight: 600">4/5</span></div>
+<div style="padding: 12px 14px; border-radius: 12px; background: #12161C; border: 1px solid #1E242D; font-size: 13px; color: #9AA3AE">[Korttext hämtas automatiskt, t.ex. från Scryfall]</div>
+</section>
+
+<section style="padding: 16px 16px 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<div style="padding: 12px; border-radius: 12px; background: #161B22; border: 1px solid #2A313C; display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #9AA3AE">Från</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600">[pris]</span></div>
+<div style="padding: 12px; border-radius: 12px; background: #161B22; border: 1px solid #2A313C; display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #9AA3AE">Trend</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600">[pris]</span></div>
+<div style="padding: 12px; border-radius: 12px; background: #161B22; border: 1px solid #2A313C; display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #9AA3AE">I lager</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600">{{stockTotal}} st</span></div>
+</section>
+
+<section style="padding: 20px 16px 0; display: flex; flex-direction: column; gap: 10px">
+<span style="font-size: 17px; font-weight: 800">Välj exemplar</span>
+<sc-for list="{{offers}}" as="o" hint-placeholder-count="3">
+<div style="padding: 14px; border-radius: 16px; background: #161B22; border: 1px solid #2A313C; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; gap: 8px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; padding: 3px 8px; border-radius: 6px; background: {{o.cbg}}; color: {{o.cfg}}">{{o.code}}</span>
+<span style="font-size: 14px; color: #C9CFD6">{{o.full}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #9AA3AE">· {{o.lang}}</span>
+<span style="margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600">[pris]</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="font-size: 13px; color: {{o.stockColor}}; width: 80px">{{o.stockLabel}}</span>
+<div style="display: flex; align-items: center; padding: 2px; border-radius: 12px; background: #0D1015; border: 1px solid #2A313C">
+<button type="button" aria-label="Minska antal" onClick="{{o.minus}}" style="width: 40px; height: 40px; border: 0; border-radius: 10px; background: transparent; color: #E8EAED; font: inherit; font-size: 18px">−</button>
+<span style="width: 28px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-weight: 600">{{o.qty}}</span>
+<button type="button" aria-label="Öka antal" onClick="{{o.plus}}" style="width: 40px; height: 40px; border: 0; border-radius: 10px; background: transparent; color: #E8EAED; font: inherit; font-size: 18px">+</button>
+</div>
+<button type="button" style="{{o.btnStyle}}; flex-grow: 1">{{o.btnLabel}}</button>
+</div>
+</div>
+</sc-for>
+<div style="display: flex; flex-direction: column; gap: 6px; padding: 4px 2px; font-size: 13px; color: #9AA3AE">
+<span style="display: flex; align-items: center; gap: 8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3FB950" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg>Hämta i butiken samma dag</span>
+<span style="display: flex; align-items: center; gap: 8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3FB950" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"></path></svg>Skickas i toploader med PostNord</span>
+</div>
+</section>
+
+<section style="padding: 16px 16px 0">
+<div style="padding: 16px; border-radius: 16px; background: #12161C; border: 1px solid #1E242D; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; align-items: center; justify-content: space-between">
+<span style="font-size: 15px; font-weight: 800">Prisutveckling</span>
+<div style="display: flex; gap: 2px">
+<sc-for list="{{ranges}}" as="r" hint-placeholder-count="3">
+<button type="button" onClick="{{r.pick}}" style="{{r.style}}">{{r.label}}</button>
+</sc-for>
+</div>
+</div>
+<svg width="100%" height="110" viewBox="0 0 800 160" preserveAspectRatio="none" aria-hidden="true">
+<path d="M0 40 H800 M0 80 H800 M0 120 H800" stroke="#1E242D" stroke-width="2"></path>
+<path d="M0 60 L60 70 L120 64 L180 82 L240 78 L300 96 L360 90 L420 104 L480 98 L540 110 L600 106 L660 118 L720 112 L800 120 L800 160 L0 160 Z" fill="{{accent}}" fill-opacity="0.12"></path>
+<path d="M0 60 L60 70 L120 64 L180 82 L240 78 L300 96 L360 90 L420 104 L480 98 L540 110 L600 106 L660 118 L720 112 L800 120" fill="none" stroke="{{accent}}" stroke-width="4" stroke-linejoin="round"></path>
+</svg>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6F7883">exempelkurva – kopplas till prisdata</span>
+</div>
+</section>
+
+<section style="padding: 24px 0 32px 16px; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 17px; font-weight: 800">Mer från Dominaria United</span>
+<div style="display: flex; gap: 10px; overflow: hidden">
+<sc-for list="{{more}}" as="m" hint-placeholder-count="4">
+<a href="SingelKortMobil.dc.html" style="width: 118px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px">
+<span style="aspect-ratio: 63 / 88; border-radius: 8px; background: {{m.art}}; border: 1px solid #2A313C"></span>
+<span style="font-size: 12px; font-weight: 700">[Kortnamn]</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 600">[pris]</span>
+</a>
+</sc-for>
+</div>
+</section>
+
+<footer style="margin-top: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #1E242D; background: #080A0E; font-size: 12px; color: #9AA3AE">
+<span style="font-size: 17px; font-weight: 800; color: #E8EAED">Butik Lyktan <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.16em; color: {{accent}}">SINGELKORT</span></span>
+<span>Veddestabron 8B, Järfälla · hej@butiklyktan.se</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A93B","options":["#F2A93B","#7BC8B4","#8FA8FF","#F28C6B"]},"$preview":{"width":390,"height":2150}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const accent = this.props.accent ?? '#F2A93B';
+const foil = !!st.foil;
+const qty = st.qty ?? {};
+const range = st.range ?? '90 d';
+const seg = (on) => 'height: 44px; border: 0; border-radius: 10px; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; ' + (on ? 'background: #2A313C; color: #E8EAED' : 'background: transparent; color: #9AA3AE');
+const C = { NM: ['Near Mint', '#13261A', '#56D364'], EX: ['Excellent', '#0F2624', '#3CCFB8'], GD: ['Good', '#2A2410', '#E3B341'], LP: ['Light Played', '#2B1C10', '#F0883E'] };
+const rows = foil
+? [{ id: 'f1', code: 'NM', lang: 'EN', stock: 0 }, { id: 'f2', code: 'EX', lang: 'EN', stock: 0 }]
+: [{ id: 'n1', code: 'NM', lang: 'EN', stock: 1 }, { id: 'n2', code: 'EX', lang: 'EN', stock: 1 }, { id: 'n3', code: 'LP', lang: 'DE', stock: 0 }];
+const arts = ['#2B2320', '#1F2A3A', '#2A1F2E', '#1E2B24', '#2E2A1D', '#23262E'];
+return {
+accent,
+isFoil: foil,
+artBg: foil ? '#241F33' : '#2B2320',
+artBorder: foil ? '#4B3F7A' : '#2A313C',
+setNormal: () => this.setState({ foil: false }),
+setFoil: () => this.setState({ foil: true }),
+normalBtn: seg(!foil),
+foilBtn: seg(foil),
+stockTotal: rows.reduce((a, r) => a + r.stock, 0),
+offers: rows.map((r) => {
+const q = qty[r.id] ?? (r.stock > 0 ? 1 : 0);
+const out = r.stock === 0;
+return {
+code: r.code, full: C[r.code][0], cbg: C[r.code][1], cfg: C[r.code][2], lang: r.lang,
+stockLabel: out ? 'Slut i lager' : r.stock + ' st',
+stockColor: out ? '#9AA3AE' : '#56D364',
+qty: q,
+minus: () => this.setState({ qty: { ...qty, [r.id]: Math.max(out ? 0 : 1, q - 1) } }),
+plus: () => this.setState({ qty: { ...qty, [r.id]: Math.min(r.stock, q + 1) } }),
+btnLabel: out ? 'Bevaka' : 'Lägg i kundvagn',
+btnStyle: 'height: 44px; border-radius: 12px; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer; ' + (out ? 'background: transparent; color: #E8EAED; border: 1px solid #4A525E' : 'background: ' + accent + '; color: #0D1015; border: 0')
+};
+}),
+ranges: ['30 d', '90 d', '1 år'].map((l) => ({ label: l, pick: () => this.setState({ range: l }), style: 'height: 36px; padding: 0 12px; border: 0; border-radius: 9px; font-family: \'IBM Plex Mono\', monospace; font-size: 12px; font-weight: 600; cursor: pointer; ' + (l === range ? 'background: #2A313C; color: #E8EAED' : 'background: transparent; color: #9AA3AE') })),
+more: arts.map((a) => ({ art: a }))
+};
+}
+}
+</script>
+</body>
+</html>

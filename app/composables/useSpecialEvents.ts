@@ -1,26 +1,5 @@
 import type { EventEntry } from '~/utils/events'
 
-const specialEventsQuery = `#graphql
-  query SpecialEvents($language: LanguageCode!) @inContext(language: $language) {
-    products(first: 20, sortKey: TITLE, query: "tag:event") {
-      nodes {
-        title
-        handle
-        description
-        featuredImage {
-          url
-          altText
-        }
-        dateAndTime: metafield(namespace: "custom", key: "date_and_time") {
-          value
-        }
-        showInCarousel: metafield(namespace: "custom", key: "show_in_carousel") {
-          value
-        }
-      }
-    }
-  }
-`
 
 /**
  * date_and_time is Shopify's combined "Date and time" metafield type — it
@@ -62,11 +41,11 @@ const splitDateAndTime = (value?: string | null) => {
  */
 export const useSpecialEvents = () => {
   const { t, locale } = useI18n()
+  const { formatMoney } = useShopifyCart()
 
-  return useStorefrontData('special-events', specialEventsQuery, {
-    variables: { language: locale.value === 'en' ? 'EN' : 'SV' },
+  return useAsyncData('special-events', () => $fetch<any>('/api/shopify/special-events', { query: { lang: locale.value } }), {
     watch: [locale],
-    transform: (result): EventEntry[] =>
+    transform: (result: any): EventEntry[] =>
       (result.products?.nodes ?? [])
         .map((product: any): EventEntry | null => {
           const parsed = splitDateAndTime(product.dateAndTime?.value)
@@ -75,12 +54,14 @@ export const useSpecialEvents = () => {
             return null
           }
 
+          const price = product.variants?.nodes?.[0]?.price
+
           return {
             titel: product.title,
             datum: parsed.datum,
             tid: parsed.tid,
             beskrivning: product.description ?? '',
-            kostnad: t('events.seeProduct'),
+            kostnad: price ? formatMoney(price.amount, price.currencyCode) : t('events.seeProduct'),
             produktHandle: product.handle,
             visaIKarusell: product.showInCarousel?.value === 'true',
             featuredImage: product.featuredImage ?? null

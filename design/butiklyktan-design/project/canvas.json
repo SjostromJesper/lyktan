@@ -1,0 +1,163 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "BokaBord.dc.html": {
+      "h": 2300,
+      "is_interactive": true,
+      "title": "Boka bord",
+      "w": 1440,
+      "x": 5500,
+      "y": 0
+    },
+    "Butik.dc.html": {
+      "h": 2200,
+      "is_interactive": true,
+      "title": "Butik – kategori",
+      "w": 1440,
+      "x": 1520,
+      "y": 0
+    },
+    "Event.dc.html": {
+      "h": 1800,
+      "is_interactive": true,
+      "title": "Event",
+      "w": 1440,
+      "x": 3040,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 3240,
+      "is_interactive": true,
+      "title": "Startsida – desktop",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "Mobil.dc.html": {
+      "h": 2680,
+      "is_interactive": true,
+      "title": "Startsida – mobil",
+      "w": 390,
+      "x": 4560,
+      "y": 0
+    },
+    "MobilMeny.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "title": "Mobilmeny – utfälld",
+      "w": 390,
+      "x": 5030,
+      "y": 0
+    },
+    "SingelKort.dc.html": {
+      "h": 1860,
+      "is_interactive": true,
+      "title": "Singelkort – kortsida",
+      "w": 1440,
+      "x": 1520,
+      "y": 3700
+    },
+    "Singlar.dc.html": {
+      "h": 1660,
+      "is_interactive": true,
+      "title": "Singelkort – sök & lista",
+      "w": 1440,
+      "x": 0,
+      "y": 3700
+    },
+    "Kundkorg.dc.html": {
+      "x": 3040,
+      "y": 3700,
+      "w": 1440,
+      "h": 1500,
+      "title": "Singelkort – kundkorg",
+      "is_interactive": true
+    },
+    "ButikMobil.dc.html": {
+      "x": 7020,
+      "y": 0,
+      "w": 390,
+      "h": 1800,
+      "title": "Butik – mobil",
+      "is_interactive": true
+    },
+    "EventMobil.dc.html": {
+      "x": 7490,
+      "y": 0,
+      "w": 390,
+      "h": 1760,
+      "title": "Event – mobil",
+      "is_interactive": true
+    },
+    "BokaBordMobil.dc.html": {
+      "x": 7960,
+      "y": 0,
+      "w": 390,
+      "h": 2300,
+      "title": "Boka bord – mobil",
+      "is_interactive": true
+    },
+    "SinglarMobil.dc.html": {
+      "x": 4560,
+      "y": 3700,
+      "w": 390,
+      "h": 1900,
+      "title": "Singelkort – sök (mobil)",
+      "is_interactive": true
+    },
+    "SingelKortMobil.dc.html": {
+      "x": 5030,
+      "y": 3700,
+      "w": 390,
+      "h": 2150,
+      "title": "Singelkort – kortsida (mobil)",
+      "is_interactive": true
+    },
+    "KundkorgMobil.dc.html": {
+      "x": 5500,
+      "y": 3700,
+      "w": 390,
+      "h": 1760,
+      "title": "Singelkort – kundkorg (mobil)",
+      "is_interactive": true
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-26T10:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "singlar": {
+      "kind": "title1",
+      "maxW": 2960,
+      "text": "Singelkort · dark mode",
+      "w": 240,
+      "x": 0,
+      "y": 3420
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Butik.dc.html",
+    "Event.dc.html",
+    "Mobil.dc.html",
+    "MobilMeny.dc.html",
+    "BokaBord.dc.html",
+    "Singlar.dc.html",
+    "SingelKort.dc.html",
+    "Kundkorg.dc.html",
+    "ButikMobil.dc.html",
+    "EventMobil.dc.html",
+    "BokaBordMobil.dc.html",
+    "SinglarMobil.dc.html",
+    "SingelKortMobil.dc.html",
+    "KundkorgMobil.dc.html"
+  ],
+  "pages": [],
+  "title": "Butik Lyktan – ny design"
+}

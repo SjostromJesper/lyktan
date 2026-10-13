@@ -12,7 +12,20 @@
     "mobileNav": "Mobilnavigation",
     "terms": "Köpvillkor",
     "customerService": "Kundservice",
-    "companyInfo": "Lyktan Spel AB · Org.nr 559541-9564"
+    "companyInfo": "Lyktan Spel AB · Org.nr 559541-9564",
+    "webshop": "Webbshop",
+    "allProducts": "Visa hela sortimentet",
+    "findUs": "Hitta hit",
+    "myAccount": "Mitt konto",
+    "openWebshopMenu": "Visa webbshop-kategorier",
+    "closeMenu": "Stäng meny",
+    "otherLinks": "Övrigt",
+    "tagline": "Spel · Kort · Figurer",
+    "address": "Veddestabron 8B · Järfälla",
+    "searchPlaceholder": "Sök spel, kort, figurer…",
+    "singles": "Singlar",
+    "beta": "Beta",
+    "submitSearch": "Sök"
   },
   "layout": {
     "shippingNotice": "Just nu: hämta i butik. Frakt öppnar inom kort.",
@@ -28,9 +41,20 @@
       "5": "Fredag",
       "6": "Lördag"
     },
+    "weekdayShort": {
+      "0": "Sön",
+      "1": "Mån",
+      "2": "Tis",
+      "3": "Ons",
+      "4": "Tor",
+      "5": "Fre",
+      "6": "Lör"
+    },
     "open": "Öppet",
     "closed": "Stängt",
-    "closedNow": "{day} stängt just nu"
+    "openUntil": "Öppet till {time}",
+    "closedOpensAt": "Stängt · öppnar {time}",
+    "closedOpensTomorrow": "Stängt · öppnar i morgon {time}"
   },
   "cart": {
     "title": "Kundvagn",
@@ -72,7 +96,18 @@
     "visitTitle": "Mer än en butik",
     "visitBookingText": "Boka ett bord för kvällen och spela i butiken.",
     "visitEventsText": "Turneringar, prereleases och spelkvällar varje vecka.",
-    "visitContactText": "Veddestabron 8B i Järfälla. Se öppettider och hitta hit."
+    "visitContactText": "Veddestabron 8B i Järfälla. Se öppettider och hitta hit.",
+    "perkPickupTitle": "Hämta i butik",
+    "perkPickupText": "Beställ online, hämta i Veddesta",
+    "perkEventsTitle": "Turneringar varje vecka",
+    "perkEventsText": "Prereleases och spelkvällar",
+    "perkBookingTitle": "Boka bord",
+    "perkBookingText": "Spela med gänget i butiken",
+    "perkHoursTitle": "Öppet 7 dagar",
+    "perkHoursText": "Vardagar 10–19, helg från 11",
+    "newProductsTitle": "Nytt i butiken!",
+    "newProductsCta": "Visa alla nyheter",
+    "cardGamesTitle": "Kortspel"
   },
   "product": {
     "comingSoon": "Kommer snart",
@@ -95,7 +130,7 @@
     "estimatedRelease": "Beräknad release: {date}. Lämna din e-post så mailar vi dig när den går att förboka eller köpa.",
     "interestThanks": "Tack! Vi mailar dig när den blir tillgänglig.",
     "emailLabel": "E-post",
-    "emailPlaceholder": "din@epost.se",
+    "emailPlaceholder": "din{'@'}epost.se",
     "sending": "Skickar...",
     "inStoreOnlyText": "Den här produkten går inte att köpa online — kom förbi butiken i Järfälla för att handla den.",
     "chooseVariant": "Välj variant",
@@ -105,6 +140,10 @@
     "noProductText": "Kontrollera handlet i Shopify eller länken du försökte öppna."
   },
   "singles": {
+    "backToShop": "Till Butik Lyktan",
+    "menuAll": "Alla singlar",
+    "menuFindUs": "Hitta hit",
+    "topNotice": "Priser och lager uppdateras löpande · Hämta i butik eller skicka med PostNord",
     "title": "Singelkort",
     "breadcrumbHome": "Hem",
     "intro": "Lösa kort ur eget lager — hämtas i butiken i Järfälla. Skick anges enligt europeisk standard (Nyskick, Utmärkt, Bra, Ok, Dåligt).",
@@ -150,7 +189,57 @@
     "cardLoadFailed": "Kortet kunde inte laddas.",
     "noCard": "Inget kort",
     "noCardTitle": "Det här kortet finns inte.",
-    "noCardText": "Kontrollera länken du försökte öppna."
+    "noCardText": "Kontrollera länken du försökte öppna.",
+    "decreaseQty": "Minska antal",
+    "increaseQty": "Öka antal",
+    "addToCartRow": "Lägg {title} i kundvagnen",
+    "inCartCount": "{count} i kundvagn",
+    "cart": {
+      "title": "Kundkorg",
+      "stepCart": "Kundkorg",
+      "stepDelivery": "Leverans",
+      "stepPayment": "Betalning",
+      "counts": "{want} kort i Want · {maybe} i Maybe",
+      "exportDecklist": "Exportera som decklista",
+      "keepShopping": "Fortsätt handla",
+      "lists": "Listor",
+      "cardCount": "{count} kort | {count} kort",
+      "wantHint": "Det här köper du. Följer med till kassan.",
+      "maybeHint": "Sparas till senare. Ingår inte i beställningen.",
+      "otherGame": "Övrigt",
+      "lastCopy": "Sista exemplaret i lager",
+      "moveToMaybe": "Flytta till Maybe",
+      "toMaybe": "Till Maybe",
+      "moveToWant": "Flytta till Want",
+      "remove": "Ta bort",
+      "wantEmpty": "Din kundkorg är tom",
+      "wantEmptyMaybe": "Want är tom – flytta tillbaka från Maybe",
+      "dropHere": "Dra kort hit",
+      "dropHint": "för att spara dem till senare",
+      "movedToMaybe": "{title} sparades i Maybe.",
+      "movedToWant": "{title} flyttades till Want.",
+      "soldOutCard": "{title} är slut i lager och kan inte flyttas till Want.",
+      "summary": "Sammanfattning",
+      "cardsLine": "Kort ({count} st, {unique} unika)",
+      "delivery": "Leverans",
+      "free": "Gratis",
+      "shipPickup": "Hämta i butik",
+      "shipPickupNote": "Veddestabron 8B, Järfälla",
+      "shipLetter": "PostNord brev",
+      "shipTracked": "PostNord spårbart",
+      "total": "Totalt",
+      "inclVat": "inkl. moms",
+      "checkout": "Gå till kassan",
+      "checkoutShort": "Till kassan",
+      "totalInclVat": "Totalt inkl. moms",
+      "conditionsInCart": "Skick i korgen",
+      "added": "Lagd i kundkorgen",
+      "viewCart": "Visa kundkorg",
+      "cartLabel": "Kundkorg, {count} kort, {total}",
+      "shipLetterNote": "Brev inom Sverige",
+      "shipTrackedNote": "Spårbart paket inom Sverige",
+      "shipInCheckout": "Visas i kassan"
+    }
   },
   "underConstruction": {
     "eyebrow": "Under konstruktion",
@@ -184,7 +273,17 @@
     "products": "produkter",
     "filteredCount": "{shown} av {total} produkter",
     "noProducts": "Inga produkter",
-    "noProductsMatch": "Inga produkter matchar filtren."
+    "noProductsMatch": "Inga produkter matchar filtren.",
+    "breadcrumbHome": "Start",
+    "allGames": "Alla",
+    "otherGames": "Övrigt",
+    "availability": "Tillgänglighet",
+    "priceUnder300": "Under 300 kr",
+    "price300to1000": "300–1 000 kr",
+    "priceOver1000": "Över 1 000 kr",
+    "allProductsTitle": "Hela sortimentet",
+    "showingOf": "Visar {shown} av {total}",
+    "showMore": "Visa fler"
   },
   "booking": {
     "loadFailed": "Kunde inte hämta lediga bord.",
@@ -243,7 +342,21 @@
     "back": "Tillbaka",
     "sending": "Skickar…",
     "confirmBooking": "Bekräfta bokning",
-    "approveAndPay": "Godkänn och betala {deposit} kr"
+    "approveAndPay": "Godkänn och betala {deposit} kr",
+    "step1": "Välj dag",
+    "step3": "Sällskap",
+    "prevMonth": "Föregående månad",
+    "nextMonth": "Nästa månad",
+    "selectedDay": "Vald dag",
+    "todayLegend": "Idag",
+    "unavailableLegend": "Ej bokningsbar",
+    "lateWarningTitle": "Sen starttid",
+    "lateWarningText": "Ni kan boka den här tiden, men det finns risk att butiken stänger innan ni hinner spela klart.",
+    "usefulToKnow": "Bra att veta",
+    "hoursShort": "Mån–fre 10–19 · Lör 11–19 · Sön 12–18",
+    "eventNoticeText": "Under event kan bord vara reserverade — se",
+    "eventCalendarLink": "eventkalendern",
+    "durationNote": "Du får bordet i upp till 4 timmar. Om en annan bokning eller ett event startar tidigare får du bordet fram till dess. Bokar du 14:00 och ett event startar 17:00 är din tid alltså 14:00–17:00."
   },
   "contact": {
     "seoDescription": "Besök Butik Lyktan på Veddestabron 8B i Järfälla, eller kontakta oss via e-post.",
@@ -268,7 +381,15 @@
     "calendarUpdates": "Kalendern uppdateras löpande — kika förbi igen snart.",
     "slugSeoDescription": "Eventsidorna ar tillfalligt under konstruktion.",
     "slugTitle": "Den här eventsidan öppnar snart.",
-    "slugText": "Vi finslipar eventsidorna just nu. Just nu är det bara Magic: The Gathering - Marvel-prereleasen som är öppen på sajten."
+    "slugText": "Vi finslipar eventsidorna just nu. Just nu är det bara Magic: The Gathering - Marvel-prereleasen som är öppen på sajten.",
+    "heroSubtitle": "Turneringar, prereleases och spelkvällar varje vecka.",
+    "upcomingSpecialTitle": "Kommande specialevent",
+    "weeklyScheduleText": "Återkommande spelkvällar och turneringar varje vecka.",
+    "register": "Anmäl dig",
+    "discordCta": "Frågor? Hitta oss på Discord →",
+    "noFixedEvents": "Inga fasta event",
+    "todayBadge": "Idag",
+    "genericTag": "Event"
   },
   "terms": {
     "seoDescription": "Köpvillkor för Butik Lyktan – företagsuppgifter, betalning, leverans, ångerrätt och reklamation.",
@@ -281,7 +402,7 @@
         "body": [
           "Lyktan Spel AB, organisationsnummer 559541-9564.",
           "Veddestabron 8B, 177 48 Järfälla.",
-          "E-post: hej@butiklyktan.se"
+          "E-post: hej{'@'}butiklyktan.se"
         ]
       },
       {
@@ -307,7 +428,7 @@
       {
         "heading": "Ångerrätt",
         "body": [
-          "Du har fjorton dagars ångerrätt från det att du tagit emot varan, enligt distansavtalslagen. Meddela oss på hej@butiklyktan.se att du vill ångra köpet, så återbetalar vi dig inom fjorton dagar från att vi tagit emot varan.",
+          "Du har fjorton dagars ångerrätt från det att du tagit emot varan, enligt distansavtalslagen. Meddela oss på hej{'@'}butiklyktan.se att du vill ångra köpet, så återbetalar vi dig inom fjorton dagar från att vi tagit emot varan.",
           "Du får undersöka varan som du hade kunnat göra i en butik. Har varan använts eller hanterats mer än så kan vi göra avdrag för värdeminskningen. Förseglade boosterpaket och kortprodukter som öppnats kan därför sällan återlämnas med fullt belopp.",
           "Ångerrätten gäller inte biljetter till event, eftersom det rör en fritidsaktivitet på en bestämd dag. Kan du inte komma – hör av dig, så löser vi det om vi kan."
         ]
@@ -315,7 +436,7 @@
       {
         "heading": "Reklamation",
         "body": [
-          "Är något fel på varan har du rätt att reklamera i upp till tre år enligt konsumentköplagen. Hör av dig till hej@butiklyktan.se så snart du upptäcker felet, så löser vi det.",
+          "Är något fel på varan har du rätt att reklamera i upp till tre år enligt konsumentköplagen. Hör av dig till hej{'@'}butiklyktan.se så snart du upptäcker felet, så löser vi det.",
           "Vi står för returfrakten vid en godkänd reklamation."
         ]
       },
@@ -329,7 +450,7 @@
         "heading": "Personuppgifter",
         "body": [
           "Vi behandlar dina uppgifter för att kunna hantera din beställning, ditt eventdeltagande och vår bokföring. Vi säljer dem aldrig vidare.",
-          "Vill du veta vilka uppgifter vi har om dig, eller vill du att vi raderar dem, mejla hej@butiklyktan.se."
+          "Vill du veta vilka uppgifter vi har om dig, eller vill du att vi raderar dem, mejla hej{'@'}butiklyktan.se."
         ]
       }
     ]

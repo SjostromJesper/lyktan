@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Kundkorg – Butik Lyktan singelkort</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D1015;color:#E8EAED;font-family:'Figtree',system-ui,sans-serif}
+a{color:#E8EAED;text-decoration:none}a:hover{color:#F2A93B}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1500px; box-sizing: border-box; background: #0D1015; display: flex; flex-direction: column; font-family: 'Figtree', system-ui, sans-serif; color: #E8EAED">
+
+<!-- Topprad -->
+<div style="height: 36px; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; background: #080A0E; border-bottom: 1px solid #1E242D; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: #9AA3AE">
+<a href="Main.dc.html" style="color: #9AA3AE">← Till Butik Lyktan</a>
+<span style="display: flex; align-items: center; gap: 8px"><span style="width: 7px; height: 7px; border-radius: 4px; background: #3FB950"></span>Priser uppdateras dagligen · Hämta i butik eller skicka med PostNord</span>
+<span>Veddestabron 8B · Järfälla</span>
+</div>
+
+<!-- Header -->
+<header style="height: 88px; box-sizing: border-box; padding: 0 40px; display: flex; align-items: center; gap: 32px; background: #0D1015">
+<a href="Singlar.dc.html" style="display: flex; align-items: center; gap: 12px; flex-shrink: 0">
+<span style="width: 44px; height: 44px; border-radius: 22px; background: {{accent}}; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0D1015" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M12 2.5v2.5"></path><path d="M6.5 8l1.5-3h8l1.5 3"></path><path d="M7 8h10l-1 12H8L7 8z"></path><path d="M12 11.5v4"></path></svg></span>
+<span style="display: flex; flex-direction: column; line-height: 1">
+<span style="font-size: 22px; font-weight: 800; letter-spacing: -0.02em">Butik Lyktan</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: {{accent}}; margin-top: 5px">Singelkort</span>
+</span>
+</a>
+<label style="flex-grow: 1; height: 52px; box-sizing: border-box; padding: 0 8px 0 18px; display: flex; align-items: center; gap: 12px; border-radius: 14px; background: #161B22; border: 1px solid #2A313C; color: #9AA3AE">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<input type="search" aria-label="Sök kort" placeholder="Sök kortnamn, set eller samlarnummer…" style="flex-grow: 1; border: 0; background: transparent; font: inherit; font-size: 16px; color: #E8EAED; outline: none">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 4px 8px; border-radius: 6px; border: 1px solid #2A313C; color: #9AA3AE">/</span>
+<span style="height: 36px; padding: 0 14px; display: flex; align-items: center; border-radius: 10px; background: #1D232C; font-size: 13px; font-weight: 700; color: #C9CFD6">Avancerad sökning</span>
+</label>
+<div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0">
+<a href="#salj" style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; border-radius: 12px; font-size: 14px; font-weight: 700; color: #E8EAED"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 20h16"></path></svg>Sälj kort</a>
+<button aria-label="Konto" style="width: 44px; height: 44px; border: 0; border-radius: 12px; background: transparent; color: #E8EAED; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></button>
+<a href="Kundkorg.dc.html" aria-label="Kundkorg, 3 kort, 184 kr" style="height: 44px; padding: 0 14px; border-radius: 12px; background: #1D232C; box-shadow: inset 0 0 0 1px {{accent}}; color: #E8EAED; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 700"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg><span style="font-family: 'IBM Plex Mono', monospace">184 kr</span><span style="min-width: 22px; height: 22px; border-radius: 11px; background: {{accent}}; color: #0D1015; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center">3</span></a>
+</div>
+</header>
+
+
+<!-- Rubrik -->
+<section style="padding: 32px 40px 0; border-top: 1px solid #1E242D; display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; align-items: center; gap: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">
+<span style="color: {{accent}}">1 Kundkorg</span><span style="color: #4A525E">——</span><span style="color: #6F7883">2 Leverans</span><span style="color: #4A525E">——</span><span style="color: #6F7883">3 Betalning</span>
+</div>
+<div style="display: flex; align-items: baseline; gap: 14px">
+<h1 style="margin: 0; font-size: 40px; font-weight: 800; letter-spacing: -0.02em">Kundkorg</h1>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; color: #9AA3AE">{{wantCount}} kort i Want · {{maybeCount}} i Maybe</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 3px 8px; border-radius: 6px; border: 1px dashed #4A525E; color: #9AA3AE">exempelpriser</span>
+</div>
+</div>
+<div style="display: flex; gap: 8px">
+<button type="button" style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #2A313C; background: #161B22; color: #E8EAED; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"></path><path d="M7 10l5 5 5-5"></path><path d="M4 20h16"></path></svg>Exportera som decklista</button>
+<a href="Singlar.dc.html" style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #2A313C; background: #161B22; font-size: 14px; font-weight: 700">Fortsätt handla</a>
+</div>
+</section>
+
+<section style="padding: 24px 40px 48px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; align-items: start">
+
+<!-- WANT -->
+<div onDragOver="{{overWant}}" onDragLeave="{{leave}}" onDrop="{{dropWant}}" style="{{wantZoneStyle}}">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 12px">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 10px; height: 10px; border-radius: 5px; background: {{accent}}"></span>
+<span style="font-size: 20px; font-weight: 800">Want</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 3px 8px; border-radius: 6px; background: #1D232C; color: #C9CFD6">{{wantCount}} kort</span>
+</div>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 600">{{wantSum}}</span>
+</div>
+<span style="padding: 0 4px 12px; font-size: 13px; color: #9AA3AE">Det här köper du. Följer med till kassan.</span>
+<sc-for list="{{wantGroups}}" as="g" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px">
+<div style="display: flex; align-items: center; gap: 8px; padding: 6px 4px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA3AE"><span style="width: 7px; height: 7px; border-radius: 4px; background: {{g.color}}"></span>{{g.name}} · {{g.count}}</div>
+<sc-for list="{{g.items}}" as="it" hint-placeholder-count="3">
+<div draggable="true" onDragStart="{{it.dragStart}}" onDragEnd="{{it.dragEnd}}" style="{{it.rowStyle}}">
+<span aria-hidden="true" style="width: 18px; color: #4A525E; cursor: grab; display: flex; justify-content: center"><svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor"><circle cx="4" cy="4" r="1.6"></circle><circle cx="10" cy="4" r="1.6"></circle><circle cx="4" cy="10" r="1.6"></circle><circle cx="10" cy="10" r="1.6"></circle><circle cx="4" cy="16" r="1.6"></circle><circle cx="10" cy="16" r="1.6"></circle></svg></span>
+<span style="width: 46px; height: 64px; flex-shrink: 0; border-radius: 6px; background: {{it.art}}; border: 1px solid {{it.artBorder}}"></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px">
+<a href="SingelKort.dc.html" style="font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{it.name}}</a>
+<div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap">
+<span style="display: flex; align-items: center; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9AA3AE"><span style="width: 7px; height: 7px; border-radius: 4px; background: {{it.rcolor}}"></span>{{it.set}} #{{it.num}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 5px; background: {{it.cbg}}; color: {{it.cfg}}">{{it.cond}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 2px 6px; border-radius: 5px; background: #1D232C; color: #C9CFD6">{{it.lang}}</span>
+<sc-if value="{{it.foil}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 5px; background: #1E1A2E; color: #C7B8FF">FOIL</span></sc-if>
+</div>
+<sc-if value="{{it.last}}" hint-placeholder-val="{{ false }}"><span style="font-size: 12px; color: #E3B341">Sista exemplaret i lager</span></sc-if>
+</div>
+<div style="display: flex; align-items: center; gap: 1px; padding: 2px; border-radius: 10px; background: #0D1015; border: 1px solid #2A313C">
+<button type="button" aria-label="Minska antal" onClick="{{it.minus}}" style="width: 32px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: #E8EAED; font: inherit; font-size: 16px; cursor: pointer">−</button>
+<span style="width: 24px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600">{{it.qty}}</span>
+<button type="button" aria-label="Öka antal" onClick="{{it.plus}}" style="width: 32px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: #E8EAED; font: inherit; font-size: 16px; cursor: pointer">+</button>
+</div>
+<div style="width: 86px; display: flex; flex-direction: column; align-items: flex-end; gap: 2px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600">{{it.lineTotal}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6F7883">{{it.unit}} /st</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<button type="button" aria-label="Flytta till Maybe" title="Flytta till Maybe" onClick="{{it.move}}" style="width: 36px; height: 30px; border: 1px solid #2A313C; border-radius: 8px; background: #161B22; color: #C9CFD6; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button>
+<button type="button" aria-label="Ta bort" title="Ta bort" onClick="{{it.remove}}" style="width: 36px; height: 30px; border: 1px solid #2A313C; border-radius: 8px; background: transparent; color: #9AA3AE; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></button>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{wantEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="height: 160px; border-radius: 14px; border: 2px dashed #2A313C; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #6F7883">Dra kort hit från Maybe</div>
+</sc-if>
+</div>
+
+<!-- MAYBE -->
+<div onDragOver="{{overMaybe}}" onDragLeave="{{leave}}" onDrop="{{dropMaybe}}" style="{{maybeZoneStyle}}">
+<div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 12px">
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="width: 10px; height: 10px; border-radius: 5px; border: 2px solid #9AA3AE; box-sizing: border-box"></span>
+<span style="font-size: 20px; font-weight: 800">Maybe</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; padding: 3px 8px; border-radius: 6px; background: #1D232C; color: #C9CFD6">{{maybeCount}} kort</span>
+</div>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; color: #9AA3AE">{{maybeSum}}</span>
+</div>
+<span style="padding: 0 4px 12px; font-size: 13px; color: #9AA3AE">Sparas till senare. Ingår inte i beställningen.</span>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{maybeItems}}" as="it" hint-placeholder-count="2">
+<div draggable="true" onDragStart="{{it.dragStart}}" onDragEnd="{{it.dragEnd}}" style="{{it.rowStyle}}">
+<span aria-hidden="true" style="width: 18px; color: #4A525E; cursor: grab; display: flex; justify-content: center"><svg width="14" height="20" viewBox="0 0 14 20" fill="currentColor"><circle cx="4" cy="4" r="1.6"></circle><circle cx="10" cy="4" r="1.6"></circle><circle cx="4" cy="10" r="1.6"></circle><circle cx="10" cy="10" r="1.6"></circle><circle cx="4" cy="16" r="1.6"></circle><circle cx="10" cy="16" r="1.6"></circle></svg></span>
+<span style="width: 40px; height: 56px; flex-shrink: 0; border-radius: 5px; background: {{it.art}}; border: 1px solid {{it.artBorder}}; opacity: 0.8"></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px">
+<a href="SingelKort.dc.html" style="font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #C9CFD6">{{it.name}}</a>
+<div style="display: flex; align-items: center; gap: 6px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9AA3AE">{{it.set}} · {{it.qty}}×</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 5px; background: {{it.cbg}}; color: {{it.cfg}}">{{it.cond}}</span>
+<sc-if value="{{it.foil}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; padding: 2px 6px; border-radius: 5px; background: #1E1A2E; color: #C7B8FF">FOIL</span></sc-if>
+</div>
+</div>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; color: #C9CFD6">{{it.lineTotal}}</span>
+<button type="button" aria-label="Flytta till Want" title="Flytta till Want" onClick="{{it.move}}" style="width: 36px; height: 36px; border: 1px solid #2A313C; border-radius: 8px; background: #161B22; color: {{accent}}; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg></button>
+</div>
+</sc-for>
+<div style="height: 96px; border-radius: 14px; border: 2px dashed {{maybeDashColor}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 13px; color: #6F7883">
+<span style="font-weight: 700; color: #9AA3AE">Dra kort hit</span>
+<span>för att spara dem till senare</span>
+</div>
+</div>
+</div>
+
+<!-- SAMMANFATTNING -->
+<aside style="grid-column: span 3; display: flex; flex-direction: column; gap: 14px">
+<div style="padding: 22px; border-radius: 20px; background: #161B22; border: 1px solid #2A313C; display: flex; flex-direction: column; gap: 16px">
+<span style="font-size: 18px; font-weight: 800">Sammanfattning</span>
+<div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px">
+<div style="display: flex; justify-content: space-between"><span style="color: #9AA3AE">Kort ({{wantCount}} st, {{wantUnique}} unika)</span><span style="font-family: 'IBM Plex Mono', monospace">{{wantSum}}</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: #9AA3AE">Leverans</span><span style="font-family: 'IBM Plex Mono', monospace">{{shipPrice}}</span></div>
+</div>
+<div role="radiogroup" aria-label="Leverans" style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ships}}" as="s" hint-placeholder-count="3">
+<button type="button" role="radio" aria-checked="{{s.on}}" onClick="{{s.pick}}" style="{{s.style}}">
+<span style="{{s.dot}}"></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; text-align: left"><span style="font-size: 14px; font-weight: 700">{{s.name}}</span><span style="font-size: 12px; color: #9AA3AE">{{s.note}}</span></span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px">{{s.price}}</span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding-top: 14px; border-top: 1px solid #2A313C">
+<span style="font-size: 16px; font-weight: 800">Totalt</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 26px; font-weight: 600">{{total}}</span>
+</div>
+<span style="margin-top: -10px; text-align: right; font-size: 12px; color: #6F7883">inkl. moms</span>
+<button type="button" disabled="{{wantEmpty}}" style="height: 54px; border: 0; border-radius: 14px; background: {{accent}}; color: #0D1015; font: inherit; font-size: 16px; font-weight: 800; cursor: pointer">Gå till kassan →</button>
+<span style="font-size: 12px; line-height: 1.5; color: #9AA3AE">Korten reserveras i [X min] när du går till kassan.</span>
+</div>
+
+<div style="padding: 18px 20px; border-radius: 18px; background: #12161C; border: 1px solid #1E242D; display: flex; flex-direction: column; gap: 12px">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #9AA3AE">Skick i korgen</span>
+<sc-for list="{{condSummary}}" as="c" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 10px; font-size: 13px">
+<span style="width: 34px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600; padding: 2px 0; text-align: center; border-radius: 5px; background: {{c.bg}}; color: {{c.fg}}">{{c.code}}</span>
+<span style="flex-grow: 1; height: 6px; border-radius: 3px; background: #1D232C; overflow: hidden; display: flex"><span style="{{c.bar}}"></span></span>
+<span style="width: 24px; text-align: right; font-family: 'IBM Plex Mono', monospace; color: #C9CFD6">{{c.n}}</span>
+</div>
+</sc-for>
+</div>
+
+<div style="padding: 16px 20px; border-radius: 18px; border: 1px dashed #2A313C; display: flex; gap: 12px; font-size: 13px; line-height: 1.5; color: #9AA3AE">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0"><path d="M5 9l7-6 7 6"></path><path d="M5 15l7 6 7-6"></path></svg>
+<span>Dra korten mellan <b style="color: #E8EAED">Want</b> och <b style="color: #E8EAED">Maybe</b>, eller använd pilknapparna.</span>
+</div>
+</aside>
+</section>
+
+<footer style="margin-top: auto; padding: 32px 40px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #1E242D; background: #080A0E; font-size: 13px; color: #9AA3AE">
+<span style="font-size: 20px; font-weight: 800; color: #E8EAED">Butik Lyktan <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-weight: 600; letter-spacing: 0.16em; color: {{accent}}">SINGELKORT</span></span>
+<span>Skickgradering enligt Cardmarket-standard · Veddestabron 8B, Järfälla · hej@butiklyktan.se</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A93B","options":["#F2A93B","#7BC8B4","#8FA8FF","#F28C6B"]},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const accent = this.props.accent ?? '#F2A93B';
+const init = [
+{ id: 1, game: 'mtg', name: 'Sheoldred, the Apocalypse', set: 'DMU', num: '107', r: 'M', cond: 'NM', lang: 'EN', qty: 1, stock: 1, price: 780, zone: 'want' },
+{ id: 2, game: 'mtg', name: 'Orcish Bowmasters', set: 'LTR', num: '103', r: 'R', cond: 'EX', lang: 'EN', qty: 2, stock: 4, price: 310, zone: 'want' },
+{ id: 3, game: 'mtg', name: 'Sol Ring', set: 'CMM', num: '[#]', r: 'U', cond: 'NM', lang: 'EN', qty: 1, stock: 12, price: 15, zone: 'want' },
+{ id: 4, game: 'mtg', name: 'Lightning Bolt', set: 'M10', num: '146', r: 'C', cond: 'GD', lang: 'EN', qty: 4, stock: 9, price: 12, zone: 'want' },
+{ id: 5, game: 'op', name: '[Kortnamn]', set: '[Set]', num: '[#]', r: 'R', cond: 'NM', lang: 'JP', qty: 1, stock: 2, price: 95, zone: 'want' },
+{ id: 6, game: 'mtg', name: 'The One Ring', set: 'LTR', num: '246', r: 'M', cond: 'NM', lang: 'EN', qty: 1, stock: 1, price: 1450, foil: true, zone: 'maybe' },
+{ id: 7, game: 'mtg', name: 'Ragavan, Nimble Pilferer', set: 'MH2', num: '138', r: 'M', cond: 'EX', lang: 'EN', qty: 1, stock: 1, price: 520, zone: 'maybe' }
+];
+const items = st.items ?? init;
+const over = st.over ?? null;
+const ship = st.ship ?? 'pickup';
+const kr = (n) => n.toLocaleString('sv-SE') + ' kr';
+const setItems = (next) => this.setState({ items: next, over: null });
+const moveTo = (id, zone) => setItems(items.map((x) => (x.id === id ? { ...x, zone } : x)));
+const R = { C: '#D9D9D9', U: '#8FB3D1', R: '#E0C063', M: '#E8743B' };
+const C = { NM: ['#13261A', '#56D364'], EX: ['#0F2624', '#3CCFB8'], GD: ['#2A2410', '#E3B341'], LP: ['#2B1C10', '#F0883E'], PL: ['#2D1414', '#F47067'] };
+const arts = ['#2B2320', '#1F2A3A', '#2A1F2E', '#1E2B24', '#2E2A1D', '#23262E', '#2A2620'];
+const G = { mtg: ['Magic: The Gathering', '#E8743B'], op: ['One Piece', '#E5484D'], pkm: ['Pokémon', '#F7D154'] };
+const dragging = st.dragging ?? null;
+const decorate = (x, i) => {
+const other = x.zone === 'want' ? 'maybe' : 'want';
+return {
+...x,
+foil: !!x.foil,
+rcolor: R[x.r], cbg: C[x.cond][0], cfg: C[x.cond][1],
+art: x.foil ? '#241F33' : arts[x.id % arts.length],
+artBorder: x.foil ? '#4B3F7A' : '#2A313C',
+last: x.zone === 'want' && x.qty >= x.stock,
+lineTotal: kr(x.price * x.qty),
+unit: kr(x.price),
+rowStyle: 'display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 6px; border-radius: 14px; background: ' + (x.zone === 'want' ? '#161B22' : '#12161C') + '; border: 1px solid ' + (dragging === x.id ? accent : '#2A313C') + '; opacity: ' + (dragging === x.id ? '0.5' : '1'),
+dragStart: (e) => { this.dragId = x.id; try { e.dataTransfer.setData('text/plain', String(x.id)); e.dataTransfer.effectAllowed = 'move'; } catch (err) {} setTimeout(() => this.setState({ dragging: x.id }), 0); },
+dragEnd: () => this.setState({ dragging: null, over: null }),
+move: () => moveTo(x.id, other),
+remove: () => setItems(items.filter((y) => y.id !== x.id)),
+minus: () => setItems(items.map((y) => (y.id === x.id ? { ...y, qty: Math.max(1, y.qty - 1) } : y))),
+plus: () => setItems(items.map((y) => (y.id === x.id ? { ...y, qty: Math.min(y.stock, y.qty + 1) } : y)))
+};
+};
+const want = items.filter((x) => x.zone === 'want');
+const maybe = items.filter((x) => x.zone === 'maybe');
+const sum = (arr) => arr.reduce((a, x) => a + x.price * x.qty, 0);
+const count = (arr) => arr.reduce((a, x) => a + x.qty, 0);
+const groups = Object.keys(G).map((g) => ({ g, list: want.filter((x) => x.game === g) })).filter((o) => o.list.length).map((o) => ({ name: G[o.g][0], color: G[o.g][1], count: count(o.list), items: o.list.map(decorate) }));
+const ships = [
+{ id: 'pickup', name: 'Hämta i butiken', note: 'Veddestabron 8B, Järfälla', price: 0 },
+{ id: 'letter', name: 'PostNord brev', note: 'Otrackat, toploader', price: null },
+{ id: 'tracked', name: 'PostNord spårbart', note: 'Rekommenderas över [belopp]', price: null }
+];
+const shipSel = ships.find((s) => s.id === ship);
+const zone = (on) => 'display: flex; flex-direction: column; padding: 18px; border-radius: 20px; min-height: 520px; transition: border-color 0.15s, background 0.15s; ' + (on ? 'background: #1A1F27; border: 2px dashed ' + accent : 'background: #12161C; border: 2px solid #1E242D');
+const allow = (z) => (e) => { e.preventDefault(); if (over !== z) this.setState({ over: z }); };
+const drop = (z) => (e) => { e.preventDefault(); let id = this.dragId; try { const d = e.dataTransfer.getData('text/plain'); if (d) id = Number(d); } catch (err) {} this.dragId = null; this.setState({ dragging: null }); if (id != null) moveTo(id, z); else this.setState({ over: null }); };
+const condCounts = ['NM', 'EX', 'GD', 'LP'].map((c) => ({ c, n: want.filter((x) => x.cond === c).reduce((a, x) => a + x.qty, 0) }));
+const maxC = Math.max(1, ...condCounts.map((o) => o.n));
+const shipCost = shipSel.price === 0 ? '0 kr' : '[pris]';
+return {
+accent,
+wantGroups: groups,
+maybeItems: maybe.map(decorate),
+wantEmpty: want.length === 0,
+wantCount: count(want),
+wantUnique: want.length,
+maybeCount: count(maybe),
+wantSum: kr(sum(want)),
+maybeSum: kr(sum(maybe)),
+shipPrice: shipCost,
+total: shipSel.price === 0 ? kr(sum(want)) : kr(sum(want)) + ' + frakt',
+wantZoneStyle: 'grid-column: span 5; ' + zone(over === 'want'),
+maybeZoneStyle: 'grid-column: span 4; ' + zone(over === 'maybe'),
+maybeDashColor: over === 'maybe' ? accent : '#2A313C',
+overWant: allow('want'),
+overMaybe: allow('maybe'),
+leave: () => {},
+dropWant: drop('want'),
+dropMaybe: drop('maybe'),
+ships: ships.map((s) => ({
+...s,
+on: s.id === ship,
+price: s.price === 0 ? 'Gratis' : '[pris]',
+pick: () => this.setState({ ship: s.id }),
+style: 'min-height: 56px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; border-radius: 12px; font: inherit; color: #E8EAED; cursor: pointer; ' + (s.id === ship ? 'background: #1D232C; border: 1px solid ' + accent : 'background: transparent; border: 1px solid #2A313C'),
+dot: 'width: 16px; height: 16px; flex-shrink: 0; border-radius: 8px; box-sizing: border-box; ' + (s.id === ship ? 'border: 5px solid ' + accent : 'border: 2px solid #4A525E')
+})),
+condSummary: condCounts.map(({ c, n }) => ({ code: c, n, bg: C[c][0], fg: C[c][1], bar: 'width: ' + Math.round((n / maxC) * 100) + '%; background: ' + C[c][1] }))
+};
+}
+}
+</script>
+</body>
+</html>

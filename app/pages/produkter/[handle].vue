@@ -122,7 +122,8 @@ watch(isSingleCard, (single) => {
 const releaseDate = computed(() => product.value?.releaseDate?.value ?? null)
 const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
 const isNew = computed(() => isRecentRelease(releaseDate.value))
-const isInStoreOnly = computed(() => product.value?.inStoreOnly?.value === 'true')
+const isInKortspelCollection = computed(() => (product.value?.collections?.nodes ?? []).some((c: any) => c.handle === 'kortspel'))
+const isInStoreOnly = computed(() => product.value?.inStoreOnly?.value === 'true' || isInKortspelCollection.value)
 
 const interestEmail = ref('')
 const interestSubmitting = ref(false)
@@ -291,7 +292,10 @@ useSeoMeta({
           <div class="flex items-center justify-center rounded-[18px] bg-lyktan-well p-6">
             <img
               v-if="selectedImage?.url"
-              :src="selectedImage.url"
+              :src="shopifyImage(selectedImage.url, 1000)"
+              :srcset="shopifySrcset(selectedImage.url, [500, 1000])"
+              sizes="(min-width: 1024px) 50vw, 90vw"
+              fetchpriority="high"
               :alt="selectedImage.altText || product.title"
               class="max-h-[500px] w-full object-contain"
             >
@@ -309,7 +313,7 @@ useSeoMeta({
               :class="index === selectedImageIndex ? 'ring-2 ring-lyktan-ink' : 'opacity-70 hover:opacity-100'"
               @click="selectedImageIndex = index"
             >
-              <img :src="image.url" :alt="image.altText || product.title" class="h-full w-full object-contain p-1">
+              <img :src="shopifyImage(image.url, 160)" :alt="image.altText || product.title" loading="lazy" class="h-full w-full object-contain p-1">
             </button>
           </div>
         </div>

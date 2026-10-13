@@ -34,6 +34,11 @@ export default defineEventHandler(async (event) => {
           inStoreOnly: metafield(namespace: "custom", key: "in_store_only") {
             value
           }
+          collections(first: 5) {
+            nodes {
+              handle
+            }
+          }
           variants(first: 1) {
             nodes {
               id
@@ -51,7 +56,7 @@ export default defineEventHandler(async (event) => {
         }
       }
     }
-  `, { query: `(title:*${safeTerm}* OR tag:*${safeTerm}*) AND -tag:event AND -tag:single`, language })
+  `, { query: `(title:*${safeTerm}* OR tag:*${safeTerm}*) AND -tag:event AND -tag:single`, language }, { ttl: 30 })
 
   const products = (data.products?.nodes ?? []).filter((product) => !EXCLUDED_HANDLES.has(product.handle))
 

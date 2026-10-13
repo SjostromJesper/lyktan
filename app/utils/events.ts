@@ -1,5 +1,3 @@
-import { recurringEvents } from '~/data/recurringEvents'
-
 type EventEntry = {
   titel: string
   datum: string
@@ -9,6 +7,13 @@ type EventEntry = {
   produktHandle?: string
   visaIKarusell?: boolean
   featuredImage?: { url: string, altText?: string | null } | null
+}
+
+/** A standing weekly event ("stående event"), as returned by /api/recurring-events. */
+type RecurringEventRule = {
+  titel: string
+  tid: string
+  weekday: number
 }
 
 type EventSeries = {
@@ -68,12 +73,13 @@ const compareEvents = (left: EventEntry, right: EventEntry) =>
     : left.datum.localeCompare(right.datum, 'sv-SE')
 
 /**
- * Expands the recurring weekly rules into concrete dated occurrences for
- * a window starting at `fromDate`. This is what lets the schedule stay
+ * Expands the recurring weekly rules (fetched from /api/recurring-events,
+ * i.e. the admin panel's "stående event") into concrete dated occurrences
+ * for a window starting at `fromDate`. This is what lets the schedule stay
  * "up to date" without anyone manually adding dates — it always looks
  * as far ahead as `days` from today.
  */
-export const expandRecurringEvents = (fromDate = new Date(), days = 60): EventEntry[] => {
+export const expandRecurringEvents = (recurringEvents: RecurringEventRule[], fromDate = new Date(), days = 60): EventEntry[] => {
   const occurrences: EventEntry[] = []
 
   for (let offset = 0; offset < days; offset++) {
@@ -90,8 +96,8 @@ export const expandRecurringEvents = (fromDate = new Date(), days = 60): EventEn
         titel: rule.titel,
         datum: toIsoDate(date),
         tid: rule.tid,
-        beskrivning: rule.beskrivning,
-        kostnad: rule.kostnad
+        beskrivning: '',
+        kostnad: ''
       })
     }
   }
@@ -101,7 +107,7 @@ export const expandRecurringEvents = (fromDate = new Date(), days = 60): EventEn
 
 /** The regular week at a glance, Monday through Sunday. Callers supply the
  * weekday label (translated) since this util has no i18n context of its own. */
-export const getWeeklyPattern = (weekdayLabel: (weekday: number) => string = (w) => weekdayLabels[w]) =>
+export const getWeeklyPattern = (recurringEvents: RecurringEventRule[], weekdayLabel: (weekday: number) => string = (w) => weekdayLabels[w]) =>
   [1, 2, 3, 4, 5, 6, 0].map((weekday) => ({
     weekday,
     label: weekdayLabel(weekday),
@@ -121,9 +127,9 @@ export const getUpcomingSpecialEvents = (specialEvents: EventEntry[], limit = 20
 }
 
 /** Recurring occurrences and special events on or after `fromDate`, merged and sorted. */
-export const getUpcomingEvents = (specialEvents: EventEntry[], limit = 20, fromDate = new Date(), windowDays = 60) => {
+export const getUpcomingEvents = (recurringEvents: RecurringEventRule[], specialEvents: EventEntry[], limit = 20, fromDate = new Date(), windowDays = 60) => {
   const fromIso = toIsoDate(fromDate)
-  const recurringOccurrences = expandRecurringEvents(fromDate, windowDays)
+  const recurringOccurrences = expandRecurringEvents(recurringEvents, fromDate, windowDays)
   const specials = specialEvents.filter((event) => event.datum >= fromIso)
 
   return [...recurringOccurrences, ...specials]
@@ -156,4 +162,4 @@ export const getEventSeriesBySlug = (slug: string) =>
 export const getPrimarySeriesForEvent = (event: EventEntry) =>
   eventSeriesList.find((series) => series.matches(event)) ?? null
 
-export type { EventEntry, EventSeries }
+export type { EventEntry, EventSeries, RecurringEventRule }

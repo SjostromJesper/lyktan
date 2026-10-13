@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import '~/assets/css/singelkort.css'
 
+definePageMeta({ layout: 'singles' })
+
 type Variant = {
   id: string
   title: string
@@ -9,6 +11,7 @@ type Variant = {
   selectedOptions: { name: string, value: string }[]
   price: { amount: string, currencyCode: string }
   compareAtPrice: { amount: string, currencyCode: string } | null
+  image?: { url: string, altText: string | null } | null
 }
 
 type SingleCard = {
@@ -20,6 +23,8 @@ type SingleCard = {
   cardSet: { value: string } | null
   rarity: { value: string } | null
   collectorNumber: { value: string } | null
+  setCode?: { value: string } | null
+  cardLanguage?: { value: string } | null
   variants: { nodes: Variant[] }
 }
 
@@ -241,32 +246,67 @@ const rows = computed<Row[]>(() => {
   )
 })
 
+// --- Pages of 50 cards (or list rows), more as you scroll; ?sida=N keeps your place ---
+const progressive = useProgressiveList(computed(() => (viewMode.value === 'grid' ? filteredCards.value.length : rows.value.length)))
+const visibleCards = computed(() => filteredCards.value.slice(0, progressive.limit.value))
+const visibleRows = computed(() => rows.value.slice(0, progressive.limit.value))
+watch(
+  [search, selectedGames, selectedConditions, selectedSets, foilOnly, inStockOnly, priceMin, priceMax, sortValue, viewMode],
+  progressive.reset
+)
+
 // --- Quantity steppers + batch add (list view) ---
+// The stepper is the amount you are about to add; what is already in the cart is
+// read straight from the cart (so removing a card there clears it here) and
+// counts against the stock, so you can never pick more than is left.
 const quantities = ref<Record<string, number>>({})
+
+const { formatMoney, addVariantsToCart, cartBusy, cartError, cartItems } = useSinglesCart()
+
+const inCartFor = (variantId: string) =>
+  cartItems.value.find((line: any) => line.merchandise?.id === variantId)?.quantity ?? 0
+
+const maxFor = (row: Row) => Math.max(0, (row.variant.quantityAvailable ?? 99) - inCartFor(row.variant.id))
 
 const quantityFor = (variantId: string) => quantities.value[variantId] ?? 0
 
 const setQuantity = (row: Row, next: number) => {
-  const max = row.variant.quantityAvailable ?? 99
-  quantities.value = { ...quantities.value, [row.variant.id]: Math.max(0, Math.min(next, max)) }
+  quantities.value = { ...quantities.value, [row.variant.id]: Math.max(0, Math.min(next, maxFor(row))) }
+}
+
+const clearQuantities = (variantIds: string[]) => {
+  const next = { ...quantities.value }
+  for (const id of variantIds) delete next[id]
+  quantities.value = next
 }
 
 const selectedRows = computed(() => rows.value.filter((r) => quantityFor(r.variant.id) > 0))
 const selectedCount = computed(() => selectedRows.value.reduce((sum, r) => sum + quantityFor(r.variant.id), 0))
 const selectedTotal = computed(() => selectedRows.value.reduce((sum, r) => sum + Number(r.variant.price.amount) * quantityFor(r.variant.id), 0))
 
-const { formatMoney, addVariantsToCart, cartBusy } = useShopifyCart()
+// Whenever the cart changes (item added elsewhere, removed, quantity edited),
+// pull any pending amount back inside what is still available.
+watch(cartItems, () => {
+  const next: Record<string, number> = {}
+  for (const row of rows.value) {
+    const pending = quantities.value[row.variant.id]
+    if (pending) next[row.variant.id] = Math.min(pending, maxFor(row))
+  }
+  quantities.value = next
+})
 
 const addRow = async (row: Row) => {
-  const qty = quantityFor(row.variant.id) || 1
-  setQuantity(row, qty)
+  const qty = Math.min(quantityFor(row.variant.id) || 1, maxFor(row))
+  if (qty < 1) return
   await addVariantsToCart([{ variantId: row.variant.id, quantity: qty }], t('cart.itemAdded', { title: row.card.title }))
+  if (!cartError.value) clearQuantities([row.variant.id])
 }
 
 const addAllSelected = async () => {
-  const lines = selectedRows.value.map((r) => ({ variantId: r.variant.id, quantity: quantityFor(r.variant.id) }))
+  const picked = selectedRows.value
+  const lines = picked.map((r) => ({ variantId: r.variant.id, quantity: quantityFor(r.variant.id) }))
   await addVariantsToCart(lines, t('cart.itemsAdded', { count: selectedCount.value }))
-  quantities.value = {}
+  if (!cartError.value) clearQuantities(picked.map((r) => r.variant.id))
 }
 
 useSeoMeta({
@@ -277,7 +317,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <main class="lykta min-h-screen pb-24">
+  <main class="lykta min-h-[60vh] pb-24">
     <div class="page-shell px-4 pt-8 sm:px-6">
       <nav class="label mb-2 !text-[11.5px]">
         <NuxtLink :to="localePath('/')" class="hover:underline">{{ t('singles.breadcrumbHome') }}</NuxtLink> / {{ t('singles.title') }}
@@ -461,16 +501,21 @@ useSeoMeta({
       </template>
 
       <!-- Grid view -->
-      <div v-else-if="viewMode === 'grid'" class="mt-4 grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 xl:grid-cols-4">
-        <NuxtLink v-for="card in filteredCards" :key="card.id" :to="localePath(`/singelkort/${card.handle}`)" class="grid gap-1.5">
+      <template v-else-if="viewMode === 'grid'">
+      <div class="mt-4 grid grid-cols-2 gap-x-3 gap-y-4 sm:grid-cols-3 xl:grid-cols-4">
+        <NuxtLink v-for="card in visibleCards" :key="card.id" :to="localePath(`/singelkort/${card.handle}`)" class="grid min-w-0 grid-cols-[minmax(0,1fr)] gap-1.5">
           <div
             class="relative overflow-hidden"
             style="aspect-ratio: 5/7; border-radius: var(--radius-md); background: var(--color-neutral-100); box-shadow: inset 0 0 0 1px var(--color-divider)"
           >
             <img
               v-if="card.featuredImage?.url"
-              :src="card.featuredImage.url"
+              :src="shopifyImage(card.featuredImage.url, 420)"
+              :srcset="shopifySrcset(card.featuredImage.url, [300, 420, 640])"
+              sizes="(min-width: 1280px) 22vw, (min-width: 640px) 30vw, 46vw"
               :alt="card.featuredImage.altText || card.title"
+              loading="lazy"
+              decoding="async"
               class="washed h-full w-full object-contain p-2"
             >
             <div v-else class="grid h-full w-full place-items-center text-2xl font-bold" style="color: var(--color-neutral-500); font-family: var(--font-heading)">
@@ -484,17 +529,26 @@ useSeoMeta({
               {{ [card.cardGame?.value, card.cardSet?.value].filter(Boolean).join(' · ') }}
             </div>
             <div class="truncate text-[14px] font-bold leading-snug">{{ card.title }}</div>
-            <div class="mt-0.5 flex items-baseline gap-1.5">
-              <span class="num text-[15px] font-medium" :style="{ color: cardIsInStock(card) ? 'var(--color-text)' : 'var(--color-neutral-600)' }">
+            <div class="mt-0.5 flex min-w-0 items-baseline gap-1.5">
+              <span class="num shrink-0 text-[15px] font-medium" :style="{ color: cardIsInStock(card) ? 'var(--color-text)' : 'var(--color-neutral-600)' }">
                 {{ cardLowestPrice(card) !== null ? formatMoney(String(cardLowestPrice(card)), cardVariants(card)[0]?.price.currencyCode || 'SEK') : '—' }}
               </span>
-              <span class="text-[11px]" style="color: var(--color-neutral-600)">
+              <span class="min-w-0 truncate text-[11px]" style="color: var(--color-neutral-600)">
                 {{ cardIsInStock(card) ? t('singles.stockAndCondition', { count: cardStockCount(card), condition: conditionLabel(cardConditions(card)[0]) || '' }) : t('singles.watch') }}
               </span>
             </div>
           </div>
         </NuxtLink>
       </div>
+
+      <LoadMore v-if="filteredCards.length > 50"
+        :shown="progressive.shown.value"
+        :total="progressive.total.value"
+        :has-more="progressive.hasMore.value"
+        :href="progressive.nextHref.value"
+        @more="progressive.showMore"
+      />
+      </template>
 
       <!-- List view -->
       <div v-else class="mt-4">
@@ -507,7 +561,7 @@ useSeoMeta({
 
         <div class="lykta-table">
           <div
-            v-for="row in rows"
+            v-for="row in visibleRows"
             :key="row.key"
             class="lykta-row grid items-center gap-3 p-3 sm:grid-cols-[56px_1fr_150px_110px_90px_90px_130px]"
             :class="{ 'opacity-60': !row.variant.availableForSale }"
@@ -517,7 +571,7 @@ useSeoMeta({
                 class="overflow-hidden"
                 style="aspect-ratio: 5/7; border-radius: var(--radius-sm); background: var(--color-neutral-200); box-shadow: inset 0 0 0 1px var(--color-divider)"
               >
-                <img v-if="row.card.featuredImage?.url" :src="row.card.featuredImage.url" :alt="row.card.title" class="washed h-full w-full object-contain">
+                <img v-if="(row.variant.image ?? row.card.featuredImage)?.url" :src="shopifyImage((row.variant.image ?? row.card.featuredImage)!.url, 160)" :alt="row.card.title" loading="lazy" decoding="async" class="washed h-full w-full object-contain">
               </div>
             </NuxtLink>
 
@@ -527,7 +581,7 @@ useSeoMeta({
                 <span v-if="row.foil" class="tag tag-accent align-middle text-[10px]">{{ t('singles.foil') }}</span>
               </div>
               <div class="truncate text-[12px]" style="color: var(--color-neutral-600)">
-                {{ row.card.cardGame?.value }}<template v-if="row.card.collectorNumber?.value"> · <span class="num">{{ row.card.collectorNumber.value }}</span></template><template v-if="row.card.rarity?.value"> · {{ row.card.rarity.value }}</template>
+                {{ row.card.cardGame?.value }}<template v-if="row.card.collectorNumber?.value"> · <span class="num">{{ [row.card.setCode?.value, row.card.collectorNumber.value].filter(Boolean).join(' ') }}</span></template><template v-if="row.card.rarity?.value"> · {{ row.card.rarity.value }}</template><template v-if="row.card.cardLanguage?.value && row.card.cardLanguage.value !== 'Engelska'"> · {{ row.card.cardLanguage.value }}</template>
               </div>
             </NuxtLink>
 
@@ -542,6 +596,7 @@ useSeoMeta({
               :style="{ color: !row.variant.availableForSale ? 'var(--color-neutral-600)' : (row.variant.quantityAvailable ?? 2) <= 1 ? 'var(--color-accent-700)' : 'var(--color-accent-2-700)' }"
             >
               {{ row.variant.availableForSale ? t('singles.stockCount', { count: row.variant.quantityAvailable ?? '—' }) : t('singles.soldOutShort') }}
+              <span v-if="inCartFor(row.variant.id)" class="block text-[11px] font-normal" style="color: var(--color-accent)">{{ t('singles.inCartCount', { count: inCartFor(row.variant.id) }) }}</span>
             </div>
 
             <div class="num text-[15px] font-medium">{{ formatMoney(row.variant.price.amount, row.variant.price.currencyCode) }}</div>
@@ -549,14 +604,15 @@ useSeoMeta({
             <div class="flex items-center gap-1.5">
               <template v-if="row.variant.availableForSale">
                 <div class="num flex items-center gap-2 rounded-[7px] px-2.5 py-1 text-[13px]" style="border: 1px solid var(--color-divider); background: var(--color-surface)">
-                  <button type="button" class="leading-none" @click="setQuantity(row, quantityFor(row.variant.id) - 1)">−</button>
+                  <button type="button" class="leading-none disabled:opacity-40" :disabled="quantityFor(row.variant.id) < 1" :aria-label="t('singles.decreaseQty')" @click="setQuantity(row, quantityFor(row.variant.id) - 1)">−</button>
                   <span class="w-4 text-center">{{ quantityFor(row.variant.id) }}</span>
-                  <button type="button" class="leading-none" @click="setQuantity(row, quantityFor(row.variant.id) + 1)">+</button>
+                  <button type="button" class="leading-none disabled:opacity-40" :disabled="maxFor(row) <= quantityFor(row.variant.id)" :aria-label="t('singles.increaseQty')" @click="setQuantity(row, quantityFor(row.variant.id) + 1)">+</button>
                 </div>
                 <button
                   type="button"
                   class="btn btn-primary btn-icon"
-                  :disabled="cartBusy"
+                  :disabled="cartBusy || maxFor(row) < 1"
+                  :aria-label="t('singles.addToCartRow', { title: row.card.title })"
                   @click="addRow(row)"
                 >
                   +
@@ -570,6 +626,14 @@ useSeoMeta({
             {{ t('singles.noListMatches') }}
           </p>
         </div>
+
+        <LoadMore v-if="rows.length > 50"
+        :shown="progressive.shown.value"
+        :total="progressive.total.value"
+        :has-more="progressive.hasMore.value"
+        :href="progressive.nextHref.value"
+        @more="progressive.showMore"
+      />
 
         <div
           v-if="selectedCount > 0"

@@ -3,12 +3,7 @@ const getShopDomain = () =>
     .replace(/^https?:\/\//, '')
     .replace(/\/.*$/, '')
 
-/**
- * Server-side Shopify Storefront API GraphQL call. Shared by every
- * server/api/shopify/* route instead of each one re-implementing the same
- * fetch + error handling.
- */
-export const shopifyStorefrontGraphql = async <T = any>(query: string, variables?: Record<string, unknown>): Promise<T> => {
+const fetchStorefront = async <T>(query: string, variables?: Record<string, unknown>): Promise<T> => {
   const shopDomain = getShopDomain()
   const publicToken = String(process.env.SHOPIFY_STOREFRONT_PUBLIC_TOKEN || '')
 
@@ -40,4 +35,59 @@ export const shopifyStorefrontGraphql = async <T = any>(query: string, variables
   }
 
   return result.data as T
+}
+
+// Short-lived in-memory cache for read queries. A page view otherwise waits 200-500 ms
+// on Shopify for every request; with a cache only the first request in each window does.
+// Instances are per server process, so each warm serverless instance keeps its own copy.
+const cache = new Map<string, { data: unknown, at: number }>()
+const inflight = new Map<string, Promise<unknown>>()
+const MAX_ENTRIES = 300
+
+/**
+ * Server-side Shopify Storefront API GraphQL call. Shared by every
+ * server/api/shopify/* route instead of each one re-implementing the same
+ * fetch + error handling.
+ *
+ * `ttl` (seconds) caches the result. Identical concurrent requests share one call,
+ * and if Shopify fails while a cached copy exists, the older copy is served instead
+ * of an error. Left out (0) the call always goes to Shopify.
+ */
+export const shopifyStorefrontGraphql = async <T = any>(
+  query: string,
+  variables?: Record<string, unknown>,
+  options: { ttl?: number } = {}
+): Promise<T> => {
+  const ttl = import.meta.dev ? 0 : (options.ttl ?? 0)
+
+  if (!ttl) {
+    return fetchStorefront<T>(query, variables)
+  }
+
+  const key = query + JSON.stringify(variables ?? {})
+  const hit = cache.get(key)
+
+  if (hit && Date.now() - hit.at < ttl * 1000) {
+    return hit.data as T
+  }
+
+  let pending = inflight.get(key) as Promise<T> | undefined
+
+  if (!pending) {
+    pending = fetchStorefront<T>(query, variables)
+      .then((data) => {
+        if (cache.size >= MAX_ENTRIES) cache.delete(cache.keys().next().value!)
+        cache.set(key, { data, at: Date.now() })
+        return data
+      })
+      .finally(() => inflight.delete(key))
+    inflight.set(key, pending)
+  }
+
+  try {
+    return await pending
+  } catch (error) {
+    if (hit) return hit.data as T
+    throw error
+  }
 }

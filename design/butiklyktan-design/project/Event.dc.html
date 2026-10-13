@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Butik Lyktan – event</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#FFFFFF;color:#1C2233;font-family:'Figtree',system-ui,sans-serif}
+a{color:#1C2233;text-decoration:none}a:hover{color:#8A5200}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1800px; box-sizing: border-box; background: #FFFFFF; display: flex; flex-direction: column; font-family: 'Figtree', system-ui, sans-serif; color: #1C2233">
+
+<div style="height: 38px; padding: 0 48px; display: flex; align-items: center; justify-content: space-between; background: #1F2A44; color: #FFFFFF; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase">
+<span style="color: #C9CFDD">Veddestabron 8B · Järfälla</span>
+<span style="display: flex; align-items: center; gap: 10px"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{accent}}"></span>Just nu: endast hämtning i butik</span>
+<span style="color: #C9CFDD">Öppet alla dagar</span>
+</div>
+
+<header style="height: 100px; box-sizing: border-box; padding: 0 48px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: center">
+<label style="justify-self: start; width: 340px; height: 46px; box-sizing: border-box; padding: 0 18px; display: flex; align-items: center; gap: 10px; border-radius: 23px; background: #F5F3EF; color: #6A6F7A">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<input type="search" placeholder="Sök spel, kort, figurer…" aria-label="Sök" style="flex-grow: 1; border: 0; background: transparent; font: inherit; font-size: 15px; color: #1C2233; outline: none">
+</label>
+<a href="Main.dc.html" style="justify-self: center; display: flex; align-items: center; gap: 12px; color: #1C2233">
+<span style="width: 52px; height: 52px; border-radius: 26px; background: {{accent}}; display: flex; align-items: center; justify-content: center">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1F2A44" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M12 2.5v2.5"></path><path d="M6.5 8l1.5-3h8l1.5 3"></path><path d="M7 8h10l-1 12H8L7 8z"></path><path d="M12 11.5v4"></path></svg>
+</span>
+<span style="display: flex; flex-direction: column; line-height: 1">
+<span style="font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Butik Lyktan</span>
+<span style="font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #6A6F7A; margin-top: 4px">Spel · Kort · Figurer</span>
+</span>
+</a>
+<div style="justify-self: end; display: flex; align-items: center; gap: 4px">
+<button aria-label="Konto" style="width: 46px; height: 46px; border: 0; border-radius: 23px; background: transparent; display: flex; align-items: center; justify-content: center; color: #1C2233; cursor: pointer"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"></path></svg></button>
+<button aria-label="Varukorg, 0 kr" style="height: 46px; padding: 0 18px 0 14px; border: 0; border-radius: 23px; background: #F5F3EF; display: flex; align-items: center; gap: 10px; font: inherit; font-size: 15px; font-weight: 700; color: #1C2233; cursor: pointer">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>0 kr</button>
+</div>
+</header>
+
+<nav style="position: relative; z-index: 20; height: 68px; display: flex; align-items: center; justify-content: center; gap: 12px; border-top: 1px solid #ECE8E0; border-bottom: 1px solid #ECE8E0; font-size: 15px; font-weight: 700">
+<div onMouseLeave="{{closeShop}}" style="position: relative">
+<button type="button" aria-haspopup="true" aria-expanded="{{shopOpen}}" onClick="{{toggleShop}}" onMouseEnter="{{openShop}}" style="height: 46px; padding: 0 16px 0 18px; display: flex; align-items: center; gap: 8px; border: 0; border-radius: 23px; background: #FFF6E5; font: inherit; font-size: 15px; font-weight: 800; color: #1C2233; cursor: pointer"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8A5200" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg>Webbshop<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="{{chevStyle}}"><path d="M6 9l6 6 6-6"></path></svg></button>
+<sc-if value="{{shopOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; top: 46px; left: 50%; transform: translateX(-50%); padding-top: 10px; width: 300px">
+<div style="padding: 8px; border-radius: 20px; background: #FFFFFF; border: 1px solid #ECE8E0; box-shadow: 0 16px 40px rgba(31, 42, 68, 0.16); display: flex; flex-direction: column; gap: 2px">
+<a href="Butik.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 12px; border-radius: 12px; font-size: 16px; font-weight: 700"><span style="width: 28px; height: 28px; border-radius: 8px; background: #CFE7DF"></span><span style="flex-grow: 1">Brädspel</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6A6F7A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+<a href="Butik.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 12px; border-radius: 12px; font-size: 16px; font-weight: 700"><span style="width: 28px; height: 28px; border-radius: 8px; background: #F8DDAE"></span><span style="flex-grow: 1">Kortspel</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6A6F7A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+<a href="Butik.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 12px; border-radius: 12px; font-size: 16px; font-weight: 700"><span style="width: 28px; height: 28px; border-radius: 8px; background: #D3DBEE"></span><span style="flex-grow: 1">Miniatyrspel</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6A6F7A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+<a href="Butik.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 12px; border-radius: 12px; font-size: 16px; font-weight: 700"><span style="width: 28px; height: 28px; border-radius: 8px; background: #EDD3DA"></span><span style="flex-grow: 1">Rollspel</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6A6F7A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+<a href="Butik.dc.html" style="height: 48px; padding: 0 12px; display: flex; align-items: center; gap: 12px; border-radius: 12px; font-size: 16px; font-weight: 700"><span style="width: 28px; height: 28px; border-radius: 8px; background: #E2E0D6"></span><span style="flex-grow: 1">Tillbehör</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6A6F7A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"></path></svg></a>
+<a href="Butik.dc.html" style="margin-top: 6px; height: 48px; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #ECE8E0; font-size: 14px; font-weight: 800; color: #8A5200"><span>Visa hela sortimentet</span><span>→</span></a>
+</div>
+</div>
+</sc-if>
+</div>
+<div style="display: flex; align-items: center; gap: 4px">
+<a href="Event.dc.html" style="padding: 10px 16px; color: #8A5200; box-shadow: inset 0 -3px 0 {{accent}}">Event</a>
+<a href="BokaBord.dc.html" style="padding: 10px 16px">Boka bord</a>
+<a href="Main.dc.html#besok" style="padding: 10px 16px">Hitta hit</a>
+</div>
+</nav>
+
+<section style="padding: 24px 48px 0">
+<div style="height: 200px; box-sizing: border-box; border-radius: 24px; background: #1F2A44; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px">
+<h1 style="margin: 0; font-size: 48px; font-weight: 800; letter-spacing: -0.01em; text-transform: uppercase">Event</h1>
+<p style="margin: 0; font-size: 17px; color: #D5DAE6">Turneringar, prereleases och spelkvällar varje vecka.</p>
+</div>
+</section>
+
+<section style="padding: 48px 48px 0; display: flex; flex-direction: column; gap: 20px">
+<h2 style="margin: 0; font-size: 34px; font-weight: 800; text-transform: uppercase">Kommande specialevent</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+<sc-for list="{{events}}" as="e" hint-placeholder-count="4">
+<div style="padding: 24px; border-radius: 22px; border: 2px solid #ECE8E0; display: flex; gap: 24px; align-items: center">
+<div style="width: 92px; height: 100px; flex-shrink: 0; border-radius: 18px; background: #1F2A44; color: #FFFFFF; display: flex; flex-direction: column; align-items: center; justify-content: center">
+<span style="font-size: 36px; font-weight: 800; line-height: 1">{{e.day}}</span>
+<span style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: {{accent}}">{{e.month}}</span>
+</div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 6px">
+<span style="align-self: flex-start; font-size: 12px; font-weight: 800; padding: 4px 10px; border-radius: 12px; background: #FFF6E5; color: #8A5200; text-transform: uppercase; letter-spacing: 0.05em">{{e.tag}}</span>
+<span style="font-size: 19px; font-weight: 800; line-height: 1.3">{{e.title}}</span>
+<span style="font-size: 14px; color: #6A6F7A">{{e.meta}}</span>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px">
+<span style="font-size: 18px; font-weight: 800">{{e.price}}</span>
+<a href="Event.dc.html" style="height: 44px; padding: 0 20px; display: flex; align-items: center; border-radius: 22px; background: {{accent}}; color: #1F2A44; font-size: 15px; font-weight: 800">Anmäl dig</a>
+</div>
+</div>
+</sc-for>
+</div>
+</section>
+
+<section style="padding: 72px 48px 72px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 style="margin: 0; font-size: 34px; font-weight: 800; text-transform: uppercase">Veckoschema</h2>
+<p style="margin: 0; font-size: 16px; color: #3E4454">Återkommande spelkvällar och turneringar varje vecka.</p>
+</div>
+<a href="https://discord.gg/r8RS4N6cqQ" style="height: 46px; padding: 0 20px; display: flex; align-items: center; gap: 10px; border-radius: 23px; border: 2px solid #ECE8E0; font-size: 15px; font-weight: 700">Frågor? Hitta oss på Discord →</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{week}}" as="d" hint-placeholder-count="7">
+<div style="{{d.cardStyle}}">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 15px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em">{{d.day}}</span>
+<sc-if value="{{d.today}}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 10px; background: {{accent}}; color: #1F2A44; text-transform: uppercase">Idag</span></sc-if>
+</div>
+<sc-for list="{{d.items}}" as="it" hint-placeholder-count="1">
+<div style="padding: 12px; border-radius: 14px; background: #FFFFFF; border: 1px solid #ECE8E0; display: flex; flex-direction: column; gap: 6px">
+<span style="align-self: flex-start; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 8px; background: #1F2A44; color: #FFFFFF">{{it.time}}</span>
+<span style="font-size: 15px; font-weight: 800; line-height: 1.25">{{it.name}}</span>
+<span style="font-size: 13px; color: #6A6F7A">{{it.price}}</span>
+</div>
+</sc-for>
+<sc-if value="{{d.empty}}" hint-placeholder-val="{{ false }}">
+<div style="padding: 12px; border-radius: 14px; border: 1px dashed #D6D1C6; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: #6A6F7A; line-height: 1.4">
+<span>Inga fasta event</span>
+<a href="BokaBord.dc.html" style="font-size: 14px; font-weight: 800; color: #8A5200">Boka bord →</a>
+</div>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</section>
+
+<footer style="margin-top: auto; background: #1F2A44; color: #C9CFDD; padding: 36px 48px; display: flex; justify-content: space-between; align-items: center; font-size: 14px">
+<span style="font-size: 24px; font-weight: 800; color: #FFFFFF">Butik Lyktan</span>
+<span>Veddestabron 8B, Järfälla · hej@butiklyktan.se</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A93B","options":["#F2A93B","#F7D154","#7BC8B4","#F28C6B"]},"$preview":{"width":1440,"height":1800}}'>
+class Component extends DCLogic {
+renderVals() {
+const shopOpen = (this.state && this.state.shop != null) ? this.state.shop : false;
+return {
+shopOpen,
+toggleShop: () => this.setState({ shop: !shopOpen }),
+openShop: () => this.setState({ shop: true }),
+closeShop: () => this.setState({ shop: false }),
+chevStyle: 'transition: transform 0.15s; transform: rotate(' + (shopOpen ? 180 : 0) + 'deg)',
+accent: this.props.accent ?? '#F2A93B',
+events: [
+{ day: '27', month: 'Sep', tag: 'Prerelease', title: 'MTG – Reality Fracture Prerelease', meta: 'Sön 12:00 · Sealed · 3 rundor · 1 booster per vinst', price: '500 kr' },
+{ day: '4', month: 'Okt', tag: 'Skirmish', title: 'Riftbound: Vendetta Skirmish', meta: 'Sön · Registrering 10:30 · Start 11:00 · Heldag', price: '[Pris]' }
+],
+week: [
+{ day: 'Måndag', items: [{ time: '18:00', name: 'Warhammer på måndag', price: 'Dagspass / medlem' }] },
+{ day: 'Tisdag', items: [{ time: '18:00', name: 'Sorcery', price: '50 / 200 / 350 kr' }] },
+{ day: 'Onsdag', items: [{ time: '18:00', name: 'Commander', price: 'Dagspass / medlem' }, { time: '18:00', name: 'One Piece', price: '50 kr' }] },
+{ day: 'Torsdag', items: [{ time: '18:00', name: 'Riftbound', price: '50 kr' }, { time: '18:00', name: 'Pokémon', price: '50 kr' }] },
+{ day: 'Fredag', items: [{ time: '18:00', name: 'Friday Night Magic', price: '250 kr' }] },
+{ day: 'Lördag', items: [] },
+{ day: 'Söndag', items: [] }
+].map((d, i) => ({ ...d, empty: d.items.length === 0, today: i === 5, cardStyle: 'min-height: 300px; padding: 14px; border-radius: 20px; display: flex; flex-direction: column; gap: 10px; ' + (i === 5 ? 'background: #FFF6E5; border: 2px solid ' + (this.props.accent ?? '#F2A93B') : 'background: #F8F6F2; border: 2px solid #F8F6F2') }))
+};
+}
+}
+</script>
+</body>
+</html>

@@ -36,6 +36,10 @@ export const useStoreHours = () => {
 
   const todayKey = computed(() => todaySchedule.value.key)
 
+  const formatHour = (hour: number) => `${String(hour).padStart(2, '0')}:00`
+
+  // "Öppet till 19:00" while open, otherwise "Stängt · öppnar 10:00" — or
+  // "… öppnar i morgon 10:00" once today's closing time has passed.
   const openStatus = computed(() => {
     const schedule = todaySchedule.value
     const { hour, minute } = getStockholmParts(now.value)
@@ -44,11 +48,16 @@ export const useStoreHours = () => {
     const closeMinutes = schedule.close * 60
     const isOpen = currentMinutes >= openMinutes && currentMinutes < closeMinutes
 
-    return {
-      isOpen,
-      label: isOpen ? t('hours.open') : t('hours.closed'),
-      message: isOpen ? `${weekdayLabel(schedule.key)} ${schedule.display}` : t('hours.closedNow', { day: weekdayLabel(schedule.key) })
+    if (isOpen) {
+      const message = t('hours.openUntil', { time: formatHour(schedule.close) })
+      return { isOpen, label: t('hours.open'), message, text: message }
     }
+
+    const opensToday = currentMinutes < openMinutes
+    const nextDay = opensToday ? schedule : openingHours.find((entry) => entry.key === (schedule.key + 1) % 7) ?? schedule
+    const message = t(opensToday ? 'hours.closedOpensAt' : 'hours.closedOpensTomorrow', { time: formatHour(nextDay.open) })
+
+    return { isOpen, label: t('hours.closed'), message, text: message }
   })
 
   const groupedHours = computed(() => {
@@ -74,6 +83,8 @@ export const useStoreHours = () => {
 
   const startClock = () => {
     if (import.meta.client && !interval) {
+      // The page may have been rendered (or cached by the CDN) a while ago.
+      now.value = new Date()
       interval = window.setInterval(() => {
         now.value = new Date()
       }, 60000)

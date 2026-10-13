@@ -1,7 +1,13 @@
-export const useShopifyCart = () => {
+// `scope` keeps carts apart: the regular shop and the singles section each get
+// their own Shopify cart (own id cookie, own state), so cards bought as singles
+// never end up in the shop's cart or checkout, and the other way round.
+export type CartScope = 'shop' | 'singles'
+
+export const useShopifyCart = (scope: CartScope = 'shop') => {
   const { t } = useI18n()
   const storefront = useStorefront()
-  const cartId = useCookie<string | null>('shopify-cart-id', {
+  const suffix = scope === 'shop' ? '' : `-${scope}`
+  const cartId = useCookie<string | null>(`shopify-cart-id${suffix}`, {
     sameSite: 'lax',
     secure: false
   })
@@ -21,7 +27,7 @@ export const useShopifyCart = () => {
           currencyCode
         }
       }
-      lines(first: 20) {
+      lines(first: 100) {
         nodes {
           id
           quantity
@@ -29,12 +35,40 @@ export const useShopifyCart = () => {
             ... on ProductVariant {
               id
               title
+              availableForSale
+              quantityAvailable
+              selectedOptions {
+                name
+                value
+              }
+              image {
+                url
+                altText
+              }
               product {
                 title
                 handle
                 featuredImage {
                   url
                   altText
+                }
+                cardGame: metafield(namespace: "custom", key: "card_game") {
+                  value
+                }
+                cardSet: metafield(namespace: "custom", key: "card_set") {
+                  value
+                }
+                setCode: metafield(namespace: "custom", key: "set_code") {
+                  value
+                }
+                collectorNumber: metafield(namespace: "custom", key: "collector_number") {
+                  value
+                }
+                rarity: metafield(namespace: "custom", key: "rarity") {
+                  value
+                }
+                cardLanguage: metafield(namespace: "custom", key: "card_language") {
+                  value
                 }
               }
               price {
@@ -104,6 +138,20 @@ export const useShopifyCart = () => {
     }
   `
 
+  const updateCartAttributesMutation = `${cartFragment}
+    mutation UpdateCartAttributes($cartId: ID!, $attributes: [AttributeInput!]!) {
+      cartAttributesUpdate(cartId: $cartId, attributes: $attributes) {
+        cart {
+          ...CartFields
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `
+
   const getCartQuery = `${cartFragment}
     query GetCart($cartId: ID!) {
       cart(id: $cartId) {
@@ -127,12 +175,12 @@ export const useShopifyCart = () => {
     }
   `
 
-  const cart = useState<any | null>('shopify-cart', () => null)
-  const cartOpen = useState('shopify-cart-open', () => false)
-  const cartBusy = useState('shopify-cart-busy', () => false)
-  const cartError = useState('shopify-cart-error', () => '')
-  const cartNotice = useState('shopify-cart-notice', () => '')
-  const loadingVariantId = useState('shopify-cart-loading-variant', () => '')
+  const cart = useState<any | null>(`shopify-cart${suffix}`, () => null)
+  const cartOpen = useState(`shopify-cart-open${suffix}`, () => false)
+  const cartBusy = useState(`shopify-cart-busy${suffix}`, () => false)
+  const cartError = useState(`shopify-cart-error${suffix}`, () => '')
+  const cartNotice = useState(`shopify-cart-notice${suffix}`, () => '')
+  const loadingVariantId = useState(`shopify-cart-loading-variant${suffix}`, () => '')
 
   const cartItems = computed(() => cart.value?.lines?.nodes ?? [])
   const cartQuantity = computed(() => cart.value?.totalQuantity ?? 0)
@@ -309,6 +357,24 @@ export const useShopifyCart = () => {
     }
   }
 
+  // Free-form notes on the cart that follow it into the order (e.g. the delivery
+  // method picked on the singles cart page), shown to staff under the order.
+  const setCartAttributes = async (attributes: { key: string, value: string }[]) => {
+    if (!cart.value?.id) return false
+
+    try {
+      const response = await storefront.request(updateCartAttributesMutation, {
+        variables: { cartId: cart.value.id, attributes }
+      })
+      const errors = response.data?.cartAttributesUpdate?.userErrors ?? []
+      if (errors.length) return false
+      cart.value = response.data?.cartAttributesUpdate?.cart ?? cart.value
+      return true
+    } catch {
+      return false
+    }
+  }
+
   const updateLineQuantity = async (lineId: string, quantity: number) => {
     if (!cart.value?.id) {
       return
@@ -457,7 +523,11 @@ export const useShopifyCart = () => {
     addVariantToCart,
     addVariantsToCart,
     updateLineQuantity,
+    setCartAttributes,
     startMembershipCheckout,
     startBookingDepositCheckout
   }
 }
+
+// The singles section's own cart (see CartScope).
+export const useSinglesCart = () => useShopifyCart('singles')

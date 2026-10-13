@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
         }
       }
     }
-  `, { language })
+  `, { language }, { ttl: 600 })
 
   // Singelkort is a real collection (so the Storefront API can serve it to
   // /singelkort), but that page is deliberately unlisted while it's still

@@ -1,46 +1,56 @@
 /* --- Lykta: the singles corner's design system ---------------------------
-   Same palette as main.css: white, near-black ink, the logo's orange
-   as the one accent, Familjen Grotesk + IBM
-   Plex Mono, flat bordered panels instead of shadows and pills.
+   Mörkt tema enligt design/butiklyktan-design/HANDOFF.md "Singelkort" —
+   bakgrund/ytor/linjer, accent (lyktgul) och skick-/sällsynthetsfärger
+   hämtade rakt av därifrån. Figtree + IBM Plex Mono som resten av sajten.
 
    Scoped under .lykta so nothing leaks into the lyktan-* tokens the rest of
    the site uses. It exposes the same token and class names the old .organic
    scope did (--color-neutral-*, .btn, .tag, .card …) so the singelkort
-   markup maps over directly. Fonts are loaded globally in nuxt.config.ts.
-
-   Accent is the site's brand orange (lyktan-brand), with maroon
-   (lyktan-accent) as the text-safe step — same as the rest of the site. */
+   markup maps over directly. */
 .lykta {
-  --color-bg: #FFFFFF;          /* page ground (paper) */
-  --color-surface: #FFFFFF;     /* panels, tiles */
-  --color-text: #15171C;        /* ink */
-  --color-accent: #FE4D01;      /* brand orange — purchase actions only, always ink text */
-  --color-accent-hover: #720000;
-  --color-accent-2: #12915F;
-  --color-divider: #E9E7E2;
-  --color-focus: #2F6FDB;
+  --color-bg: #0D1015;           /* page ground */
+  --color-surface: #12161C;      /* panels, tiles */
+  --color-surface-2: #161B22;
+  --color-surface-3: #1D232C;
+  --color-text: #E8EAED;         /* primary text */
+  --color-accent: #F2A93B;       /* lyktgul — purchase actions, always dark text */
+  --color-accent-hover: #D6912A;
+  --color-accent-2: #56D364;
+  --color-divider: #1E242D;
+  --color-divider-2: #2A313C;
+  --color-focus: #56D364;
 
-  --color-neutral-100: #F5F4F1;  /* image wells */
-  --color-neutral-200: #EEEDE9;
-  --color-neutral-300: #E9E7E2;
-  --color-neutral-400: #C6C4BE;
-  --color-neutral-500: #93928D;
-  --color-neutral-600: #6B6B70;
-  --color-neutral-700: #45464B;
-  --color-neutral-800: #24272E;
-  --color-neutral-900: #15171C;
+  --color-neutral-100: #1D232C;
+  --color-neutral-200: #232A34;
+  --color-neutral-300: #2A313C;
+  --color-neutral-400: #3B434F;
+  --color-neutral-500: #6F7883;  /* tertiary text */
+  --color-neutral-600: #9AA3AE;  /* secondary text */
+  --color-neutral-700: #C4CAD2;
+  --color-neutral-800: #E8EAED;
+  --color-neutral-900: #F5F6F7;
 
-  --color-accent-100: #FDEEE6;
-  --color-accent-200: #FFD9C2;
-  --color-accent-500: #FE4D01;
-  --color-accent-700: #720000;  /* maroon — text-safe on white */
-  --color-accent-800: #5C0000;
+  --color-accent-100: #3A2E12;
+  --color-accent-200: #5A4419;
+  --color-accent-500: #F2A93B;
+  --color-accent-700: #F2A93B;   /* on dark, accent itself is the text-safe step */
+  --color-accent-800: #FBD599;
 
-  --color-accent-2-100: #E9F7F0;
-  --color-accent-2-700: #12915F;
-  --color-accent-2-800: #0B6B45;
+  --color-accent-2-100: #123420;
+  --color-accent-2-700: #56D364;
+  --color-accent-2-800: #A4EFAF;
 
-  --font-heading: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Foil-märke */
+  --color-foil-text: #C7B8FF;
+  --color-foil-border: #4B3F7A;
+
+  /* Sällsynthet (rarity) */
+  --color-rarity-common: #D9D9D9;
+  --color-rarity-uncommon: #8FB3D1;
+  --color-rarity-rare: #E0C063;
+  --color-rarity-mythic: #E8743B;
+
+  --font-heading: var(--font-sans, 'Figtree'), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body: var(--font-heading);
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
@@ -49,8 +59,8 @@
   --radius-lg: 18px;
 
   --shadow-sm: none;
-  --shadow-md: 0 1px 3px rgb(21 23 28 / 0.08), 0 8px 24px rgb(21 23 28 / 0.08);
-  --shadow-lg: 0 1px 3px rgb(21 23 28 / 0.10), 0 12px 32px rgb(21 23 28 / 0.12);
+  --shadow-md: 0 1px 3px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+  --shadow-lg: 0 1px 3px rgb(0 0 0 / 0.35), 0 12px 32px rgb(0 0 0 / 0.45);
 
   background: var(--color-bg);
   color: var(--color-text);
@@ -208,11 +218,12 @@
   white-space: nowrap;
   color: var(--color-neutral-700);
 }
-.lykta .cond-nyskick { color: #2E8B57; }
-.lykta .cond-utmarkt { color: #2B7F86; }
-.lykta .cond-bra     { color: #9A7B12; }
-.lykta .cond-ok      { color: #B7791F; }
-.lykta .cond-daligt  { color: #A23A3A; }
+/* Cardmarket-liknande skick-färger, se HANDOFF.md */
+.lykta .cond-nyskick { color: #56D364; } /* NM */
+.lykta .cond-utmarkt { color: #3CCFB8; } /* EX */
+.lykta .cond-bra     { color: #E3B341; } /* GD */
+.lykta .cond-ok      { color: #F0883E; } /* LP */
+.lykta .cond-daligt  { color: #F47067; } /* PL */
 
 /* --- List view as one table-like panel --- */
 .lykta .lykta-table {

@@ -19,7 +19,12 @@ const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
 const isNew = computed(() => isRecentRelease(releaseDate.value))
 
 const isSoldOut = computed(() => firstVariant.value && firstVariant.value.availableForSale === false)
-const isInStoreOnly = computed(() => props.product?.inStoreOnly?.value === 'true')
+// Kortspel (Magic, Pokémon m.fl.) säljs aldrig i webbshoppen — döljs även om
+// in_store_only-metafältet saknas, så länge produkten ligger i kortspel-kollektionen.
+const isInKortspelCollection = computed(() =>
+  (props.product?.collections?.nodes ?? []).some((c: any) => c.handle === 'kortspel')
+)
+const isInStoreOnly = computed(() => props.product?.inStoreOnly?.value === 'true' || isInKortspelCollection.value)
 
 const hasDiscount = computed(() => {
   const compareAt = Number(firstVariant.value?.compareAtPrice?.amount)
@@ -42,8 +47,12 @@ const addToCart = async () => {
       :style="{ '--tint': accent.tint }">
       <img
         v-if="product.featuredImage?.url"
-        :src="product.featuredImage.url"
+        :src="shopifyImage(product.featuredImage.url, 480)"
+        :srcset="shopifySrcset(product.featuredImage.url, [320, 480, 720])"
+        sizes="(min-width: 1280px) 22vw, (min-width: 640px) 30vw, 46vw"
         :alt="product.featuredImage.altText || product.title"
+        loading="lazy"
+        decoding="async"
         class="absolute inset-0 h-full w-full object-contain p-6 mix-blend-multiply transition duration-300 group-hover:scale-[1.04]"
       >
       <div v-else class="grid h-full w-full place-items-center text-lg font-medium text-lyktan-mute">
@@ -51,9 +60,6 @@ const addToCart = async () => {
       </div>
       <span v-if="isUpcoming" class="absolute left-3 top-3 rounded-full bg-lyktan-brand px-2.5 py-1 text-[0.68rem] font-semibold text-lyktan-ink">
         {{ t('product.comingSoon') }}
-      </span>
-      <span v-else-if="isInStoreOnly" class="absolute left-3 top-3 rounded-full bg-white px-2.5 py-1 text-[0.68rem] font-medium text-lyktan-ink ring-1 ring-lyktan-line">
-        {{ t('product.inStoreOnly') }}
       </span>
       <span v-else-if="isSoldOut" class="absolute left-3 top-3 rounded-full bg-lyktan-ink px-2.5 py-1 text-[0.68rem] font-medium text-white">
         {{ t('product.soldOut') }}
@@ -80,9 +86,13 @@ const addToCart = async () => {
       <NuxtLink v-if="isUpcoming" :to="productPath" class="card-cta mt-3">
         {{ t('product.getReminder') }}
       </NuxtLink>
-      <NuxtLink v-else-if="isInStoreOnly" :to="productPath" class="card-cta mt-3">
+      <!-- A quiet note, not an action: these products can't be bought online. -->
+      <p v-else-if="isInStoreOnly" class="mt-3 flex items-center gap-1.5 text-[0.8rem] text-lyktan-mute">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="h-3.5 w-3.5 shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 10l1.5-5h13L20 10" /><path d="M5 10v9h14v-9" /><path d="M4 10h16" /><path d="M10 19v-5h4v5" />
+        </svg>
         {{ t('product.inStoreOnly') }}
-      </NuxtLink>
+      </p>
       <button
         v-else
         type="button"

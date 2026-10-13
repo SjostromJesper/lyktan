@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Singelkort mobil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D1015;color:#E8EAED;font-family:'Figtree',system-ui,sans-serif}
+a{color:#E8EAED;text-decoration:none}a:hover{color:#F2A93B}
+</style>
+</helmet>
+<div style="width: 390px; height: 1900px; box-sizing: border-box; background: #0D1015; display: flex; flex-direction: column; font-family: 'Figtree', system-ui, sans-serif; color: #E8EAED">
+<header style="height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 0 8px; display: grid; grid-template-columns: 96px minmax(0, 1fr) 96px; align-items: center; border-bottom: 1px solid #1E242D; background: #0D1015">
+<a href="MobilMeny.dc.html" aria-label="Meny" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></a>
+<a href="SinglarMobil.dc.html" style="justify-self: center; display: flex; align-items: center; gap: 8px">
+<span style="width: 30px; height: 30px; border-radius: 15px; background: {{accent}}; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D1015" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M12 2.5v2.5"></path><path d="M6.5 8l1.5-3h8l1.5 3"></path><path d="M7 8h10l-1 12H8L7 8z"></path><path d="M12 11.5v4"></path></svg></span>
+<span style="display: flex; flex-direction: column; line-height: 1"><span style="font-size: 16px; font-weight: 800">Butik Lyktan</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: {{accent}}; margin-top: 3px">SINGELKORT</span></span>
+</a>
+<a href="KundkorgMobil.dc.html" aria-label="Kundkorg, 3 kort" style="justify-self: end; width: 44px; height: 44px; margin-right: 4px; display: flex; align-items: center; justify-content: center; position: relative"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg><span style="position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; border-radius: 9px; background: {{accent}}; color: #0D1015; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center">3</span></a>
+</header>
+<div style="padding: 12px 16px 0">
+<label style="height: 50px; box-sizing: border-box; padding: 0 14px; display: flex; align-items: center; gap: 10px; border-radius: 14px; background: #161B22; border: 1px solid #2A313C; color: #9AA3AE">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+<input type="search" aria-label="Sök kort" placeholder="Sök kortnamn, set, nummer…" style="flex-grow: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 16px; color: #E8EAED; outline: none">
+</label>
+</div>
+
+<nav aria-label="Spel" style="padding: 12px 0 0 16px; display: flex; gap: 8px; overflow: hidden">
+<sc-for list="{{games}}" as="g" hint-placeholder-count="5">
+<button type="button" onClick="{{g.pick}}" style="{{g.mstyle}}"><span style="width: 7px; height: 7px; border-radius: 4px; background: {{g.color}}"></span>{{g.name}}</button>
+</sc-for>
+</nav>
+
+<section style="padding: 14px 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<a href="SinglarMobil.dc.html" style="padding: 14px; border-radius: 16px; background: #161B22; border: 1px solid #2A313C; display: flex; flex-direction: column; gap: 6px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13"></path><path d="M8 12h13"></path><path d="M8 18h13"></path><path d="M3 6h.01"></path><path d="M3 12h.01"></path><path d="M3 18h.01"></path></svg>
+<span style="font-size: 15px; font-weight: 800; line-height: 1.2">Klistra in decklista</span>
+<span style="font-size: 12px; color: #9AA3AE">Hitta alla kort på en gång</span>
+</a>
+<a href="SinglarMobil.dc.html" style="padding: 14px; border-radius: 16px; background: {{accent}}; color: #0D1015; display: flex; flex-direction: column; gap: 6px">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0D1015" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="12" height="16" rx="2"></rect><path d="M8 21h10a2 2 0 0 0 2-2V7"></path></svg>
+<span style="font-size: 15px; font-weight: 800; line-height: 1.2; color: #0D1015">Sälj dina kort</span>
+<span style="font-size: 12px; color: #2B2110">Värdering i butiken</span>
+</a>
+</section>
+
+<section style="padding: 20px 16px 0; display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{gameName}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #9AA3AE">[antal] kort i lager</span>
+</div>
+<div style="display: flex; gap: 8px; flex-shrink: 0">
+<button type="button" style="height: 44px; padding: 0 14px; display: flex; align-items: center; gap: 8px; border-radius: 12px; border: 1px solid #2A313C; background: #161B22; color: #E8EAED; font: inherit; font-size: 14px; font-weight: 700"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16"></path><path d="M7 12h10"></path><path d="M10 18h4"></path></svg>Filter</button>
+<div role="group" aria-label="Visning" style="display: flex; padding: 3px; border-radius: 12px; background: #161B22; border: 1px solid #2A313C">
+<button type="button" aria-label="Rutnät" onClick="{{setGrid}}" style="{{gridBtn}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><rect x="14" y="14" width="6" height="6" rx="1"></rect></svg></button>
+<button type="button" aria-label="Lista" onClick="{{setList}}" style="{{listBtn}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg></button>
+</div>
+</div>
+</section>
+
+<div style="padding: 12px 16px 0; display: flex; gap: 6px; overflow: hidden">
+<sc-for list="{{conds}}" as="c" hint-placeholder-count="5">
+<button type="button" onClick="{{c.pick}}" aria-pressed="{{c.on}}" style="{{c.style}}; flex-shrink: 0"><span style="width: 8px; height: 8px; border-radius: 4px; background: {{c.color}}"></span>{{c.code}}</button>
+</sc-for>
+</div>
+
+<sc-if value="{{isGrid}}" hint-placeholder-val="{{ true }}">
+<section style="padding: 16px 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; row-gap: 22px">
+<sc-for list="{{cards}}" as="k" hint-placeholder-count="8">
+<a href="SingelKortMobil.dc.html" style="display: flex; flex-direction: column; gap: 8px">
+<div style="aspect-ratio: 63 / 88; border-radius: 10px; background: {{k.art}}; border: 1px solid #2A313C; position: relative; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #6F7883">Kortbild
+<sc-if value="{{k.foil}}" hint-placeholder-val="{{ false }}"><span style="position: absolute; top: 6px; left: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; padding: 2px 6px; border-radius: 5px; background: #0D1015; color: #C7B8FF; border: 1px solid #4B3F7A">FOIL</span></sc-if>
+<span aria-hidden="true" style="position: absolute; right: 6px; bottom: 6px; width: 38px; height: 38px; border-radius: 19px; background: {{accent}}; color: #0D1015; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></span>
+</div>
+<span style="font-size: 14px; font-weight: 700; line-height: 1.25">{{k.name}}</span>
+<span style="display: flex; align-items: center; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #9AA3AE"><span style="width: 7px; height: 7px; border-radius: 4px; background: {{k.rcolor}}"></span>{{k.set}} · #{{k.num}}</span>
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600">{{k.price}}</span>
+<span style="font-size: 11px; color: #9AA3AE">{{k.stock}} st</span>
+</div>
+</a>
+</sc-for>
+</section>
+</sc-if>
+
+<sc-if value="{{isList}}" hint-placeholder-val="{{ false }}">
+<section style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{cards}}" as="k" hint-placeholder-count="10">
+<div style="padding: 10px; border-radius: 14px; background: #161B22; border: 1px solid #2A313C; display: flex; align-items: center; gap: 12px">
+<span style="width: 40px; height: 56px; flex-shrink: 0; border-radius: 5px; background: {{k.art}}; border: 1px solid #2A313C"></span>
+<a href="SingelKortMobil.dc.html" style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{k.name}}</span>
+<span style="display: flex; align-items: center; gap: 5px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #9AA3AE"><span style="width: 7px; height: 7px; border-radius: 4px; background: {{k.rcolor}}"></span>{{k.set}} · NM · {{k.stock}} st</span>
+</a>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600">{{k.price}}</span>
+<button type="button" aria-label="Lägg i kundkorg" style="width: 40px; height: 40px; border: 0; border-radius: 10px; background: {{accent}}; color: #0D1015; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
+</div>
+</sc-for>
+</section>
+</sc-if>
+
+<section style="padding: 24px 16px 32px; display: flex; justify-content: center">
+<button type="button" style="height: 48px; padding: 0 28px; border-radius: 14px; border: 1px solid #2A313C; background: #161B22; color: #E8EAED; font: inherit; font-size: 15px; font-weight: 700">Visa fler kort</button>
+</section>
+
+<footer style="margin-top: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #1E242D; background: #080A0E; font-size: 12px; color: #9AA3AE">
+<span style="font-size: 17px; font-weight: 800; color: #E8EAED">Butik Lyktan <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.16em; color: {{accent}}">SINGELKORT</span></span>
+<span>Veddestabron 8B, Järfälla · hej@butiklyktan.se</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A93B","options":["#F2A93B","#7BC8B4","#8FA8FF","#F28C6B"]},"$preview":{"width":390,"height":1900}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const accent = this.props.accent ?? '#F2A93B';
+const game = st.game ?? 'mtg';
+const view = st.view ?? 'grid';
+const condOn = st.conds ?? { NM: true, EX: true, GD: false, LP: false, PL: false };
+const games = [
+{ id: 'mtg', name: 'Magic: The Gathering', color: '#E8743B' },
+{ id: 'pkm', name: 'Pokémon', color: '#F7D154' },
+{ id: 'op', name: 'One Piece', color: '#E5484D' },
+{ id: 'rb', name: 'Riftbound', color: '#4FB8E8' },
+{ id: 'sor', name: 'Sorcery', color: '#B79CFF' }
+];
+const R = { C: '#D9D9D9', U: '#8FB3D1', R: '#E0C063', M: '#E8743B' };
+const arts = ['#2B2320', '#1F2A3A', '#2A1F2E', '#1E2B24', '#2E2A1D', '#23262E'];
+const mtg = [
+{ name: 'Sheoldred, the Apocalypse', set: 'DMU', num: '107', r: 'M', price: '[pris]', stock: 2 },
+{ name: 'The One Ring', set: 'LTR', num: '246', r: 'M', price: '[pris]', stock: 1, foil: true },
+{ name: 'Ragavan, Nimble Pilferer', set: 'MH2', num: '138', r: 'M', price: '[pris]', stock: 1 },
+{ name: 'Orcish Bowmasters', set: 'LTR', num: '103', r: 'R', price: '[pris]', stock: 4 },
+{ name: 'Sol Ring', set: 'CMM', num: '[#]', r: 'U', price: '[pris]', stock: 12 },
+{ name: 'Lightning Bolt', set: 'M10', num: '146', r: 'C', price: '[pris]', stock: 9 },
+{ name: 'Counterspell', set: '[Set]', num: '[#]', r: 'C', price: '[pris]', stock: 6, foil: true },
+{ name: 'Llanowar Elves', set: '[Set]', num: '[#]', r: 'C', price: '[pris]', stock: 15 },
+{ name: '[Kortnamn]', set: '[Set]', num: '[#]', r: 'R', price: '[pris]', stock: 3 },
+{ name: '[Kortnamn]', set: '[Set]', num: '[#]', r: 'U', price: '[pris]', stock: 7 }
+];
+const ph = Array.from({ length: 10 }, (_, i) => ({ name: '[Kortnamn]', set: '[Set]', num: '[#]', r: ['C', 'U', 'R', 'M'][i % 4], price: '[pris]', stock: '[n]', foil: i === 3 }));
+const list = game === 'mtg' ? mtg : ph;
+const tab = 'height: 48px; padding: 0 18px; display: flex; align-items: center; gap: 10px; border: 0; border-radius: 12px 12px 0 0; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; ';
+const condDefs = [['NM', 'Near Mint', '#3FB950'], ['EX', 'Excellent', '#2BB5A0'], ['GD', 'Good', '#D4A72C'], ['LP', 'Light Played', '#E07B39'], ['PL', 'Played', '#E5534B']];
+const vbtn = (on) => 'width: 38px; height: 38px; border: 0; border-radius: 9px; display: flex; align-items: center; justify-content: center; cursor: pointer; ' + (on ? 'background: #2A313C; color: #E8EAED' : 'background: transparent; color: #9AA3AE');
+return {
+accent,
+games: games.map((g) => ({ ...g, mstyle: 'height: 40px; padding: 0 14px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; border-radius: 20px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; ' + (g.id === game ? 'background: #E8EAED; color: #0D1015; border: 1px solid #E8EAED' : 'background: #161B22; color: #C9CFD6; border: 1px solid #2A313C'), pick: () => this.setState({ game: g.id }), style: tab + (g.id === game ? 'background: #161B22; color: #E8EAED; box-shadow: inset 0 -3px 0 ' + accent : 'background: transparent; color: #9AA3AE') })),
+gameName: games.find((g) => g.id === game).name,
+conds: condDefs.map(([code, full, color]) => ({ code, full, color, on: !!condOn[code], pick: () => this.setState({ conds: { ...condOn, [code]: !condOn[code] } }), style: 'height: 36px; padding: 0 12px; display: flex; align-items: center; gap: 7px; border-radius: 10px; font-family: \'IBM Plex Mono\', monospace; font-size: 13px; font-weight: 600; cursor: pointer; ' + (condOn[code] ? 'background: #1D232C; color: #E8EAED; border: 1px solid #4A525E' : 'background: transparent; color: #9AA3AE; border: 1px solid #2A313C') })),
+isGrid: view === 'grid',
+isList: view === 'list',
+setGrid: () => this.setState({ view: 'grid' }),
+setList: () => this.setState({ view: 'list' }),
+gridBtn: vbtn(view === 'grid'),
+listBtn: vbtn(view === 'list'),
+cards: list.map((k, i) => ({ ...k, foil: !!k.foil, rcolor: R[k.r], art: arts[i % arts.length] }))
+};
+}
+}
+</script>
+</body>
+</html>

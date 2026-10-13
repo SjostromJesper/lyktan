@@ -12,7 +12,20 @@
     "mobileNav": "Mobile navigation",
     "terms": "Terms",
     "customerService": "Customer service",
-    "companyInfo": "Lyktan Spel AB · Reg. no. 559541-9564"
+    "companyInfo": "Lyktan Spel AB · Reg. no. 559541-9564",
+    "webshop": "Shop",
+    "allProducts": "View the full range",
+    "findUs": "Find us",
+    "myAccount": "My account",
+    "openWebshopMenu": "Show shop categories",
+    "closeMenu": "Close menu",
+    "otherLinks": "More",
+    "tagline": "Games · Cards · Miniatures",
+    "address": "Veddestabron 8B · Järfälla",
+    "searchPlaceholder": "Search games, cards, miniatures…",
+    "singles": "Singles",
+    "beta": "Beta",
+    "submitSearch": "Search"
   },
   "layout": {
     "shippingNotice": "Right now: in-store pickup only. Shipping opens shortly.",
@@ -28,9 +41,20 @@
       "5": "Friday",
       "6": "Saturday"
     },
+    "weekdayShort": {
+      "0": "Sun",
+      "1": "Mon",
+      "2": "Tue",
+      "3": "Wed",
+      "4": "Thu",
+      "5": "Fri",
+      "6": "Sat"
+    },
     "open": "Open",
     "closed": "Closed",
-    "closedNow": "{day} closed right now"
+    "openUntil": "Open until {time}",
+    "closedOpensAt": "Closed · opens {time}",
+    "closedOpensTomorrow": "Closed · opens tomorrow {time}"
   },
   "cart": {
     "title": "Cart",
@@ -72,7 +96,18 @@
     "visitTitle": "More than a shop",
     "visitBookingText": "Book a table for the evening and play in the store.",
     "visitEventsText": "Tournaments, prereleases and game nights every week.",
-    "visitContactText": "Veddestabron 8B in Järfälla. Opening hours and directions."
+    "visitContactText": "Veddestabron 8B in Järfälla. Opening hours and directions.",
+    "perkPickupTitle": "Pickup in store",
+    "perkPickupText": "Order online, pick up in Veddesta",
+    "perkEventsTitle": "Weekly tournaments",
+    "perkEventsText": "Prereleases and game nights",
+    "perkBookingTitle": "Book a table",
+    "perkBookingText": "Play with friends in the store",
+    "perkHoursTitle": "Open 7 days",
+    "perkHoursText": "Weekdays 10–19, weekends from 11",
+    "newProductsTitle": "New in store!",
+    "newProductsCta": "View all new arrivals",
+    "cardGamesTitle": "Card games"
   },
   "product": {
     "comingSoon": "Coming soon",
@@ -95,7 +130,7 @@
     "estimatedRelease": "Estimated release: {date}. Leave your email and we'll let you know when it's up for pre-order or purchase.",
     "interestThanks": "Thanks! We'll email you when it's available.",
     "emailLabel": "Email",
-    "emailPlaceholder": "you@email.com",
+    "emailPlaceholder": "you{'@'}email.com",
     "sending": "Sending...",
     "inStoreOnlyText": "This product can't be bought online — come by the store in Järfälla to buy it.",
     "chooseVariant": "Choose variant",
@@ -105,6 +140,10 @@
     "noProductText": "Check the handle in Shopify or the link you tried to open."
   },
   "singles": {
+    "backToShop": "To Butik Lyktan",
+    "menuAll": "All singles",
+    "menuFindUs": "Find us",
+    "topNotice": "Prices and stock update continuously · Pick up in store or ship with PostNord",
     "title": "Singles",
     "breadcrumbHome": "Home",
     "intro": "Loose cards from our own stock — pick up in store in Järfälla. Condition follows the European standard (Mint, Excellent, Good, Ok, Poor).",
@@ -150,7 +189,57 @@
     "cardLoadFailed": "The card couldn't be loaded.",
     "noCard": "No card",
     "noCardTitle": "This card doesn't exist.",
-    "noCardText": "Check the link you tried to open."
+    "noCardText": "Check the link you tried to open.",
+    "decreaseQty": "Decrease quantity",
+    "increaseQty": "Increase quantity",
+    "addToCartRow": "Add {title} to cart",
+    "inCartCount": "{count} in cart",
+    "cart": {
+      "title": "Cart",
+      "stepCart": "Cart",
+      "stepDelivery": "Delivery",
+      "stepPayment": "Payment",
+      "counts": "{want} cards in Want · {maybe} in Maybe",
+      "exportDecklist": "Export as decklist",
+      "keepShopping": "Keep shopping",
+      "lists": "Lists",
+      "cardCount": "{count} card | {count} cards",
+      "wantHint": "This is what you're buying. Goes to checkout.",
+      "maybeHint": "Saved for later. Not part of the order.",
+      "otherGame": "Other",
+      "lastCopy": "Last copy in stock",
+      "moveToMaybe": "Move to Maybe",
+      "toMaybe": "To Maybe",
+      "moveToWant": "Move to Want",
+      "remove": "Remove",
+      "wantEmpty": "Your cart is empty",
+      "wantEmptyMaybe": "Want is empty – move cards back from Maybe",
+      "dropHere": "Drag cards here",
+      "dropHint": "to save them for later",
+      "movedToMaybe": "{title} saved to Maybe.",
+      "movedToWant": "{title} moved to Want.",
+      "soldOutCard": "{title} is sold out and cannot be moved to Want.",
+      "summary": "Summary",
+      "cardsLine": "Cards ({count}, {unique} unique)",
+      "delivery": "Delivery",
+      "free": "Free",
+      "shipPickup": "Pick up in store",
+      "shipPickupNote": "Veddestabron 8B, Järfälla",
+      "shipLetter": "PostNord letter",
+      "shipTracked": "PostNord tracked",
+      "total": "Total",
+      "inclVat": "incl. VAT",
+      "checkout": "Go to checkout",
+      "checkoutShort": "Checkout",
+      "totalInclVat": "Total incl. VAT",
+      "conditionsInCart": "Condition in cart",
+      "added": "Added to cart",
+      "viewCart": "View cart",
+      "cartLabel": "Cart, {count} cards, {total}",
+      "shipLetterNote": "Letter within Sweden",
+      "shipTrackedNote": "Tracked parcel within Sweden",
+      "shipInCheckout": "Shown at checkout"
+    }
   },
   "underConstruction": {
     "eyebrow": "Under construction",
@@ -184,7 +273,17 @@
     "products": "products",
     "filteredCount": "{shown} of {total} products",
     "noProducts": "No products",
-    "noProductsMatch": "No products match the filters."
+    "noProductsMatch": "No products match the filters.",
+    "breadcrumbHome": "Home",
+    "allGames": "All",
+    "otherGames": "Other",
+    "availability": "Availability",
+    "priceUnder300": "Under 300 kr",
+    "price300to1000": "300–1,000 kr",
+    "priceOver1000": "Over 1,000 kr",
+    "allProductsTitle": "Full range",
+    "showingOf": "Showing {shown} of {total}",
+    "showMore": "Show more"
   },
   "booking": {
     "loadFailed": "Couldn't load available tables.",
@@ -243,7 +342,21 @@
     "back": "Back",
     "sending": "Sending…",
     "confirmBooking": "Confirm booking",
-    "approveAndPay": "Approve and pay {deposit} kr"
+    "approveAndPay": "Approve and pay {deposit} kr",
+    "step1": "Choose a day",
+    "step3": "Party",
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "selectedDay": "Selected day",
+    "todayLegend": "Today",
+    "unavailableLegend": "Not bookable",
+    "lateWarningTitle": "Late start time",
+    "lateWarningText": "You can book this time, but there's a risk the store closes before you're done playing.",
+    "usefulToKnow": "Good to know",
+    "hoursShort": "Mon–Fri 10–19 · Sat 11–19 · Sun 12–18",
+    "eventNoticeText": "During events, tables may be reserved — see the",
+    "eventCalendarLink": "event calendar",
+    "durationNote": "You get the table for up to 4 hours. If another booking or an event starts sooner, you have the table until then. If you book 14:00 and an event starts at 17:00, your time is 14:00–17:00."
   },
   "contact": {
     "seoDescription": "Visit Butik Lyktan at Veddestabron 8B in Järfälla, or contact us by email.",
@@ -268,7 +381,15 @@
     "calendarUpdates": "The calendar updates continuously — check back again soon.",
     "slugSeoDescription": "The event pages are temporarily under construction.",
     "slugTitle": "This event page is opening soon.",
-    "slugText": "We're polishing the event pages right now. Right now only the Magic: The Gathering – Marvel prerelease is open on the site."
+    "slugText": "We're polishing the event pages right now. Right now only the Magic: The Gathering – Marvel prerelease is open on the site.",
+    "heroSubtitle": "Tournaments, prereleases and game nights every week.",
+    "upcomingSpecialTitle": "Upcoming special events",
+    "weeklyScheduleText": "Recurring game nights and tournaments every week.",
+    "register": "Sign up",
+    "discordCta": "Questions? Find us on Discord →",
+    "noFixedEvents": "No fixed events",
+    "todayBadge": "Today",
+    "genericTag": "Event"
   },
   "terms": {
     "seoDescription": "Terms of purchase for Butik Lyktan – company details, payment, delivery, right of withdrawal and complaints.",
@@ -281,7 +402,7 @@
         "body": [
           "Lyktan Spel AB, company registration number 559541-9564.",
           "Veddestabron 8B, 177 48 Järfälla, Sweden.",
-          "Email: hej@butiklyktan.se"
+          "Email: hej{'@'}butiklyktan.se"
         ]
       },
       {
@@ -307,7 +428,7 @@
       {
         "heading": "Right of withdrawal",
         "body": [
-          "You have fourteen days to withdraw from your purchase from the day you receive the goods, under Swedish distance selling law. Email hej@butiklyktan.se and we refund you within fourteen days of receiving the item back.",
+          "You have fourteen days to withdraw from your purchase from the day you receive the goods, under Swedish distance selling law. Email hej{'@'}butiklyktan.se and we refund you within fourteen days of receiving the item back.",
           "You may examine the item as you would have in a shop. If it has been used or handled beyond that, we may deduct for the reduction in value. Sealed booster packs and card products that have been opened can therefore rarely be returned for a full refund.",
           "The right of withdrawal does not apply to event tickets, as these concern a leisure activity on a set date. If you cannot make it, get in touch and we will sort it out if we can."
         ]
@@ -315,7 +436,7 @@
       {
         "heading": "Complaints",
         "body": [
-          "If an item is faulty you may file a complaint for up to three years under the Swedish Consumer Sales Act. Email hej@butiklyktan.se as soon as you discover the fault and we will put it right.",
+          "If an item is faulty you may file a complaint for up to three years under the Swedish Consumer Sales Act. Email hej{'@'}butiklyktan.se as soon as you discover the fault and we will put it right.",
           "We cover return shipping for an approved complaint."
         ]
       },
@@ -329,7 +450,7 @@
         "heading": "Personal data",
         "body": [
           "We process your data to handle your order, your event participation and our bookkeeping. We never sell it on.",
-          "To find out what data we hold about you, or to have it deleted, email hej@butiklyktan.se."
+          "To find out what data we hold about you, or to have it deleted, email hej{'@'}butiklyktan.se."
         ]
       }
     ]

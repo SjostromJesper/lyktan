@@ -11,9 +11,22 @@ const storefrontPublicToken = process.env.SHOPIFY_STOREFRONT_PUBLIC_TOKEN ?? ''
 const storefrontPrivateToken = process.env.SHOPIFY_STOREFRONT_PRIVATE_TOKEN ?? ''
 const useMockStorefront = !normalizedShopName || (!storefrontPublicToken && !storefrontPrivateToken)
 
+// Headers that let Netlify's CDN cache a page (s-maxage, then stale-while-revalidate)
+// while browsers still ask the CDN again every time.
+const cdnCache = (seconds: number, staleSeconds: number) => ({
+  'cache-control': 'public, max-age=0, must-revalidate',
+  'netlify-cdn-cache-control': `public, s-maxage=${seconds}, stale-while-revalidate=${staleSeconds}`
+})
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  css: ['./app/assets/css/main.css'],
+  // Fonts are self-hosted (no Google round trips before the first paint).
+  css: [
+    '@fontsource-variable/figtree/index.css',
+    '@fontsource/ibm-plex-mono/400.css',
+    '@fontsource/ibm-plex-mono/500.css',
+    './app/assets/css/main.css'
+  ],
   modules: ['@nuxtjs/shopify', '@nuxtjs/i18n'],
   i18n: {
     // Messages are bundled directly via i18n.config.ts (plain static
@@ -40,9 +53,8 @@ export default defineNuxtConfig({
     head: {
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/images/logo/orange-solo.svg' },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap' },
+        // Product photos come from Shopify's CDN.
+        { rel: 'preconnect', href: 'https://cdn.shopify.com', crossorigin: '' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }
       ],
       script: [
@@ -94,9 +106,24 @@ export default defineNuxtConfig({
         'cache-control': 'no-store, max-age=0'
       }
     },
+    // The pages are the same for every visitor (the cart is loaded in the browser), so
+    // Netlify's CDN may serve them from cache: a fresh copy for a minute, then a stale
+    // one while it refreshes in the background. Browsers always revalidate.
+    '/': { headers: cdnCache(60, 3600) },
+    '/butik': { headers: cdnCache(60, 3600) },
+    '/butik/**': { headers: cdnCache(60, 3600) },
+    '/events': { headers: cdnCache(60, 3600) },
+    '/kontakt': { headers: cdnCache(300, 3600) },
+    '/villkor': { headers: cdnCache(300, 3600) },
+    '/medlem': { headers: cdnCache(300, 3600) },
+    '/bordsbokning': { headers: cdnCache(300, 3600) },
+    '/singelkort': { headers: cdnCache(300, 3600) },
+    '/singelkort/**': { headers: cdnCache(300, 3600) },
+    // Product pages show stock, so the CDN copy is short-lived (the page refreshes stock itself).
     '/produkter/**': {
       headers: {
-        'cache-control': 'no-store, max-age=0'
+        'cache-control': 'no-store, max-age=0',
+        'netlify-cdn-cache-control': 'public, s-maxage=30, stale-while-revalidate=300'
       }
     }
   },

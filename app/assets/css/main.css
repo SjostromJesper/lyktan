@@ -1,20 +1,29 @@
 @import "tailwindcss";
 
 @theme {
-  /* White and clean, colour in the details: brand orange for the one
-     primary action and small highlights, and one colour per category
-     (app/utils/categoryAccent.ts) for dots, tiles and underlines.
-     Familjen Grotesk for text, IBM Plex Mono for prices/numbers. */
-  --font-sans: "Familjen Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Redesign per design/butiklyktan-design/HANDOFF.md. Existing token
+     NAMES are kept so every bg-lyktan-star/text-lyktan-star class already
+     used across the site picks up the new palette instantly, instead of
+     needing a page-by-page class rename — most VALUES below are simply
+     the new design's colours. Figtree for text, IBM Plex Mono stays for
+     prices/numbers and the singles section from step 6 onward.
+     --color-navy and --color-lyktan-mute-2 are the only genuinely new
+     tokens; the old palette had no dark-chrome or second muted-text
+     shade to repurpose. --color-lyktan-felt, -sage, -mint, -go and
+     -cat-star are left untouched for now, revisited as the pages using
+     them are rebuilt in later steps. */
+  --font-sans: "Figtree Variable", "Figtree", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --color-lyktan-ink: #15171C;
+  --color-lyktan-ink: #1C2233;       /* primary text */
+  --color-lyktan-mute: #6A6F7A;      /* secondary text */
+  --color-lyktan-mute-2: #3E4454;    /* secondary text, alternate (NEW) */
+  --color-navy: #1F2A44;             /* topprad/footer/mörka knappar (NEW) */
   --color-lyktan-paper: #FFFFFF;   /* page ground */
   --color-lyktan-surface: #FFFFFF; /* panels, paired with lyktan-line */
-  --color-lyktan-well: #F5F4F1;    /* image wells behind product photos */
-  --color-lyktan-soft: #FAF9F7;    /* subtle bands (status bar, footer) */
+  --color-lyktan-well: #F5F3EF;    /* ljusgrå ytor */
+  --color-lyktan-soft: #FFF6E5;    /* krämfärgade ytor (promo panels, subtle bands) */
   --color-lyktan-field: #FFFFFF;   /* form fields */
-  --color-lyktan-line: #E9E7E2;    /* borders, dividers */
-  --color-lyktan-mute: #6B6B70;    /* secondary text */
+  --color-lyktan-line: #ECE8E0;    /* borders, dividers */
   /* Dark card (highlighted membership etc.) — text on it uses lyktan-cream. */
   --color-lyktan-felt: #15171C;
   --color-lyktan-felt-2: #24272E;
@@ -29,12 +38,11 @@
   --color-cat-brad: #12915F;
   --color-cat-roll: #8A4FE0;
   --color-cat-event: #E09A00;
-  /* Maroon — used for accent TEXT (links, hover, small UI) since it holds contrast
-     on white; the vivid orange below fails WCAG AA at text sizes on white. */
-  --color-lyktan-accent: #720000;
-  /* Orange — the signature brand color. Backgrounds/badges/icons only, always
-     paired with ink (dark) text/fill, never white-on-orange at small sizes. */
-  --color-lyktan-brand: #fe4d01;
+  /* Accent TEXT (links, hover, small UI) — AA-safe on white per HANDOFF. */
+  --color-lyktan-accent: #8A5200;
+  /* Lyktgul — the signature brand color. Backgrounds/badges/icons only, always
+     paired with ink (dark) text/fill, never white-on-accent at small sizes. */
+  --color-lyktan-brand: #F2A93B;
 }
 
 @layer base {
@@ -363,12 +371,12 @@
   }
 
   .page-title {
-    @apply text-[clamp(2.2rem,4.6vw,3.4rem)] font-bold leading-[1] tracking-[-0.035em] text-lyktan-ink;
+    @apply text-[clamp(2.2rem,4.6vw,3.4rem)] font-extrabold leading-[1] tracking-[-0.035em] text-lyktan-ink;
   }
 
   /* Section heading pattern: small coloured label + big title */
   .section-title {
-    @apply text-[clamp(1.6rem,3vw,2.3rem)] font-bold leading-[1.05] tracking-[-0.025em] text-lyktan-ink;
+    @apply text-[clamp(1.6rem,3vw,2.3rem)] font-extrabold leading-[1.05] tracking-[-0.025em] text-lyktan-ink;
   }
 
   /* Compact button under product cards: outline, fills orange on hover */
@@ -381,14 +389,23 @@
   }
 
   .primary-cta {
-    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[10px] bg-lyktan-brand px-5 text-[0.92rem] font-semibold !text-lyktan-ink transition hover:bg-lyktan-ink hover:!text-white disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-full bg-lyktan-brand px-5 text-[0.92rem] font-semibold !text-lyktan-ink transition hover:bg-navy hover:!text-white disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .secondary-cta {
-    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-[10px] border border-lyktan-line bg-lyktan-surface px-5 text-[0.92rem] font-medium !text-lyktan-ink transition hover:border-lyktan-ink disabled:cursor-not-allowed disabled:opacity-40;
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-full border border-lyktan-line bg-lyktan-surface px-5 text-[0.92rem] font-medium !text-lyktan-ink transition hover:border-lyktan-ink disabled:cursor-not-allowed disabled:opacity-40;
   }
 
   .tag-chip {
     @apply inline-flex min-h-6 items-center text-[0.72rem] font-medium text-lyktan-mute;
+  }
+
+  /* Pill-shaped filter/tab button — used for sub-filters (kortspel game tabs,
+     category game tabs) across the homepage, category pages and events. */
+  .tab-pill {
+    @apply h-11 rounded-full border-2 border-lyktan-line bg-white px-5 text-[0.88rem] font-bold text-lyktan-ink transition;
+  }
+  .tab-pill-active {
+    @apply border-navy bg-navy text-white;
   }
 }

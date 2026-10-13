@@ -1,6 +1,9 @@
 import { openingHours } from './openingHours'
 
-export const SLOT_INTERVAL_HOURS = 2
+// Starttider är hela timmar (se HANDOFF.md "Affärsregler / Bordsbokning") —
+// close är exklusiv i loopen nedan, så senaste starttiden blir automatiskt
+// close-1 (t.ex. söndag stänger 18 -> sista start 17:00).
+export const SLOT_INTERVAL_HOURS = 1
 
 /** A booking holds its table for up to this long, unless something else on the same table starts sooner. */
 export const BOOKING_MAX_DURATION_HOURS = 4

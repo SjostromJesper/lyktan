@@ -50,7 +50,8 @@ const {
           <div class="h-16 w-16 overflow-hidden rounded-[10px] bg-lyktan-well">
             <img
               v-if="line.merchandise?.product?.featuredImage?.url"
-              :src="line.merchandise.product.featuredImage.url"
+              :src="shopifyImage(line.merchandise.product.featuredImage.url, 160)"
+              loading="lazy"
               :alt="line.merchandise.product.featuredImage.altText || line.merchandise?.product?.title"
               class="h-full w-full object-cover"
             >

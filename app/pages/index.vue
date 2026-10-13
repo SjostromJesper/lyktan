@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCarouselEvents } from '~/utils/events'
+import { getCarouselEvents, getUpcomingEvents } from '~/utils/events'
 
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
@@ -7,6 +7,7 @@ const localePath = useLocalePath()
 // The hero carousel shows Shopify products tagged "event" that are flagged
 // event_show_in_carousel via metafield and have an upcoming event_date.
 const { data: specialEvents } = await useSpecialEvents()
+const { data: recurringEvents } = await useRecurringEvents()
 
 const heroItems = computed(() =>
   getCarouselEvents(specialEvents.value ?? []).map((event) => ({
@@ -26,59 +27,66 @@ const heroItems = computed(() =>
 // be excluded via a "-tag:event"-style query filter — filtered out below instead.
 const EXCLUDED_SHOWCASE_HANDLES = new Set(['medlemskap', 'bordsbokning-forskott'])
 
-const homepageQuery = `#graphql
-  query HomepageProducts($language: LanguageCode!) @inContext(language: $language) {
-    showcaseProducts: products(first: 10, sortKey: CREATED_AT, reverse: true, query: "-tag:event AND -tag:single") {
-      nodes {
-        id
-        title
-        handle
-        tags
-        featuredImage {
-          url
-          altText
-        }
-        releaseDate: metafield(namespace: "custom", key: "release_date") {
-          value
-        }
-        inStoreOnly: metafield(namespace: "custom", key: "in_store_only") {
-          value
-        }
-        variants(first: 1) {
-          nodes {
-            id
-            availableForSale
-            price {
-              amount
-              currencyCode
-            }
-            compareAtPrice {
-              amount
-              currencyCode
-            }
-          }
-        }
-      }
-    }
-  }
-`
 
-const { data } = await useStorefrontData(`homepage-products-${locale.value}`, homepageQuery, {
-  variables: { language: locale.value === 'en' ? 'EN' : 'SV' },
-  transform: (result) => ({
+const { data } = await useAsyncData(`homepage-products-${locale.value}`, () => $fetch<any>('/api/shopify/home-products', { query: { lang: locale.value } }), {
+  watch: [locale],
+  transform: (result: any) => ({
     showcaseProducts: (result.showcaseProducts?.nodes ?? [])
       .filter((product: any) => !EXCLUDED_SHOWCASE_HANDLES.has(product.handle) && !(product.tags ?? []).includes('single'))
       .slice(0, 8)
   })
 })
 
-// Category tiles — same endpoint as /butik
-type Collection = { id: string, handle: string, title: string, image: { url: string, altText: string | null } | null }
-const { data: collectionsData } = await useAsyncData(`home-collections-${locale.value}`, () =>
-  $fetch<{ collections: Collection[] }>('/api/shopify/collections', { query: { lang: locale.value } }).catch(() => ({ collections: [] }))
+// Kortspel-flikar — hämtar hela kortspel-kollektionen (samma data som
+// /butik/kortspel) och grupperar klientsidan per spel utifrån taggar, i
+// stället för hårdkodade flikar. Kortspel säljs aldrig i webbshoppen, så
+// varje produkt flaggas in_store_only här oavsett metafält.
+const { data: kortspelData } = await useAsyncData(`home-kortspel-${locale.value}`, () =>
+  $fetch<{ products: any[] }>('/api/shopify/collection/kortspel', { query: { lang: locale.value } }).catch(() => ({ products: [] }))
 )
-const categories = computed(() =>
-  (collectionsData.value?.collections ?? []).slice(0, 5).map((c, i) => ({ ...c, accent: categoryAccentAt(c.title, i) }))
+
+const cardGameGroups = computed(() => {
+  const groups = new Map<string, any[]>()
+  for (const product of kortspelData.value?.products ?? []) {
+    const flagged = { ...product, inStoreOnly: { value: 'true' } }
+    const label = classifyCardGame(product, t('home.cardGamesTitle'))
+    if (!groups.has(label)) groups.set(label, [])
+    groups.get(label)!.push(flagged)
+  }
+  return [...groups.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 4)
+})
+
+const activeCardTab = ref('')
+watch(cardGameGroups, (groups) => {
+  if (groups.length && !groups.some(([label]) => label === activeCardTab.value)) {
+    activeCardTab.value = groups[0]![0]
+  }
+}, { immediate: true })
+
+const activeCardProducts = computed(() =>
+  (cardGameGroups.value.find(([label]) => label === activeCardTab.value)?.[1] ?? []).slice(0, 5)
+)
+
+// Kommande event-kort — återanvänder samma sammanslagna lista (återkommande +
+// specialevent) som /events kommer bygga på, begränsat till de 3 närmaste.
+const weekdayShort = (date: Date) => {
+  const label = new Intl.DateTimeFormat(locale.value === 'en' ? 'en-GB' : 'sv-SE', { weekday: 'short' }).format(date)
+  return label.charAt(0).toUpperCase() + label.slice(1).replace('.', '')
+}
+
+const upcomingEventCards = computed(() =>
+  getUpcomingEvents(recurringEvents.value, specialEvents.value ?? [], 3).map((eventItem, index) => {
+    const date = new Date(`${eventItem.datum}T00:00:00`)
+    const month = new Intl.DateTimeFormat(locale.value === 'en' ? 'en-GB' : 'sv-SE', { month: 'short' }).format(date).replace('.', '')
+    return {
+      key: `${eventItem.datum}-${eventItem.titel}-${index}`,
+      day: new Intl.DateTimeFormat('sv-SE', { day: 'numeric' }).format(date),
+      month: month.charAt(0).toUpperCase() + month.slice(1),
+      title: eventItem.titel,
+      meta: [`${weekdayShort(date)} ${eventItem.tid}`, eventItem.kostnad].filter(Boolean).join(' · '),
+      link: eventItem.produktHandle ? localePath(`/produkter/${eventItem.produktHandle}`) : localePath('/events')
+    }
+  })
 )
 
 const eventAccent = categoryAccent('event')
@@ -159,7 +167,10 @@ useSeoMeta({
           <div class="hero-panel" :style="{ '--tint': eventAccent.tint, '--dot': eventAccent.color }">
             <img
               v-if="activeHero.product?.featuredImage?.url"
-              :src="activeHero.product.featuredImage.url"
+              :src="shopifyImage(activeHero.product.featuredImage.url, 800)"
+              :srcset="shopifySrcset(activeHero.product.featuredImage.url, [480, 800, 1200])"
+              sizes="(min-width: 1024px) 40vw, 90vw"
+              fetchpriority="high"
               :alt="activeHero.product.featuredImage.altText || activeHero.product.title"
               class="relative z-[1] max-h-[360px] w-full object-contain drop-shadow-[0_20px_30px_rgba(21,23,28,0.18)]"
             >
@@ -194,42 +205,73 @@ useSeoMeta({
     </section>
 
     <div class="page-shell grid grid-cols-1 gap-20 px-4 pt-16 sm:px-6 lg:pt-20">
-      <!-- Categories -->
-      <section v-if="categories.length">
-        <p class="eyebrow">{{ t('home.categoriesEyebrow') }}</p>
-        <h2 class="section-title mt-2">{{ t('home.categoriesTitle') }}</h2>
-        <div class="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          <NuxtLink
-            v-for="category in categories"
-            :key="category.id"
-            :to="localePath(`/butik/${category.handle}`)"
-            class="category-tile group"
-            :style="{ '--tint': category.accent.tint, '--dot': category.accent.color }"
-          >
-            <span class="flex items-center justify-between">
-              <span class="h-2.5 w-2.5 rounded-full" :style="{ background: category.accent.color }" />
-              <span class="text-lg text-lyktan-mute transition group-hover:translate-x-0.5 group-hover:text-lyktan-ink" aria-hidden="true">→</span>
-            </span>
-            <span class="mt-8 block text-[1.05rem] font-semibold leading-tight text-lyktan-ink">{{ category.title }}</span>
-          </NuxtLink>
+      <!-- Fördelar -->
+      <section class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="perk-tile">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8A5200" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M3 10l9-6 9 6v10H3V10z" /><path d="M9 20v-6h6v6" /></svg>
+          <div><p class="perk-title">{{ t('home.perkPickupTitle') }}</p><p class="perk-text">{{ t('home.perkPickupText') }}</p></div>
+        </div>
+        <div class="perk-tile">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8A5200" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z" /><path d="M8 6H5a3 3 0 0 0 3 4" /><path d="M16 6h3a3 3 0 0 1-3 4" /><path d="M12 13v4" /><path d="M8 20h8" /></svg>
+          <div><p class="perk-title">{{ t('home.perkEventsTitle') }}</p><p class="perk-text">{{ t('home.perkEventsText') }}</p></div>
+        </div>
+        <div class="perk-tile">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8A5200" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><rect x="3" y="7" width="18" height="4" rx="1" /><path d="M6 11v8" /><path d="M18 11v8" /></svg>
+          <div><p class="perk-title">{{ t('home.perkBookingTitle') }}</p><p class="perk-text">{{ t('home.perkBookingText') }}</p></div>
+        </div>
+        <div class="perk-tile">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8A5200" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+          <div><p class="perk-title">{{ t('home.perkHoursTitle') }}</p><p class="perk-text">{{ t('home.perkHoursText') }}</p></div>
         </div>
       </section>
 
-      <!-- Products -->
-      <section v-if="data?.showcaseProducts?.length">
-        <div class="flex flex-col gap-4 pb-7 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p class="eyebrow">{{ t('home.shopEyebrow') }}</p>
-            <h2 class="section-title mt-2">{{ t('home.browseProducts') }}</h2>
-            <p class="mt-3 max-w-md text-sm leading-6 text-lyktan-mute">{{ t('home.browseProductsText') }}</p>
-          </div>
-          <NuxtLink :to="localePath('/butik')" class="link-arrow shrink-0">
-            {{ t('home.viewAllInShop') }} <span aria-hidden="true">→</span>
-          </NuxtLink>
-        </div>
-
-        <div class="grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
+      <!-- Nytt i butiken -->
+      <section v-if="data?.showcaseProducts?.length" class="new-products-panel">
+        <h2 class="panel-title">{{ t('home.newProductsTitle') }}</h2>
+        <div class="grid w-full grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 xl:grid-cols-4">
           <ProductCard v-for="product in data.showcaseProducts" :key="product.id" :product="product" />
+        </div>
+        <NuxtLink :to="localePath('/butik')" class="primary-cta !min-h-[50px]">
+          {{ t('home.newProductsCta') }}
+        </NuxtLink>
+      </section>
+
+      <!-- Kortspel med flikar -->
+      <section v-if="cardGameGroups.length" class="flex flex-col items-center gap-6">
+        <h2 class="section-title text-center">{{ t('home.cardGamesTitle') }}</h2>
+        <div role="tablist" :aria-label="t('home.cardGamesTitle')" class="flex flex-wrap justify-center gap-2">
+          <button
+            v-for="group in cardGameGroups"
+            :key="group[0]"
+            type="button"
+            role="tab"
+            :aria-selected="group[0] === activeCardTab"
+            class="tab-pill"
+            :class="{ 'tab-pill-active': group[0] === activeCardTab }"
+            @click="activeCardTab = group[0]"
+          >
+            {{ group[0] }}
+          </button>
+        </div>
+        <div class="grid w-full grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
+          <ProductCard v-for="product in activeCardProducts" :key="product.id" :product="product" />
+        </div>
+      </section>
+
+      <!-- Kommande event -->
+      <section v-if="upcomingEventCards.length" class="flex flex-col items-center gap-9">
+        <h2 class="section-title text-center">{{ t('home.upcomingEvent') }}</h2>
+        <div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-3">
+          <NuxtLink v-for="eventCard in upcomingEventCards" :key="eventCard.key" :to="eventCard.link" class="event-card-mini group">
+            <div class="event-daybox">
+              <span class="event-day">{{ eventCard.day }}</span>
+              <span class="event-month">{{ eventCard.month }}</span>
+            </div>
+            <div class="min-w-0">
+              <p class="truncate text-[1.05rem] font-bold leading-tight text-lyktan-ink">{{ eventCard.title }}</p>
+              <p class="mt-1 text-sm text-lyktan-mute">{{ eventCard.meta }}</p>
+            </div>
+          </NuxtLink>
         </div>
       </section>
 
@@ -337,17 +379,81 @@ useSeoMeta({
   box-shadow: 0 10px 30px rgba(21, 23, 28, 0.15);
 }
 
-.category-tile {
-  display: block;
-  padding: 18px;
-  border-radius: 18px;
-  background: var(--tint);
-  border: 1px solid transparent;
-  transition: border-color 0.15s ease, transform 0.15s ease;
+.perk-tile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 84px;
+  padding: 0 24px;
+  border-radius: 16px;
+  background: var(--color-lyktan-soft);
 }
-.category-tile:hover {
-  border-color: var(--dot);
-  transform: translateY(-2px);
+.perk-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--color-lyktan-ink);
+}
+.perk-text {
+  margin-top: 2px;
+  font-size: 0.85rem;
+  color: var(--color-lyktan-mute);
+}
+
+.new-products-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 44px 32px;
+  border-radius: 28px;
+  background: var(--color-lyktan-soft);
+}
+.panel-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--color-lyktan-ink);
+  text-align: center;
+}
+
+.event-card-mini {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  border: 2px solid var(--color-lyktan-line);
+  transition: border-color 0.15s ease;
+}
+.event-card-mini:hover {
+  border-color: var(--color-navy);
+}
+.event-daybox {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 68px;
+  height: 76px;
+  border-radius: 16px;
+  background: var(--color-navy);
+  color: #fff;
+}
+.event-day {
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.event-month {
+  margin-top: 2px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-lyktan-brand);
 }
 
 .visit-card {

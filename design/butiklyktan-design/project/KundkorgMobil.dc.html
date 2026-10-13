@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Kundkorg – singelkort mobil</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D1015;color:#E8EAED;font-family:'Figtree',system-ui,sans-serif}
+a{color:#E8EAED;text-decoration:none}a:hover{color:#F2A93B}
+</style>
+</helmet>
+<div style="width: 390px; height: 1760px; box-sizing: border-box; background: #0D1015; display: flex; flex-direction: column; font-family: 'Figtree', system-ui, sans-serif; color: #E8EAED">
+<header style="height: 60px; flex-shrink: 0; box-sizing: border-box; padding: 0 8px; display: grid; grid-template-columns: 96px minmax(0, 1fr) 96px; align-items: center; border-bottom: 1px solid #1E242D; background: #0D1015">
+<a href="MobilMeny.dc.html" aria-label="Meny" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg></a>
+<a href="SinglarMobil.dc.html" style="justify-self: center; display: flex; align-items: center; gap: 8px">
+<span style="width: 30px; height: 30px; border-radius: 15px; background: {{accent}}; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0D1015" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2.5h6"></path><path d="M12 2.5v2.5"></path><path d="M6.5 8l1.5-3h8l1.5 3"></path><path d="M7 8h10l-1 12H8L7 8z"></path><path d="M12 11.5v4"></path></svg></span>
+<span style="display: flex; flex-direction: column; line-height: 1"><span style="font-size: 16px; font-weight: 800">Butik Lyktan</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: {{accent}}; margin-top: 3px">SINGELKORT</span></span>
+</a>
+<a href="KundkorgMobil.dc.html" aria-label="Kundkorg, 3 kort" style="justify-self: end; width: 44px; height: 44px; margin-right: 4px; display: flex; align-items: center; justify-content: center; position: relative"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6L5 8z"></path><path d="M9 8V6a3 3 0 0 1 6 0v2"></path></svg><span style="position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; border-radius: 9px; background: {{accent}}; color: #0D1015; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center">3</span></a>
+</header>
+<section style="padding: 16px 16px 0; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">
+<span style="color: {{accent}}">1 Korg</span><span style="color: #4A525E">—</span><span style="color: #6F7883">2 Leverans</span><span style="color: #4A525E">—</span><span style="color: #6F7883">3 Betalning</span>
+</div>
+<div style="display: flex; align-items: baseline; justify-content: space-between">
+<h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Kundkorg</h1>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 2px 7px; border-radius: 6px; border: 1px dashed #4A525E; color: #9AA3AE">exempelpriser</span>
+</div>
+</section>
+
+<!-- Want / Maybe-växlare -->
+<div role="tablist" aria-label="Listor" style="margin: 14px 16px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 14px; background: #161B22; border: 1px solid #2A313C">
+<button type="button" role="tab" aria-selected="{{tabWant}}" onClick="{{showWant}}" style="{{tabWantStyle}}">Want <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; opacity: 0.8">{{wantCount}}</span></button>
+<button type="button" role="tab" aria-selected="{{tabMaybe}}" onClick="{{showMaybe}}" style="{{tabMaybeStyle}}">Maybe <span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; opacity: 0.8">{{maybeCount}}</span></button>
+</div>
+
+<sc-if value="{{tabWant}}" hint-placeholder-val="{{ true }}">
+<section style="padding: 12px 16px 0; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding: 2px 2px 4px"><span style="font-size: 13px; color: #9AA3AE">Följer med till kassan</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600">{{wantSum}}</span></div>
+<sc-for list="{{wantGroups}}" as="g" hint-placeholder-count="2">
+<div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px">
+<div style="display: flex; align-items: center; gap: 8px; padding: 4px 2px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #9AA3AE"><span style="width: 7px; height: 7px; border-radius: 4px; background: {{g.color}}"></span>{{g.name}} · {{g.count}}</div>
+<sc-for list="{{g.items}}" as="it" hint-placeholder-count="3">
+<div style="padding: 12px; border-radius: 14px; background: #161B22; border: 1px solid #2A313C; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; gap: 12px">
+<span style="width: 46px; height: 64px; flex-shrink: 0; border-radius: 6px; background: {{it.art}}; border: 1px solid {{it.artBorder}}"></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px">
+<a href="SingelKortMobil.dc.html" style="font-size: 15px; font-weight: 700; line-height: 1.25">{{it.name}}</a>
+<div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #9AA3AE">{{it.set}} #{{it.num}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; padding: 2px 5px; border-radius: 5px; background: {{it.cbg}}; color: {{it.cfg}}">{{it.cond}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 2px 5px; border-radius: 5px; background: #1D232C; color: #C9CFD6">{{it.lang}}</span>
+<sc-if value="{{it.foil}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; padding: 2px 5px; border-radius: 5px; background: #1E1A2E; color: #C7B8FF">FOIL</span></sc-if>
+</div>
+<sc-if value="{{it.last}}" hint-placeholder-val="{{ false }}"><span style="font-size: 11px; color: #E3B341">Sista exemplaret i lager</span></sc-if>
+</div>
+<button type="button" aria-label="Ta bort" onClick="{{it.remove}}" style="width: 36px; height: 36px; flex-shrink: 0; border: 0; border-radius: 8px; background: transparent; color: #9AA3AE; display: flex; align-items: center; justify-content: center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12"></path><path d="M18 6L6 18"></path></svg></button>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<div style="display: flex; align-items: center; padding: 2px; border-radius: 10px; background: #0D1015; border: 1px solid #2A313C">
+<button type="button" aria-label="Minska antal" onClick="{{it.minus}}" style="width: 38px; height: 38px; border: 0; border-radius: 8px; background: transparent; color: #E8EAED; font: inherit; font-size: 16px">−</button>
+<span style="width: 24px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600">{{it.qty}}</span>
+<button type="button" aria-label="Öka antal" onClick="{{it.plus}}" style="width: 38px; height: 38px; border: 0; border-radius: 8px; background: transparent; color: #E8EAED; font: inherit; font-size: 16px">+</button>
+</div>
+<button type="button" onClick="{{it.move}}" style="height: 40px; padding: 0 12px; display: flex; align-items: center; gap: 6px; border: 1px solid #2A313C; border-radius: 10px; background: transparent; color: #C9CFD6; font: inherit; font-size: 13px; font-weight: 700">Till Maybe<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M13 6l6 6-6 6"></path></svg></button>
+<div style="margin-left: auto; display: flex; flex-direction: column; align-items: flex-end">
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600">{{it.lineTotal}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6F7883">{{it.unit}}/st</span>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</sc-for>
+<sc-if value="{{wantEmpty}}" hint-placeholder-val="{{ false }}">
+<div style="height: 120px; border-radius: 14px; border: 2px dashed #2A313C; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #6F7883">Want är tom – flytta tillbaka från Maybe</div>
+</sc-if>
+</section>
+</sc-if>
+
+<sc-if value="{{tabMaybe}}" hint-placeholder-val="{{ false }}">
+<section style="padding: 12px 16px 0; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; padding: 2px 2px 4px"><span style="font-size: 13px; color: #9AA3AE">Sparas till senare, ingår inte</span><span style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: #9AA3AE">{{maybeSum}}</span></div>
+<sc-for list="{{maybeItems}}" as="it" hint-placeholder-count="2">
+<div style="padding: 12px; border-radius: 14px; background: #12161C; border: 1px solid #2A313C; display: flex; align-items: center; gap: 12px">
+<span style="width: 40px; height: 56px; flex-shrink: 0; border-radius: 5px; background: {{it.art}}; border: 1px solid {{it.artBorder}}; opacity: 0.8"></span>
+<div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+<span style="font-size: 14px; font-weight: 700; color: #C9CFD6">{{it.name}}</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #9AA3AE">{{it.set}} · {{it.cond}} · {{it.qty}}× · {{it.lineTotal}}</span>
+</div>
+<button type="button" onClick="{{it.move}}" style="height: 40px; padding: 0 12px; display: flex; align-items: center; gap: 6px; border: 1px solid {{accent}}; border-radius: 10px; background: transparent; color: {{accent}}; font: inherit; font-size: 13px; font-weight: 800"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M11 6l-6 6 6 6"></path></svg>Want</button>
+</div>
+</sc-for>
+<div style="height: 80px; border-radius: 14px; border: 2px dashed #2A313C; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 20px; font-size: 13px; color: #6F7883">Tryck ”Till Maybe” på ett kort i Want för att spara det här</div>
+</section>
+</sc-if>
+
+<!-- Sammanfattning -->
+<section style="padding: 20px 16px 24px">
+<div style="padding: 18px; border-radius: 18px; background: #161B22; border: 1px solid #2A313C; display: flex; flex-direction: column; gap: 12px">
+<span style="font-size: 16px; font-weight: 800">Leverans</span>
+<div role="radiogroup" aria-label="Leverans" style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{ships}}" as="s" hint-placeholder-count="3">
+<button type="button" role="radio" aria-checked="{{s.on}}" onClick="{{s.pick}}" style="{{s.style}}">
+<span style="{{s.dot}}"></span>
+<span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px; text-align: left"><span style="font-size: 14px; font-weight: 700">{{s.name}}</span><span style="font-size: 12px; color: #9AA3AE">{{s.note}}</span></span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 13px">{{s.price}}</span>
+</button>
+</sc-for>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px; padding-top: 12px; border-top: 1px solid #2A313C; font-size: 14px">
+<div style="display: flex; justify-content: space-between"><span style="color: #9AA3AE">Kort ({{wantCount}} st)</span><span style="font-family: 'IBM Plex Mono', monospace">{{wantSum}}</span></div>
+<div style="display: flex; justify-content: space-between"><span style="color: #9AA3AE">Leverans</span><span style="font-family: 'IBM Plex Mono', monospace">{{shipPrice}}</span></div>
+</div>
+</div>
+</section>
+
+<!-- Fast kassarad -->
+<div style="position: sticky; bottom: 0; margin-top: auto; padding: 14px 16px 22px; background: #080A0E; border-top: 1px solid #1E242D; display: flex; align-items: center; gap: 14px">
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 12px; color: #9AA3AE">Totalt inkl. moms</span>
+<span style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600">{{total}}</span>
+</div>
+<button type="button" disabled="{{wantEmpty}}" style="flex-grow: 1; height: 52px; border: 0; border-radius: 14px; background: {{accent}}; color: #0D1015; font: inherit; font-size: 16px; font-weight: 800">Till kassan →</button>
+</div>
+
+<footer style="margin-top: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 6px; border-top: 1px solid #1E242D; background: #080A0E; font-size: 12px; color: #9AA3AE">
+<span style="font-size: 17px; font-weight: 800; color: #E8EAED">Butik Lyktan <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.16em; color: {{accent}}">SINGELKORT</span></span>
+<span>Veddestabron 8B, Järfälla · hej@butiklyktan.se</span>
+</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#F2A93B","options":["#F2A93B","#7BC8B4","#8FA8FF","#F28C6B"]},"$preview":{"width":390,"height":1760}}'>
+class Component extends DCLogic {
+renderVals() {
+const st = this.state || {};
+const accent = this.props.accent ?? '#F2A93B';
+const init = [
+{ id: 1, game: 'mtg', name: 'Sheoldred, the Apocalypse', set: 'DMU', num: '107', r: 'M', cond: 'NM', lang: 'EN', qty: 1, stock: 1, price: 780, zone: 'want' },
+{ id: 2, game: 'mtg', name: 'Orcish Bowmasters', set: 'LTR', num: '103', r: 'R', cond: 'EX', lang: 'EN', qty: 2, stock: 4, price: 310, zone: 'want' },
+{ id: 3, game: 'mtg', name: 'Sol Ring', set: 'CMM', num: '[#]', r: 'U', cond: 'NM', lang: 'EN', qty: 1, stock: 12, price: 15, zone: 'want' },
+{ id: 4, game: 'mtg', name: 'Lightning Bolt', set: 'M10', num: '146', r: 'C', cond: 'GD', lang: 'EN', qty: 4, stock: 9, price: 12, zone: 'want' },
+{ id: 5, game: 'op', name: '[Kortnamn]', set: '[Set]', num: '[#]', r: 'R', cond: 'NM', lang: 'JP', qty: 1, stock: 2, price: 95, zone: 'want' },
+{ id: 6, game: 'mtg', name: 'The One Ring', set: 'LTR', num: '246', r: 'M', cond: 'NM', lang: 'EN', qty: 1, stock: 1, price: 1450, foil: true, zone: 'maybe' },
+{ id: 7, game: 'mtg', name: 'Ragavan, Nimble Pilferer', set: 'MH2', num: '138', r: 'M', cond: 'EX', lang: 'EN', qty: 1, stock: 1, price: 520, zone: 'maybe' }
+];
+const items = st.items ?? init;
+const over = st.over ?? null;
+const ship = st.ship ?? 'pickup';
+const kr = (n) => n.toLocaleString('sv-SE') + ' kr';
+const setItems = (next) => this.setState({ items: next, over: null });
+const moveTo = (id, zone) => setItems(items.map((x) => (x.id === id ? { ...x, zone } : x)));
+const R = { C: '#D9D9D9', U: '#8FB3D1', R: '#E0C063', M: '#E8743B' };
+const C = { NM: ['#13261A', '#56D364'], EX: ['#0F2624', '#3CCFB8'], GD: ['#2A2410', '#E3B341'], LP: ['#2B1C10', '#F0883E'], PL: ['#2D1414', '#F47067'] };
+const arts = ['#2B2320', '#1F2A3A', '#2A1F2E', '#1E2B24', '#2E2A1D', '#23262E', '#2A2620'];
+const G = { mtg: ['Magic: The Gathering', '#E8743B'], op: ['One Piece', '#E5484D'], pkm: ['Pokémon', '#F7D154'] };
+const dragging = st.dragging ?? null;
+const decorate = (x, i) => {
+const other = x.zone === 'want' ? 'maybe' : 'want';
+return {
+tabWant: (st.tab ?? 'want') === 'want',
+tabMaybe: (st.tab ?? 'want') === 'maybe',
+showWant: () => this.setState({ tab: 'want' }),
+showMaybe: () => this.setState({ tab: 'maybe' }),
+tabWantStyle: 'height: 44px; border: 0; border-radius: 10px; font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; ' + ((st.tab ?? 'want') === 'want' ? 'background: ' + accent + '; color: #0D1015' : 'background: transparent; color: #9AA3AE'),
+tabMaybeStyle: 'height: 44px; border: 0; border-radius: 10px; font: inherit; font-size: 15px; font-weight: 800; cursor: pointer; ' + ((st.tab ?? 'want') === 'maybe' ? 'background: #E8EAED; color: #0D1015' : 'background: transparent; color: #9AA3AE'),
+...x,
+foil: !!x.foil,
+rcolor: R[x.r], cbg: C[x.cond][0], cfg: C[x.cond][1],
+art: x.foil ? '#241F33' : arts[x.id % arts.length],
+artBorder: x.foil ? '#4B3F7A' : '#2A313C',
+last: x.zone === 'want' && x.qty >= x.stock,
+lineTotal: kr(x.price * x.qty),
+unit: kr(x.price),
+rowStyle: 'display: flex; align-items: center; gap: 12px; padding: 10px 12px 10px 6px; border-radius: 14px; background: ' + (x.zone === 'want' ? '#161B22' : '#12161C') + '; border: 1px solid ' + (dragging === x.id ? accent : '#2A313C') + '; opacity: ' + (dragging === x.id ? '0.5' : '1'),
+dragStart: (e) => { this.dragId = x.id; try { e.dataTransfer.setData('text/plain', String(x.id)); e.dataTransfer.effectAllowed = 'move'; } catch (err) {} setTimeout(() => this.setState({ dragging: x.id }), 0); },
+dragEnd: () => this.setState({ dragging: null, over: null }),
+move: () => moveTo(x.id, other),
+remove: () => setItems(items.filter((y) => y.id !== x.id)),
+minus: () => setItems(items.map((y) => (y.id === x.id ? { ...y, qty: Math.max(1, y.qty - 1) } : y))),
+plus: () => setItems(items.map((y) => (y.id === x.id ? { ...y, qty: Math.min(y.stock, y.qty + 1) } : y)))
+};
+};
+const want = items.filter((x) => x.zone === 'want');
+const maybe = items.filter((x) => x.zone === 'maybe');
+const sum = (arr) => arr.reduce((a, x) => a + x.price * x.qty, 0);
+const count = (arr) => arr.reduce((a, x) => a + x.qty, 0);
+const groups = Object.keys(G).map((g) => ({ g, list: want.filter((x) => x.game === g) })).filter((o) => o.list.length).map((o) => ({ name: G[o.g][0], color: G[o.g][1], count: count(o.list), items: o.list.map(decorate) }));
+const ships = [
+{ id: 'pickup', name: 'Hämta i butiken', note: 'Veddestabron 8B, Järfälla', price: 0 },
+{ id: 'letter', name: 'PostNord brev', note: 'Otrackat, toploader', price: null },
+{ id: 'tracked', name: 'PostNord spårbart', note: 'Rekommenderas över [belopp]', price: null }
+];
+const shipSel = ships.find((s) => s.id === ship);
+const zone = (on) => 'display: flex; flex-direction: column; padding: 18px; border-radius: 20px; min-height: 520px; transition: border-color 0.15s, background 0.15s; ' + (on ? 'background: #1A1F27; border: 2px dashed ' + accent : 'background: #12161C; border: 2px solid #1E242D');
+const allow = (z) => (e) => { e.preventDefault(); if (over !== z) this.setState({ over: z }); };
+const drop = (z) => (e) => { e.preventDefault(); let id = this.dragId; try { const d = e.dataTransfer.getData('text/plain'); if (d) id = Number(d); } catch (err) {} this.dragId = null; this.setState({ dragging: null }); if (id != null) moveTo(id, z); else this.setState({ over: null }); };
+const condCounts = ['NM', 'EX', 'GD', 'LP'].map((c) => ({ c, n: want.filter((x) => x.cond === c).reduce((a, x) => a + x.qty, 0) }));
+const maxC = Math.max(1, ...condCounts.map((o) => o.n));
+const shipCost = shipSel.price === 0 ? '0 kr' : '[pris]';
+return {
+accent,
+wantGroups: groups,
+maybeItems: maybe.map(decorate),
+wantEmpty: want.length === 0,
+wantCount: count(want),
+wantUnique: want.length,
+maybeCount: count(maybe),
+wantSum: kr(sum(want)),
+maybeSum: kr(sum(maybe)),
+shipPrice: shipCost,
+total: shipSel.price === 0 ? kr(sum(want)) : kr(sum(want)) + ' + frakt',
+wantZoneStyle: 'grid-column: span 5; ' + zone(over === 'want'),
+maybeZoneStyle: 'grid-column: span 4; ' + zone(over === 'maybe'),
+maybeDashColor: over === 'maybe' ? accent : '#2A313C',
+overWant: allow('want'),
+overMaybe: allow('maybe'),
+leave: () => {},
+dropWant: drop('want'),
+dropMaybe: drop('maybe'),
+ships: ships.map((s) => ({
+...s,
+on: s.id === ship,
+price: s.price === 0 ? 'Gratis' : '[pris]',
+pick: () => this.setState({ ship: s.id }),
+style: 'min-height: 56px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; border-radius: 12px; font: inherit; color: #E8EAED; cursor: pointer; ' + (s.id === ship ? 'background: #1D232C; border: 1px solid ' + accent : 'background: transparent; border: 1px solid #2A313C'),
+dot: 'width: 16px; height: 16px; flex-shrink: 0; border-radius: 8px; box-sizing: border-box; ' + (s.id === ship ? 'border: 5px solid ' + accent : 'border: 2px solid #4A525E')
+})),
+condSummary: condCounts.map(({ c, n }) => ({ code: c, n, bg: C[c][0], fg: C[c][1], bar: 'width: ' + Math.round((n / maxC) * 100) + '%; background: ' + C[c][1] }))
+};
+}
+}
+</script>
+</body>
+</html>
