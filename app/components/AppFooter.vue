@@ -2,6 +2,7 @@
 const { t } = useI18n()
 const localePath = useLocalePath()
 const { groupedHours } = useStoreHours()
+const { reopen } = useConsent()
 </script>
 
 <template>
@@ -48,7 +49,11 @@ const { groupedHours } = useStoreHours()
 
     <div class="border-t border-white/10">
       <div class="page-shell flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
-        <p class="text-xs text-white/60">© Butik Lyktan · {{ t('nav.companyInfo') }}</p>
+        <p class="text-xs text-white/60">
+          © Butik Lyktan · {{ t('nav.companyInfo') }}
+          <span aria-hidden="true"> · </span>
+          <button type="button" class="underline underline-offset-2 transition hover:text-white" @click="reopen">{{ t('consent.settings') }}</button>
+        </p>
         <SocialLinks variant="dark" />
       </div>
     </div>

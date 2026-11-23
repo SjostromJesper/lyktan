@@ -454,5 +454,13 @@
         ]
       }
     ]
+  },
+  "consent": {
+    "title": "Cookies och marknadsföring",
+    "text": "Vi vill använda Meta Pixel (Facebook och Instagram) för att se hur vår marknadsföring fungerar. Då sätts cookies och Meta får veta att du besökt sajten. Du väljer själv, och sajten fungerar likadant oavsett.",
+    "more": "Läs mer",
+    "accept": "Godkänn",
+    "decline": "Neka",
+    "settings": "Cookie-inställningar"
   }
 }

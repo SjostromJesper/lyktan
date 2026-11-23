@@ -5,6 +5,7 @@ export type CartScope = 'shop' | 'singles'
 
 export const useShopifyCart = (scope: CartScope = 'shop') => {
   const { t } = useI18n()
+  const metaPixel = useMetaPixel()
   const storefront = useStorefront()
   const suffix = scope === 'shop' ? '' : `-${scope}`
   const cartId = useCookie<string | null>(`shopify-cart-id${suffix}`, {
@@ -46,6 +47,7 @@ export const useShopifyCart = (scope: CartScope = 'shop') => {
                 altText
               }
               product {
+                id
                 title
                 handle
                 featuredImage {
@@ -204,6 +206,18 @@ export const useShopifyCart = (scope: CartScope = 'shop') => {
   const logCartAdd = (variantId: string, quantity: number) => {
     const line = cart.value?.lines?.nodes?.find((l: any) => l.merchandise?.id === variantId)
     if (!line) return
+
+    // Meta Pixel (bara efter samtycke): en produkt lades i kundvagnen.
+    const unitPrice = line.merchandise.price?.amount ? Number(line.merchandise.price.amount) : undefined
+    const productId = metaPixel.numericId(line.merchandise.product?.id)
+    metaPixel.track('AddToCart', {
+      content_ids: productId ? [productId] : undefined,
+      content_name: line.merchandise.product?.title,
+      content_type: 'product',
+      contents: productId ? [{ id: productId, quantity }] : undefined,
+      value: unitPrice !== undefined ? Math.round(unitPrice * quantity * 100) / 100 : undefined,
+      currency: line.merchandise.price?.currencyCode || 'SEK'
+    })
 
     const variantTitle = line.merchandise.title && line.merchandise.title !== 'Default Title' ? line.merchandise.title : undefined
 

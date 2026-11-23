@@ -454,5 +454,13 @@
         ]
       }
     ]
+  },
+  "consent": {
+    "title": "Cookies and marketing",
+    "text": "We would like to use the Meta Pixel (Facebook and Instagram) to see how our marketing performs. This sets cookies and lets Meta know you visited the site. It is your choice, and the site works the same either way.",
+    "more": "Read more",
+    "accept": "Accept",
+    "decline": "Decline",
+    "settings": "Cookie settings"
   }
 }

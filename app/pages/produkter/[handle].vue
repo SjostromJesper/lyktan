@@ -101,6 +101,24 @@ const selectedVariant = computed(
   () => variants.value.find((entry: any) => entry.id === selectedVariantId.value) ?? variants.value[0] ?? null
 )
 
+// Meta Pixel (bara efter samtycke): en produkt visades. En gång per produkt, även vid byte mellan produkter.
+const metaPixel = useMetaPixel()
+let lastViewedProductId = ''
+watch(product, (p) => {
+  if (import.meta.server || !p?.id || p.id === lastViewedProductId) return
+  lastViewedProductId = p.id
+  const variant = selectedVariant.value
+  const price = Number(variant?.price?.amount)
+  const productId = metaPixel.numericId(p.id)
+  metaPixel.track('ViewContent', {
+    content_ids: [productId],
+    content_name: p.title,
+    content_type: 'product',
+    value: Number.isFinite(price) ? price : undefined,
+    currency: variant?.price?.currencyCode || 'SEK'
+  })
+}, { immediate: true })
+
 const isSoldOut = computed(
   () => !selectedVariant.value?.availableForSale || selectedVariant.value?.quantityAvailable === 0
 )

@@ -46,7 +46,9 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       shopifyStoreDomain: rawShopDomain,
-      shopifyStorefrontPublicToken: storefrontPublicToken
+      shopifyStorefrontPublicToken: storefrontPublicToken,
+      // Meta Pixel-id (inte hemligt). Kan bytas med NUXT_PUBLIC_META_PIXEL_ID. Laddas först efter samtycke.
+      metaPixelId: '29759433230328030'
     }
   },
   app: {
