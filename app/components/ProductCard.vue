@@ -19,12 +19,9 @@ const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
 const isNew = computed(() => isRecentRelease(releaseDate.value))
 
 const isSoldOut = computed(() => firstVariant.value && firstVariant.value.availableForSale === false)
-// Kortspel (Magic, Pokémon m.fl.) säljs aldrig i webbshoppen — döljs även om
-// in_store_only-metafältet saknas, så länge produkten ligger i kortspel-kollektionen.
-const isInKortspelCollection = computed(() =>
-  (props.product?.collections?.nodes ?? []).some((c: any) => c.handle === 'kortspel')
-)
-const isInStoreOnly = computed(() => props.product?.inStoreOnly?.value === 'true' || isInKortspelCollection.value)
+// Bara fältet in_store_only (som personalen slår av och på per produkt i adminpanelen) avgör om en produkt
+// bara säljs i butik. Ingen kategori eller kollektion tvingar det längre.
+const isInStoreOnly = computed(() => props.product?.inStoreOnly?.value === 'true')
 
 const hasDiscount = computed(() => {
   const compareAt = Number(firstVariant.value?.compareAtPrice?.amount)

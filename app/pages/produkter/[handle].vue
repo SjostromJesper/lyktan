@@ -140,8 +140,8 @@ watch(isSingleCard, (single) => {
 const releaseDate = computed(() => product.value?.releaseDate?.value ?? null)
 const isUpcoming = computed(() => isUpcomingRelease(releaseDate.value))
 const isNew = computed(() => isRecentRelease(releaseDate.value))
-const isInKortspelCollection = computed(() => (product.value?.collections?.nodes ?? []).some((c: any) => c.handle === 'kortspel'))
-const isInStoreOnly = computed(() => product.value?.inStoreOnly?.value === 'true' || isInKortspelCollection.value)
+// Bara fältet in_store_only (styrs per produkt i adminpanelen) avgör om produkten bara säljs i butik.
+const isInStoreOnly = computed(() => product.value?.inStoreOnly?.value === 'true')
 
 const interestEmail = ref('')
 const interestSubmitting = ref(false)

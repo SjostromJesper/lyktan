@@ -39,8 +39,8 @@ const { data } = await useAsyncData(`homepage-products-${locale.value}`, () => $
 
 // Kortspel-flikar — hämtar hela kortspel-kollektionen (samma data som
 // /butik/kortspel) och grupperar klientsidan per spel utifrån taggar, i
-// stället för hårdkodade flikar. Kortspel säljs aldrig i webbshoppen, så
-// varje produkt flaggas in_store_only här oavsett metafält.
+// stället för hårdkodade flikar. Vilka produkter som bara säljs i butik avgörs per produkt
+// (fältet in_store_only), inte av kollektionen.
 const { data: kortspelData } = await useAsyncData(`home-kortspel-${locale.value}`, () =>
   $fetch<{ products: any[] }>('/api/shopify/collection/kortspel', { query: { lang: locale.value } }).catch(() => ({ products: [] }))
 )
@@ -48,10 +48,9 @@ const { data: kortspelData } = await useAsyncData(`home-kortspel-${locale.value}
 const cardGameGroups = computed(() => {
   const groups = new Map<string, any[]>()
   for (const product of kortspelData.value?.products ?? []) {
-    const flagged = { ...product, inStoreOnly: { value: 'true' } }
     const label = classifyCardGame(product, t('home.cardGamesTitle'))
     if (!groups.has(label)) groups.set(label, [])
-    groups.get(label)!.push(flagged)
+    groups.get(label)!.push(product)
   }
   return [...groups.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 4)
 })
