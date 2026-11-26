@@ -150,9 +150,11 @@ const details = ref<Details | null>(null)
 const loadDetails = async () => {
   const setCode = product.value?.setCode?.value
   const number = product.value?.collectorNumber?.value
-  const game = product.value?.cardGame?.value?.startsWith('Pok') ? 'pokemon' : 'mtg'
+  const gameName = product.value?.cardGame?.value ?? ''
+  // The card details register only covers Magic and Pokémon.
+  const game = gameName.startsWith('Pok') ? 'pokemon' : !gameName || gameName.startsWith('Magic') ? 'mtg' : null
   details.value = null
-  if (!setCode || !number) return
+  if (!game || !setCode || !number) return
   details.value = await $fetch<Details>('/api/singelkort-details', { query: { game, set: setCode, number } }).catch(() => null)
 }
 
